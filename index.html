@@ -158,7 +158,7 @@
                     </div>
                     <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
                     <div class="text-right sm:text-left">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Current Session / User Score</span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Current Session / Attempt #<span id="attempt-num-display">1</span></span>
                         <p class="text-base font-extrabold text-emerald-600">
                             <span id="w1-score-display">0 pts</span>
                             <span class="text-xs text-slate-400 font-normal"> (Total: <span id="user-accumulated-score" class="font-bold text-slate-700">0</span>)</span>
@@ -401,8 +401,23 @@
                     </div>
                 </div>
 
-                <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-1 custom-scrollbar min-h-[250px]">
+                <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-1 custom-scrollbar min-h-[220px]">
                     <!-- Dynamically populated entries -->
+                </div>
+
+                <!-- Scoring Disclaimer Box -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 shrink-0 text-amber-950 text-xs space-y-1">
+                    <div class="font-extrabold flex items-center gap-1.5 text-amber-900">
+                        <i class="fa-solid fa-circle-info text-amber-600"></i>
+                        <span>Scoring & Fair Play Rules</span>
+                    </div>
+                    <p class="text-[11px] leading-relaxed text-amber-800">
+                        Base points are awarded per correct question. To encourage mastery, getting a <strong>perfect score (10/10)</strong> awards attempt bonus points:
+                        <br>
+                        • <strong>1st try:</strong> +10 extra pts | • <strong>2nd try:</strong> +8 extra pts | • <strong>3rd try:</strong> +6 extra pts
+                        <br>
+                        • <strong>4th try:</strong> +4 extra pts | • <strong>5th try:</strong> +2 extra pts | • <strong>6+ tries:</strong> 0 extra pts.
+                    </p>
                 </div>
 
                 <div class="text-center shrink-0 pt-2 border-t">
@@ -454,6 +469,11 @@
                         <span class="text-xs font-bold text-slate-400 uppercase">Correct Answers</span>
                         <p class="text-2xl font-extrabold text-emerald-600" id="final-accuracy">0 / 10</p>
                     </div>
+                </div>
+
+                <!-- Attempt Bonus Callout -->
+                <div id="bonus-callout-box" class="hidden bg-amber-50 border border-amber-300 rounded-xl p-3 text-amber-900 text-xs font-extrabold">
+                    <span id="bonus-callout-text">🎉 Bonus Awarded!</span>
                 </div>
 
                 <div class="space-y-2 pt-2">
@@ -594,6 +614,7 @@
         let soundEnabled = true;
         let audioCtx = null;
         let isInstructorMode = false;
+        let userQuizAttemptCount = 1;
 
         // Current Active Student User Account
         let activeUser = null;
@@ -667,6 +688,7 @@
             const q = week1Questions[currentQuestionIndex];
             
             document.getElementById('q-number-display').textContent = `Question ${currentQuestionIndex + 1} of ${week1Questions.length}`;
+            document.getElementById('attempt-num-display').textContent = userQuizAttemptCount;
             document.getElementById('category-badge').textContent = q.category;
             document.getElementById('question-hint').textContent = q.hint;
             
@@ -797,7 +819,6 @@
                     statusMsg.className = "font-extrabold text-sm text-emerald-600 flex items-center gap-2";
                     statusMsg.innerHTML = `<i class="fa-solid fa-circle-check text-lg"></i> Correct! +${addedPts} pts`;
                     
-                    // Accumulate score to active user profile
                     if (activeUser) {
                         activeUser.totalPoints = (activeUser.totalPoints || 0) + addedPts;
                         saveActiveUserData();
@@ -1201,6 +1222,34 @@
         }
 
         function showSummaryModal() {
+            let attemptBonus = 0;
+            const calloutBox = document.getElementById('bonus-callout-box');
+            const calloutText = document.getElementById('bonus-callout-text');
+
+            // Check if player scored 100% correct (10/10)
+            if (correctAnswersCount === week1Questions.length) {
+                if (userQuizAttemptCount === 1) attemptBonus = 10;
+                else if (userQuizAttemptCount === 2) attemptBonus = 8;
+                else if (userQuizAttemptCount === 3) attemptBonus = 6;
+                else if (userQuizAttemptCount === 4) attemptBonus = 4;
+                else if (userQuizAttemptCount === 5) attemptBonus = 2;
+                else attemptBonus = 0;
+
+                if (attemptBonus > 0) {
+                    currentScore += attemptBonus;
+                    if (activeUser) {
+                        activeUser.totalPoints = (activeUser.totalPoints || 0) + attemptBonus;
+                        saveActiveUserData();
+                    }
+                    calloutText.textContent = `🏆 Perfect 10/10 Bonus! You earned +${attemptBonus} extra bonus points for completing in Try #${userQuizAttemptCount}!`;
+                    calloutBox.classList.remove('hidden');
+                } else {
+                    calloutBox.classList.add('hidden');
+                }
+            } else {
+                calloutBox.classList.add('hidden');
+            }
+
             document.getElementById('summary-modal').classList.remove('hidden');
             document.getElementById('summary-modal').classList.add('flex');
             document.getElementById('final-score').textContent = `${currentScore} pts`;
@@ -1213,6 +1262,7 @@
         }
 
         function restartWeek1() {
+            userQuizAttemptCount++;
             currentQuestionIndex = 0;
             currentScore = 0;
             correctAnswersCount = 0;
