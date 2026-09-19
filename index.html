@@ -401,6 +401,18 @@
                     </div>
                 </div>
 
+                <!-- Instructor Scoreboard Reset Banner (Visible only in Instructor Mode) -->
+                <div id="instructor-leaderboard-actions" class="hidden bg-amber-100 border border-amber-300 p-3 rounded-xl shrink-0 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
+                    <div class="flex items-center gap-2 font-bold text-amber-950">
+                        <i class="fa-solid fa-user-shield text-amber-700 text-sm"></i>
+                        <span>Instructor Management: Reset Scoreboard for New Semester</span>
+                    </div>
+                    <button onclick="clearEntireLeaderboard()" class="bg-rose-700 hover:bg-rose-800 text-white font-extrabold px-3 py-1.5 rounded-lg transition shadow text-xs shrink-0 flex items-center gap-1.5">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span>Wipe All Semester Scores</span>
+                    </button>
+                </div>
+
                 <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-1 custom-scrollbar min-h-[220px]">
                     <!-- Dynamically populated entries -->
                 </div>
@@ -503,7 +515,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Global Application Context
         window.appId = typeof __app_id !== 'undefined' ? __app_id : 'malaysian-taxation-tu-app';
@@ -540,6 +552,8 @@
         }
 
         window.dbInstance = db;
+        window.deleteDocRef = deleteDoc;
+        window.docRef = doc;
     </script>
 
     <script>
@@ -941,7 +955,7 @@
             // Sync to Firestore if available
             if (window.dbInstance) {
                 try {
-                    const userRef = doc(window.dbInstance, 'artifacts', window.appId, 'public', 'data', 'leaderboard', activeUser.username);
+                    const userRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'public', 'data', 'leaderboard', activeUser.username);
                     setDoc(userRef, {
                         username: activeUser.username,
                         totalPoints: activeUser.totalPoints || 0,
@@ -1054,7 +1068,7 @@
                 closeInstructorLoginModal();
                 document.getElementById('instructor-toolbar').classList.remove('hidden');
                 document.getElementById('instructor-btn-label').textContent = "Lecturer Active";
-                showToast("Instructor Unlocked", "Skip & reveal controls are now available.");
+                showToast("Instructor Unlocked", "Skip, reveal, and scoreboard reset controls are active.");
             } else {
                 document.getElementById('instructor-pass-error').classList.remove('hidden');
             }
@@ -1112,6 +1126,14 @@
         }
 
         function openLeaderboardModal() {
+            // Toggle instructor management banner
+            const instActions = document.getElementById('instructor-leaderboard-actions');
+            if (isInstructorMode) {
+                instActions.classList.remove('hidden');
+            } else {
+                instActions.classList.add('hidden');
+            }
+
             renderLeaderboard();
             document.getElementById('leaderboard-modal').classList.remove('hidden');
             document.getElementById('leaderboard-modal').classList.add('flex');
@@ -1152,6 +1174,15 @@
                 if (index === 1) rankBadge = `<span class="w-7 h-7 flex items-center justify-center rounded-lg font-extrabold text-xs bg-slate-300 text-slate-800">2</span>`;
                 if (index === 2) rankBadge = `<span class="w-7 h-7 flex items-center justify-center rounded-lg font-extrabold text-xs bg-amber-700 text-white">3</span>`;
 
+                let instructorDeleteBtn = '';
+                if (isInstructorMode) {
+                    instructorDeleteBtn = `
+                        <button onclick="deleteLeaderboardEntry('${user.username}')" class="text-rose-600 hover:text-rose-800 hover:bg-rose-100 p-1.5 rounded-lg border border-rose-200 transition text-xs ml-2" title="Delete entry from scoreboard">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    `;
+                }
+
                 item.innerHTML = `
                     <div class="flex items-center gap-3">
                         ${rankBadge}
@@ -1164,13 +1195,69 @@
                             <p class="text-[11px] text-slate-500 line-clamp-1">${user.interests || 'Taxation Scholar'}</p>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <span class="font-extrabold text-base text-red-700">${user.totalPoints || 0}</span>
-                        <span class="text-[10px] text-slate-400 block uppercase font-bold">pts</span>
+                    <div class="flex items-center">
+                        <div class="text-right">
+                            <span class="font-extrabold text-base text-red-700">${user.totalPoints || 0}</span>
+                            <span class="text-[10px] text-slate-400 block uppercase font-bold">pts</span>
+                        </div>
+                        ${instructorDeleteBtn}
                     </div>
                 `;
                 list.appendChild(item);
             });
+        }
+
+        // Instructor deletion functions
+        function deleteLeaderboardEntry(username) {
+            if (!isInstructorMode) return;
+            if (!confirm(`Are you sure you want to delete @${username} from the scoreboard?`)) return;
+
+            delete allUsersStore[username];
+            try {
+                localStorage.setItem('tu_tax_users', JSON.stringify(allUsersStore));
+            } catch(e) {}
+
+            if (activeUser && activeUser.username === username) {
+                logoutUser();
+            }
+
+            // Sync deletion to Firestore if connected
+            if (window.dbInstance && window.deleteDocRef) {
+                try {
+                    const userRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'public', 'data', 'leaderboard', username);
+                    window.deleteDocRef(userRef).catch(() => {});
+                } catch(e) {}
+            }
+
+            renderLeaderboard();
+            showToast("Entry Deleted", `Removed @${username} from scoreboard.`);
+        }
+
+        function clearEntireLeaderboard() {
+            if (!isInstructorMode) return;
+            if (!confirm("⚠️ SEMESTER RESET WARNING:\n\nAre you sure you want to wipe ALL student scores and entries for a new semester? This action cannot be undone.")) return;
+
+            const usernames = Object.keys(allUsersStore);
+            usernames.forEach(username => {
+                if (window.dbInstance && window.deleteDocRef) {
+                    try {
+                        const userRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'public', 'data', 'leaderboard', username);
+                        window.deleteDocRef(userRef).catch(() => {});
+                    } catch(e) {}
+                }
+            });
+
+            allUsersStore = {};
+            try {
+                localStorage.setItem('tu_tax_users', JSON.stringify(allUsersStore));
+            } catch(e) {}
+
+            if (activeUser) {
+                logoutUser();
+            }
+
+            renderLeaderboard();
+            showToast("Scoreboard Wiped", "All student scores cleared for the new semester.");
         }
 
         // Firestore real-time snapshot subscription
