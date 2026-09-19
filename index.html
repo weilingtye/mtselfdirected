@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Malaysian Taxation TU - Interactive Weekly Tax Quizzes</title>
+    <title>Malaysian Taxation TU - Tax Quiz & Leaderboard App</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -31,82 +31,117 @@
         .animate-success {
             animation: pulse-success 0.4s ease-in-out;
         }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col text-slate-800">
 
     <header class="bg-gradient-to-r from-red-800 via-red-900 to-neutral-950 text-white shadow-lg sticky top-0 z-30 border-b border-red-700/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <!-- Taylor's University Official 'T' Pillar Vector SVG Logo -->
-                <div class="bg-white p-1.5 rounded-xl shadow-md flex items-center justify-center w-11 h-11 border-2 border-red-500/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
+            <!-- Brand Logo & Title -->
+            <div class="flex items-center gap-3 shrink-0">
+                <div class="bg-white p-1.5 rounded-xl shadow-md flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 border-2 border-red-500/20">
                     <svg viewBox="0 0 100 110" class="w-full h-full">
-                        <!-- Top Horizontal Bar of 'T' -->
                         <rect x="18" y="10" width="64" height="15" rx="1" fill="#221f1f"/>
-                        <!-- Left Pillar (Red/Orange) -->
                         <polygon points="26,29 38,29 38,80 32,87 26,80" fill="#d9381e"/>
-                        <!-- Middle Pillar (Dark Slate - Longer Center) -->
                         <polygon points="44,29 56,29 56,92 50,100 44,92" fill="#221f1f"/>
-                        <!-- Right Pillar (Red/Orange) -->
                         <polygon points="62,29 74,29 74,80 68,87 62,80" fill="#d9381e"/>
                     </svg>
                 </div>
                 <div>
-                    <h1 class="font-extrabold text-lg leading-tight tracking-wide flex items-center gap-1.5">
+                    <h1 class="font-extrabold text-base sm:text-lg leading-tight tracking-wide flex items-center gap-1.5">
                         <span>Malaysian Taxation TU</span>
                     </h1>
-                    <p class="text-xs text-red-200/90 font-medium">Taylor's University • School of Accounting & Finance</p>
+                    <p class="text-[10px] sm:text-xs text-red-200/90 font-medium hidden sm:block">Taylor's University • School of Accounting & Finance</p>
                 </div>
             </div>
             
-            <div class="flex items-center gap-4">
-                <div class="bg-black/40 backdrop-blur px-3.5 py-1.5 rounded-lg border border-red-500/30 flex items-center gap-2 text-xs sm:text-sm">
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Leaderboard Trigger -->
+                <button onclick="openLeaderboardModal()" class="bg-black/40 hover:bg-black/60 backdrop-blur px-3 py-1.5 rounded-xl border border-amber-500/40 flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-amber-300 transition shadow">
                     <i class="fa-solid fa-trophy text-amber-400"></i>
-                    <span>Total Score: <strong id="global-score" class="text-amber-300 font-bold">0</strong> pts</span>
+                    <span class="hidden md:inline">Scoreboard</span>
+                </button>
+
+                <!-- Instructor Mode Toggle Button -->
+                <button onclick="openInstructorLoginModal()" id="instructor-btn" class="bg-black/40 hover:bg-black/60 backdrop-blur px-3 py-1.5 rounded-xl border border-red-500/30 flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-red-200 transition">
+                    <i class="fa-solid fa-user-shield text-red-400"></i>
+                    <span id="instructor-btn-label" class="hidden sm:inline">Instructor</span>
+                </button>
+
+                <!-- User Profile / Auth Button -->
+                <div id="user-header-profile" class="flex items-center">
+                    <button onclick="openAuthModal()" class="bg-red-700 hover:bg-red-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Login / Register</span>
+                    </button>
                 </div>
-                <button onclick="toggleSound()" id="sound-btn" class="p-2 rounded-lg bg-black/40 hover:bg-black/60 transition text-red-200 hover:text-white border border-red-500/30" title="Toggle Sound Effects">
+
+                <!-- Sound Toggle Button -->
+                <button onclick="toggleSound()" id="sound-btn" class="p-2 rounded-xl bg-black/40 hover:bg-black/60 transition text-red-200 hover:text-white border border-red-500/30 text-xs sm:text-sm" title="Toggle Sound">
                     <i class="fa-solid fa-volume-high" id="sound-icon"></i>
                 </button>
             </div>
         </div>
     </header>
 
+    <div id="instructor-toolbar" class="hidden bg-amber-500 text-slate-950 px-4 py-2 border-b border-amber-600 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm font-bold">
+            <div class="flex items-center gap-2">
+                <span class="bg-slate-950 text-amber-400 px-2.5 py-0.5 rounded-lg uppercase tracking-wider text-[10px] font-black">Instructor Mode Active</span>
+                <span>Welcome, Lecturer! Quick controls enabled.</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="instructorRevealAnswer()" class="bg-slate-950 hover:bg-slate-800 text-amber-300 px-3 py-1 rounded-lg transition flex items-center gap-1">
+                    <i class="fa-solid fa-eye"></i> Reveal Answer
+                </button>
+                <button onclick="instructorSkipQuestion()" class="bg-slate-950 hover:bg-slate-800 text-amber-300 px-3 py-1 rounded-lg transition flex items-center gap-1">
+                    <i class="fa-solid fa-forward"></i> Skip Question
+                </button>
+                <button onclick="openAnswerKeyModal()" class="bg-slate-950 hover:bg-slate-800 text-amber-300 px-3 py-1 rounded-lg transition flex items-center gap-1">
+                    <i class="fa-solid fa-book-open"></i> Full Answer Key
+                </button>
+                <button onclick="exitInstructorMode()" class="bg-rose-700 hover:bg-rose-800 text-white px-2.5 py-1 rounded-lg transition">
+                    <i class="fa-solid fa-xmark"></i> Exit
+                </button>
+            </div>
+        </div>
+    </div>
+
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
 
-        <!-- Weekly Navigation Selector (With Weeks 2-4 Locked & Hidden Topic Titles) -->
-        <nav class="bg-white p-2 rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
+        <!-- Weekly Navigation Selector -->
+        <nav class="bg-white p-2 rounded-2xl shadow-sm border border-slate-200 overflow-x-auto custom-scrollbar">
             <div class="flex space-x-2 min-w-max">
-                <!-- Active Topic: Week 1 -->
                 <button onclick="selectWeek(1)" id="tab-week-1" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all bg-red-700 text-white shadow">
                     <span class="bg-red-900 text-white text-xs px-2 py-0.5 rounded-full font-bold">Week 1</span>
                     <span>Individual Resident Status (ITA 1967 S.7)</span>
                     <span class="text-xs bg-amber-400 text-slate-950 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider">Hangman</span>
                 </button>
 
-                <!-- Locked Topic: Week 2 -->
                 <button onclick="showLockedNotification('Week 2')" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all text-slate-400 bg-slate-50 border border-slate-200 opacity-75 cursor-not-allowed">
                     <span class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
                         <i class="fa-solid fa-lock text-[10px]"></i> Week 2
                     </span>
-                    <span>Locked Module</span>
+                    <span>Employment Income</span>
                     <span class="text-xs bg-slate-200 text-slate-500 px-2 py-0.5 rounded-md font-medium uppercase">Locked</span>
                 </button>
 
-                <!-- Locked Topic: Week 3 -->
                 <button onclick="showLockedNotification('Week 3')" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all text-slate-400 bg-slate-50 border border-slate-200 opacity-75 cursor-not-allowed">
                     <span class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
                         <i class="fa-solid fa-lock text-[10px]"></i> Week 3
                     </span>
-                    <span>Locked Module</span>
-                    <span class="text-xs bg-slate-200 text-slate-500 px-2 py-0.5 rounded-md font-medium uppercase">Locked</span>
-                </button>
-
-                <!-- Locked Topic: Week 4 -->
-                <button onclick="showLockedNotification('Week 4')" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all text-slate-400 bg-slate-50 border border-slate-200 opacity-75 cursor-not-allowed">
-                    <span class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
-                        <i class="fa-solid fa-lock text-[10px]"></i> Week 4
-                    </span>
-                    <span>Locked Module</span>
+                    <span>Business Income & Reliefs</span>
                     <span class="text-xs bg-slate-200 text-slate-500 px-2 py-0.5 rounded-md font-medium uppercase">Locked</span>
                 </button>
             </div>
@@ -123,50 +158,44 @@
                     </div>
                     <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
                     <div class="text-right sm:text-left">
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Streak / Score</span>
-                        <p class="text-base font-extrabold text-emerald-600" id="w1-score-display">0 pts</p>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Current Session / User Score</span>
+                        <p class="text-base font-extrabold text-emerald-600">
+                            <span id="w1-score-display">0 pts</span>
+                            <span class="text-xs text-slate-400 font-normal"> (Total: <span id="user-accumulated-score" class="font-bold text-slate-700">0</span>)</span>
+                        </p>
                     </div>
                 </div>
 
-                <!-- Progress bar -->
                 <div class="w-full md:w-64 bg-slate-100 rounded-full h-3 overflow-hidden border border-slate-200">
                     <div id="w1-progress-bar" class="bg-red-700 h-full transition-all duration-500 rounded-full" style="width: 10%;"></div>
                 </div>
             </div>
 
-            <!-- Main Interactive Game Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
                 <!-- Left Column: Hangman Graphic Canvas -->
                 <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-between space-y-4">
                     <div class="w-full flex justify-between items-center border-b pb-3">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Hangman Penalty Visual</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Hangman Visual</span>
                         <span class="text-xs font-semibold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200">
-                            Mistakes Allowed: <strong id="lives-display">6</strong> / 6
+                            Mistakes Left: <strong id="lives-display">6</strong> / 6
                         </span>
                     </div>
 
-                    <!-- SVG Hangman Graphic Canvas -->
+                    <!-- SVG Hangman Graphic -->
                     <div class="relative w-56 h-64 flex items-center justify-center my-2">
                         <svg class="w-full h-full" viewBox="0 0 200 230">
-                            <!-- Base & Gallows (Always visible) -->
                             <path d="M 20 210 L 180 210" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
                             <path d="M 50 210 L 50 20" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
                             <path d="M 48 20 L 130 20" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
                             <path d="M 50 60 L 90 20" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
                             <path d="M 130 20 L 130 50" stroke="#dc2626" stroke-width="3" stroke-dasharray="4" stroke-linecap="round"/>
 
-                            <!-- Part 1: Head -->
                             <circle id="hm-head" cx="130" cy="70" r="18" stroke="#334155" stroke-width="3.5" fill="#f8fafc" class="hidden"/>
-                            <!-- Part 2: Body -->
                             <path id="hm-body" d="M 130 88 L 130 140" stroke="#334155" stroke-width="3.5" stroke-linecap="round" class="hidden"/>
-                            <!-- Part 3: Left Arm -->
                             <path id="hm-arm-left" d="M 130 100 L 100 120" stroke="#334155" stroke-width="3.5" stroke-linecap="round" class="hidden"/>
-                            <!-- Part 4: Right Arm -->
                             <path id="hm-arm-right" d="M 130 100 L 160 120" stroke="#334155" stroke-width="3.5" stroke-linecap="round" class="hidden"/>
-                            <!-- Part 5: Left Leg -->
                             <path id="hm-leg-left" d="M 130 140 L 105 180" stroke="#334155" stroke-width="3.5" stroke-linecap="round" class="hidden"/>
-                            <!-- Part 6: Right Leg -->
                             <path id="hm-leg-right" d="M 130 140 L 155 180" stroke="#334155" stroke-width="3.5" stroke-linecap="round" class="hidden"/>
                         </svg>
                     </div>
@@ -178,7 +207,6 @@
 
                 <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
                     
-                    <!-- Question Scenario / Hint -->
                     <div class="space-y-2">
                         <div class="flex items-center gap-2">
                             <span class="bg-red-100 text-red-800 text-xs font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider">Tax Law Scenario</span>
@@ -190,22 +218,20 @@
                     </div>
 
                     <!-- Hidden Phrase Display Slots -->
-                    <div id="word-slots-container" class="flex flex-wrap gap-2 justify-center my-4 min-h-[70px] items-center p-4 bg-slate-900 rounded-xl shadow-inner overflow-x-auto">
-                        <!-- Letters injected dynamically -->
+                    <div id="word-slots-container" class="flex flex-wrap gap-2 justify-center my-4 min-h-[70px] items-center p-4 bg-slate-900 rounded-xl shadow-inner overflow-x-auto custom-scrollbar">
                     </div>
 
-                    <!-- On-Screen Virtual Keyboard -->
+                    <!-- On-Screen Keyboard -->
                     <div class="space-y-2">
                         <div class="text-xs font-bold text-slate-400 uppercase tracking-wider text-center">Select Letters</div>
                         <div id="keyboard" class="flex flex-wrap gap-1.5 justify-center">
-                            <!-- Dynamic Key Buttons -->
                         </div>
                     </div>
 
                     <!-- Next Question Action Bar -->
                     <div id="action-bar" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div id="status-message" class="font-bold text-sm"></div>
-                        <button onclick="nextQuestion()" class="w-full sm:w-auto bg-red-700 hover:bg-red-800 text-white font-bold px-6 py-2.5 rounded-xl shadow transition-colors flex items-center justify-center gap-2">
+                        <button onclick="nextQuestion()" class="w-full sm:w-auto bg-red-700 hover:bg-red-800 text-white font-bold px-6 py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
                             <span>Next Question</span>
                             <i class="fa-solid fa-arrow-right"></i>
                         </button>
@@ -214,18 +240,201 @@
                 </div>
             </div>
 
+            <!-- Tax Rationale Box -->
             <div id="explanation-box" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-6 shadow-sm space-y-2">
                 <div class="flex items-center gap-2 text-emerald-800 font-bold text-base">
                     <i class="fa-solid fa-graduation-cap text-lg"></i>
                     <span>Tax Rationale & Statutory Explanation</span>
                 </div>
                 <p id="explanation-text" class="text-emerald-950 text-sm leading-relaxed">
-                    <!-- Dynamic tax explanation -->
                 </p>
             </div>
 
         </section>
 
+        <!-- Auth Modal (Login / Register) -->
+        <div id="auth-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-5 relative">
+                <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+
+                <div class="text-center">
+                    <div class="w-12 h-12 bg-red-100 text-red-700 rounded-2xl flex items-center justify-center text-xl mx-auto mb-2 font-bold">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <h3 id="auth-modal-title" class="text-xl font-extrabold text-slate-800">Student Account</h3>
+                    <p id="auth-modal-subtitle" class="text-xs text-slate-500">Sign in or register your unique username to save quiz points.</p>
+                </div>
+
+                <!-- Tab Toggle -->
+                <div class="flex bg-slate-100 p-1 rounded-xl">
+                    <button id="tab-btn-login" onclick="switchAuthMode('login')" class="flex-1 py-1.5 font-bold text-xs rounded-lg bg-white shadow text-red-800 transition">Log In</button>
+                    <button id="tab-btn-register" onclick="switchAuthMode('register')" class="flex-1 py-1.5 font-bold text-xs rounded-lg text-slate-500 transition">Register</button>
+                </div>
+
+                <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Unique Username *</label>
+                        <input type="text" id="auth-username" required placeholder="e.g. alex_taxation" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-600 text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Password *</label>
+                        <input type="password" id="auth-password" required placeholder="••••••••" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-600 text-sm">
+                    </div>
+
+                    <!-- Registration Only Fields -->
+                    <div id="register-fields" class="space-y-3 hidden">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Taxation Interests</label>
+                            <input type="text" id="auth-interests" placeholder="e.g. Individual Tax, Corporate Tax, RPGT" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-600 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Student Bio</label>
+                            <textarea id="auth-bio" rows="2" placeholder="Tell your peers a bit about yourself..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-600 text-sm"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Avatar / Profile Image URL (Optional)</label>
+                            <input type="url" id="auth-avatar" placeholder="https://example.com/photo.jpg" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-600 text-sm">
+                        </div>
+                    </div>
+
+                    <p id="auth-error" class="text-xs text-rose-600 font-bold hidden text-center"></p>
+
+                    <button type="submit" id="auth-submit-btn" class="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-2.5 rounded-xl shadow transition text-sm">
+                        Log In
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- User Profile Drawer / Modal -->
+        <div id="profile-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-5 relative">
+                <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+
+                <div class="text-center space-y-2">
+                    <img id="prof-display-img" src="https://placehold.co/100x100/dc2626/ffffff?text=TU" class="w-20 h-20 rounded-full mx-auto border-4 border-red-100 shadow object-cover">
+                    <h3 id="prof-display-username" class="text-xl font-extrabold text-slate-800">@username</h3>
+                    <div class="inline-block bg-amber-100 text-amber-900 px-3 py-1 rounded-full text-xs font-extrabold border border-amber-300">
+                        Total Points: <span id="prof-display-points">0</span> pts
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                    <div>
+                        <span class="text-[10px] font-extrabold uppercase text-slate-400 block">Tax Interests</span>
+                        <p id="prof-display-interests" class="text-xs font-semibold text-slate-700">None set</p>
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-extrabold uppercase text-slate-400 block">Bio</span>
+                        <p id="prof-display-bio" class="text-xs text-slate-600 italic">No bio provided.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <button onclick="toggleEditProfileForm()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-xl text-xs transition flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Profile & Password
+                    </button>
+                    
+                    <!-- Edit Profile Form -->
+                    <form id="edit-profile-form" onsubmit="handleProfileUpdate(event)" class="space-y-3 hidden bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <input type="text" id="edit-interests" placeholder="Interests" class="w-full px-3 py-1.5 rounded-lg border text-xs">
+                        <textarea id="edit-bio" rows="2" placeholder="Bio" class="w-full px-3 py-1.5 rounded-lg border text-xs"></textarea>
+                        <input type="url" id="edit-avatar" placeholder="Avatar URL" class="w-full px-3 py-1.5 rounded-lg border text-xs">
+                        <input type="password" id="edit-password" placeholder="New Password (optional)" class="w-full px-3 py-1.5 rounded-lg border text-xs">
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 rounded-lg text-xs transition">Save Changes</button>
+                    </form>
+
+                    <button onclick="logoutUser()" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold py-2 rounded-xl text-xs transition border border-rose-200">
+                        <i class="fa-solid fa-right-from-bracket mr-1"></i> Log Out
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructor Login Modal -->
+        <div id="instructor-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-4 relative">
+                <button onclick="closeInstructorLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+
+                <div class="text-center">
+                    <div class="w-12 h-12 bg-amber-100 text-amber-800 rounded-2xl flex items-center justify-center text-xl mx-auto mb-2 font-bold">
+                        <i class="fa-solid fa-key"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-slate-800">Instructor Authentication</h3>
+                    <p class="text-xs text-slate-500">Enter lecturer security code to unlock question controls.</p>
+                </div>
+
+                <form onsubmit="handleInstructorLogin(event)" class="space-y-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Instructor Password</label>
+                        <input type="password" id="instructor-pass-input" required placeholder="Enter password" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
+                    </div>
+                    <p id="instructor-pass-error" class="text-xs text-rose-600 font-bold hidden text-center">Incorrect password.</p>
+                    <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold py-2.5 rounded-xl shadow transition text-sm">
+                        Unlock Instructor Portal
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Leaderboard / Scoreboard Modal -->
+        <div id="leaderboard-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 space-y-4 relative max-h-[90vh] flex flex-col">
+                <button onclick="closeLeaderboardModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+
+                <div class="flex items-center gap-3 border-b pb-3 shrink-0">
+                    <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-extrabold text-slate-800">Taxation TU Scoreboard</h3>
+                        <p class="text-xs text-slate-500">Accumulated total points across all weekly tax modules.</p>
+                    </div>
+                </div>
+
+                <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-1 custom-scrollbar min-h-[250px]">
+                    <!-- Dynamically populated entries -->
+                </div>
+
+                <div class="text-center shrink-0 pt-2 border-t">
+                    <span class="text-xs text-slate-400">Scores sync automatically for registered student accounts.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructor Answer Key Modal -->
+        <div id="answer-key-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-6 space-y-4 relative max-h-[85vh] flex flex-col">
+                <button onclick="closeAnswerKeyModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+
+                <div class="flex items-center gap-3 border-b pb-3 shrink-0">
+                    <div class="w-10 h-10 bg-red-100 text-red-700 rounded-xl flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-extrabold text-slate-800">Instructor Answer Key — Week 1</h3>
+                        <p class="text-xs text-slate-500">Individual Resident Status (ITA 1967 Section 7) Solutions & Statutory Explanations</p>
+                    </div>
+                </div>
+
+                <div id="answer-key-list" class="flex-grow overflow-y-auto space-y-3 pr-2 custom-scrollbar">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Completion Summary Modal -->
         <div id="summary-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 text-center space-y-5 animate-success">
                 <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto">
@@ -238,7 +447,7 @@
 
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-2 gap-4">
                     <div>
-                        <span class="text-xs font-bold text-slate-400 uppercase">Final Score</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase">Session Score</span>
                         <p class="text-2xl font-extrabold text-red-700" id="final-score">0 pts</p>
                     </div>
                     <div>
@@ -258,21 +467,62 @@
             </div>
         </div>
 
-        <!-- Toast Notification for Locked Weeks -->
+        <!-- Toast Notification -->
         <div id="locked-toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700 hidden items-center gap-3 z-50 transition-all transform duration-300">
             <div class="w-8 h-8 bg-amber-500/20 text-amber-400 rounded-lg flex items-center justify-center font-bold">
-                <i class="fa-solid fa-lock"></i>
+                <i class="fa-solid fa-circle-info"></i>
             </div>
             <div>
-                <p class="text-xs font-bold text-slate-400 uppercase">Module Locked</p>
-                <p id="locked-toast-msg" class="text-sm font-semibold text-white">This week's quiz topic is currently locked.</p>
+                <p id="locked-toast-title" class="text-xs font-bold text-slate-400 uppercase">Notice</p>
+                <p id="locked-toast-msg" class="text-sm font-semibold text-white">Message text here</p>
             </div>
         </div>
 
     </main>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Application Context
+        window.appId = typeof __app_id !== 'undefined' ? __app_id : 'malaysian-taxation-tu-app';
+        let db = null;
+        let auth = null;
+        let currentUserUid = null;
+
+        // Try initializing Firebase
+        try {
+            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                const initAuth = async () => {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                };
+                initAuth().catch(console.error);
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        currentUserUid = user.uid;
+                        window.listenToLiveLeaderboard();
+                    }
+                });
+            }
+        } catch (e) {
+            console.log("Firebase initialized in local fallback mode.");
+        }
+
+        window.dbInstance = db;
+    </script>
+
     <script>
-        // 10 Comprehensive Questions on Individual Resident Status (ITA 1967 S.7)
         const week1Questions = [
             {
                 phrase: "ONE HUNDRED EIGHTY TWO DAYS",
@@ -343,6 +593,21 @@
         let correctAnswersCount = 0;
         let soundEnabled = true;
         let audioCtx = null;
+        let isInstructorMode = false;
+
+        // Current Active Student User Account
+        let activeUser = null;
+        let allUsersStore = {}; // Fallback in-memory storage
+
+        // Load persisted users from localStorage if available
+        try {
+            const stored = localStorage.getItem('tu_tax_users');
+            if (stored) allUsersStore = JSON.parse(stored);
+            const activeUsername = localStorage.getItem('tu_tax_active_user');
+            if (activeUsername && allUsersStore[activeUsername]) {
+                activeUser = allUsersStore[activeUsername];
+            }
+        } catch(e) {}
 
         function initAudio() {
             if (!audioCtx) {
@@ -353,11 +618,7 @@
         function toggleSound() {
             soundEnabled = !soundEnabled;
             const icon = document.getElementById('sound-icon');
-            if (soundEnabled) {
-                icon.className = "fa-solid fa-volume-high";
-            } else {
-                icon.className = "fa-solid fa-volume-xmark";
-            }
+            icon.className = soundEnabled ? "fa-solid fa-volume-high" : "fa-solid fa-volume-xmark";
         }
 
         function playSound(type) {
@@ -368,13 +629,12 @@
                 const gain = audioCtx.createGain();
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-
                 const now = audioCtx.currentTime;
 
                 if (type === 'correct') {
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(587.33, now); // D5
-                    osc.frequency.setValueAtTime(880, now + 0.08); // A5
+                    osc.frequency.setValueAtTime(587.33, now);
+                    osc.frequency.setValueAtTime(880, now + 0.08);
                     gain.gain.setValueAtTime(0.2, now);
                     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
                     osc.start(now);
@@ -397,9 +657,7 @@
                     osc.start(now);
                     osc.stop(now + 0.5);
                 }
-            } catch (e) {
-                console.log("Audio play deferred or unavailable");
-            }
+            } catch (e) {}
         }
 
         function initHangmanQuestion() {
@@ -421,30 +679,7 @@
             renderHangmanSVG();
             renderWordSlots();
             renderKeyboard();
-        }
-
-        function selectWeek(weekNum) {
-            if (weekNum !== 1) {
-                showLockedNotification(`Week ${weekNum}`);
-                return;
-            }
-            document.querySelectorAll('.week-view').forEach(v => v.classList.add('hidden'));
-            document.getElementById(`view-week-1`).classList.remove('hidden');
-        }
-
-        function showLockedNotification(topicTitle) {
-            playSound('wrong');
-            const toast = document.getElementById('locked-toast');
-            const msg = document.getElementById('locked-toast-msg');
-            msg.textContent = `${topicTitle} is locked by your instructor until scheduled release.`;
-            
-            toast.classList.remove('hidden');
-            toast.classList.add('flex');
-
-            setTimeout(() => {
-                toast.classList.add('hidden');
-                toast.classList.remove('flex');
-            }, 3500);
+            updateUserHeaderUI();
         }
 
         function renderWordSlots() {
@@ -532,7 +767,6 @@
             renderHangmanSVG();
             renderWordSlots();
             renderKeyboard();
-
             checkQuestionStatus();
         }
 
@@ -556,10 +790,18 @@
 
                 if (isWon) {
                     playSound('win');
-                    currentScore += 100 + (lives * 10);
+                    const addedPts = 100 + (lives * 10);
+                    currentScore += addedPts;
                     correctAnswersCount++;
+                    
                     statusMsg.className = "font-extrabold text-sm text-emerald-600 flex items-center gap-2";
-                    statusMsg.innerHTML = `<i class="fa-solid fa-circle-check text-lg"></i> Correct! +${100 + (lives * 10)} pts`;
+                    statusMsg.innerHTML = `<i class="fa-solid fa-circle-check text-lg"></i> Correct! +${addedPts} pts`;
+                    
+                    // Accumulate score to active user profile
+                    if (activeUser) {
+                        activeUser.totalPoints = (activeUser.totalPoints || 0) + addedPts;
+                        saveActiveUserData();
+                    }
                 } else {
                     [...cleanPhrase].forEach(c => guessedLetters.add(c));
                     renderWordSlots();
@@ -569,7 +811,7 @@
                 }
 
                 document.getElementById('w1-score-display').textContent = `${currentScore} pts`;
-                document.getElementById('global-score').textContent = currentScore;
+                updateUserHeaderUI();
             }
         }
 
@@ -580,6 +822,382 @@
             } else {
                 showSummaryModal();
             }
+        }
+
+        let authMode = 'login';
+
+        function openAuthModal() {
+            document.getElementById('auth-modal').classList.remove('hidden');
+            document.getElementById('auth-modal').classList.add('flex');
+            document.getElementById('auth-error').classList.add('hidden');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+            document.getElementById('auth-modal').classList.remove('flex');
+        }
+
+        function switchAuthMode(mode) {
+            authMode = mode;
+            const regFields = document.getElementById('register-fields');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const tabLogin = document.getElementById('tab-btn-login');
+            const tabRegister = document.getElementById('tab-btn-register');
+
+            if (mode === 'register') {
+                regFields.classList.remove('hidden');
+                submitBtn.textContent = 'Create Profile & Register';
+                tabRegister.className = "flex-1 py-1.5 font-bold text-xs rounded-lg bg-white shadow text-red-800 transition";
+                tabLogin.className = "flex-1 py-1.5 font-bold text-xs rounded-lg text-slate-500 transition";
+            } else {
+                regFields.classList.add('hidden');
+                submitBtn.textContent = 'Log In';
+                tabLogin.className = "flex-1 py-1.5 font-bold text-xs rounded-lg bg-white shadow text-red-800 transition";
+                tabRegister.className = "flex-1 py-1.5 font-bold text-xs rounded-lg text-slate-500 transition";
+            }
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('auth-username').value.trim().toLowerCase();
+            const password = document.getElementById('auth-password').value;
+            const errorElem = document.getElementById('auth-error');
+
+            if (!username || !password) {
+                errorElem.textContent = "Please fill in all required fields.";
+                errorElem.classList.remove('hidden');
+                return;
+            }
+
+            if (authMode === 'register') {
+                if (allUsersStore[username]) {
+                    errorElem.textContent = "Username already taken! Please pick another.";
+                    errorElem.classList.remove('hidden');
+                    return;
+                }
+                const interests = document.getElementById('auth-interests').value.trim();
+                const bio = document.getElementById('auth-bio').value.trim();
+                const avatar = document.getElementById('auth-avatar').value.trim() || `https://placehold.co/100x100/dc2626/ffffff?text=${username.charAt(0).toUpperCase()}`;
+
+                activeUser = {
+                    username: username,
+                    password: password,
+                    interests: interests || "Taxation Student",
+                    bio: bio || "Enthusiastic about Malaysian taxation law.",
+                    avatar: avatar,
+                    totalPoints: 0
+                };
+                allUsersStore[username] = activeUser;
+                saveActiveUserData();
+                showToast("Account Created", `Welcome @${username}!`);
+            } else { // Login
+                if (!allUsersStore[username]) {
+                    errorElem.textContent = "Username not found. Please register first.";
+                    errorElem.classList.remove('hidden');
+                    return;
+                }
+                if (allUsersStore[username].password !== password) {
+                    errorElem.textContent = "Incorrect password!";
+                    errorElem.classList.remove('hidden');
+                    return;
+                }
+                activeUser = allUsersStore[username];
+                showToast("Logged In", `Welcome back, @${username}!`);
+            }
+
+            localStorage.setItem('tu_tax_active_user', activeUser.username);
+            updateUserHeaderUI();
+            closeAuthModal();
+        }
+
+        function saveActiveUserData() {
+            if (!activeUser) return;
+            allUsersStore[activeUser.username] = activeUser;
+            try {
+                localStorage.setItem('tu_tax_users', JSON.stringify(allUsersStore));
+            } catch(e) {}
+
+            // Sync to Firestore if available
+            if (window.dbInstance) {
+                try {
+                    const userRef = doc(window.dbInstance, 'artifacts', window.appId, 'public', 'data', 'leaderboard', activeUser.username);
+                    setDoc(userRef, {
+                        username: activeUser.username,
+                        totalPoints: activeUser.totalPoints || 0,
+                        bio: activeUser.bio,
+                        interests: activeUser.interests,
+                        avatar: activeUser.avatar,
+                        updatedAt: new Date().toISOString()
+                    }, { merge: true }).catch(() => {});
+                } catch(e) {}
+            }
+        }
+
+        function updateUserHeaderUI() {
+            const container = document.getElementById('user-header-profile');
+            const accumScoreElem = document.getElementById('user-accumulated-score');
+
+            if (activeUser) {
+                accumScoreElem.textContent = activeUser.totalPoints || 0;
+                container.innerHTML = `
+                    <button onclick="openProfileModal()" class="bg-black/40 hover:bg-black/60 backdrop-blur px-2.5 py-1 rounded-xl border border-red-500/30 flex items-center gap-2 text-xs transition">
+                        <img src="${activeUser.avatar}" class="w-6 h-6 rounded-full object-cover border border-red-400">
+                        <span class="font-bold text-white max-w-[100px] truncate">@${activeUser.username}</span>
+                    </button>
+                `;
+            } else {
+                accumScoreElem.textContent = '0';
+                container.innerHTML = `
+                    <button onclick="openAuthModal()" class="bg-red-700 hover:bg-red-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Login / Register</span>
+                    </button>
+                `;
+            }
+        }
+
+        function openProfileModal() {
+            if (!activeUser) return openAuthModal();
+            document.getElementById('prof-display-img').src = activeUser.avatar;
+            document.getElementById('prof-display-username').textContent = `@${activeUser.username}`;
+            document.getElementById('prof-display-points').textContent = activeUser.totalPoints || 0;
+            document.getElementById('prof-display-interests').textContent = activeUser.interests || "None specified";
+            document.getElementById('prof-display-bio').textContent = activeUser.bio || "No bio provided.";
+
+            document.getElementById('edit-interests').value = activeUser.interests || '';
+            document.getElementById('edit-bio').value = activeUser.bio || '';
+            document.getElementById('edit-avatar').value = activeUser.avatar || '';
+
+            document.getElementById('profile-modal').classList.remove('hidden');
+            document.getElementById('profile-modal').classList.add('flex');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+            document.getElementById('profile-modal').classList.remove('flex');
+            document.getElementById('edit-profile-form').classList.add('hidden');
+        }
+
+        function toggleEditProfileForm() {
+            const form = document.getElementById('edit-profile-form');
+            form.classList.toggle('hidden');
+        }
+
+        function handleProfileUpdate(e) {
+            e.preventDefault();
+            if (!activeUser) return;
+
+            const newInterests = document.getElementById('edit-interests').value.trim();
+            const newBio = document.getElementById('edit-bio').value.trim();
+            const newAvatar = document.getElementById('edit-avatar').value.trim();
+            const newPass = document.getElementById('edit-password').value;
+
+            activeUser.interests = newInterests || activeUser.interests;
+            activeUser.bio = newBio || activeUser.bio;
+            if (newAvatar) activeUser.avatar = newAvatar;
+            if (newPass) activeUser.password = newPass;
+
+            saveActiveUserData();
+            openProfileModal();
+            showToast("Profile Updated", "Your changes have been saved.");
+        }
+
+        function logoutUser() {
+            activeUser = null;
+            localStorage.removeItem('tu_tax_active_user');
+            closeProfileModal();
+            updateUserHeaderUI();
+            showToast("Logged Out", "You have signed out.");
+        }
+
+        function openInstructorLoginModal() {
+            if (isInstructorMode) {
+                showToast("Instructor Mode", "You are already in Instructor Mode.");
+                return;
+            }
+            document.getElementById('instructor-modal').classList.remove('hidden');
+            document.getElementById('instructor-modal').classList.add('flex');
+            document.getElementById('instructor-pass-error').classList.add('hidden');
+        }
+
+        function closeInstructorLoginModal() {
+            document.getElementById('instructor-modal').classList.add('hidden');
+            document.getElementById('instructor-modal').classList.remove('flex');
+        }
+
+        function handleInstructorLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('instructor-pass-input').value;
+            if (pass === 'tye6632') {
+                isInstructorMode = true;
+                closeInstructorLoginModal();
+                document.getElementById('instructor-toolbar').classList.remove('hidden');
+                document.getElementById('instructor-btn-label').textContent = "Lecturer Active";
+                showToast("Instructor Unlocked", "Skip & reveal controls are now available.");
+            } else {
+                document.getElementById('instructor-pass-error').classList.remove('hidden');
+            }
+        }
+
+        function exitInstructorMode() {
+            isInstructorMode = false;
+            document.getElementById('instructor-toolbar').classList.add('hidden');
+            document.getElementById('instructor-btn-label').textContent = "Instructor";
+            showToast("Instructor Mode Exited", "Returned to standard student view.");
+        }
+
+        function instructorRevealAnswer() {
+            if (!isInstructorMode) return;
+            const q = week1Questions[currentQuestionIndex];
+            const cleanPhrase = q.phrase.replace(/\s+/g, '');
+            [...cleanPhrase].forEach(char => guessedLetters.add(char));
+            renderWordSlots();
+            renderKeyboard();
+            checkQuestionStatus();
+            showToast("Instructor Action", "Answer phrase revealed!");
+        }
+
+        function instructorSkipQuestion() {
+            if (!isInstructorMode) return;
+            showToast("Instructor Action", "Skipping to next question...");
+            nextQuestion();
+        }
+
+        function openAnswerKeyModal() {
+            const list = document.getElementById('answer-key-list');
+            list.innerHTML = '';
+
+            week1Questions.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = "bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5";
+                item.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-red-700 uppercase">Q${idx + 1}. ${q.category}</span>
+                        <span class="text-xs bg-red-100 text-red-800 font-extrabold px-2 py-0.5 rounded-md">${q.phrase}</span>
+                    </div>
+                    <p class="text-xs text-slate-700"><strong>Scenario:</strong> ${q.hint}</p>
+                    <p class="text-xs text-emerald-800 bg-emerald-50 p-2 rounded-lg border border-emerald-100"><strong>Statutory Basis:</strong> ${q.explanation}</p>
+                `;
+                list.appendChild(item);
+            });
+
+            document.getElementById('answer-key-modal').classList.remove('hidden');
+            document.getElementById('answer-key-modal').classList.add('flex');
+        }
+
+        function closeAnswerKeyModal() {
+            document.getElementById('answer-key-modal').classList.add('hidden');
+            document.getElementById('answer-key-modal').classList.remove('flex');
+        }
+
+        function openLeaderboardModal() {
+            renderLeaderboard();
+            document.getElementById('leaderboard-modal').classList.remove('hidden');
+            document.getElementById('leaderboard-modal').classList.add('flex');
+        }
+
+        function closeLeaderboardModal() {
+            document.getElementById('leaderboard-modal').classList.add('hidden');
+            document.getElementById('leaderboard-modal').classList.remove('flex');
+        }
+
+        function renderLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            list.innerHTML = '';
+
+            // Combine all local and loaded users
+            let usersArray = Object.values(allUsersStore);
+            usersArray.sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
+
+            if (usersArray.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-8 text-slate-400 font-medium">
+                        <i class="fa-solid fa-users text-3xl mb-2 block"></i>
+                        No registered students yet. Be the first to register and top the scoreboard!
+                    </div>
+                `;
+                return;
+            }
+
+            usersArray.forEach((user, index) => {
+                const item = document.createElement('div');
+                const isCurrent = activeUser && activeUser.username === user.username;
+                item.className = `p-3 rounded-xl border flex items-center justify-between transition ${
+                    isCurrent ? 'bg-red-50 border-red-300 ring-2 ring-red-400/30' : 'bg-slate-50 border-slate-200'
+                }`;
+
+                let rankBadge = `<span class="w-7 h-7 flex items-center justify-center rounded-lg font-bold text-xs bg-slate-200 text-slate-600">${index + 1}</span>`;
+                if (index === 0) rankBadge = `<span class="w-7 h-7 flex items-center justify-center rounded-lg font-extrabold text-xs bg-amber-400 text-slate-950 shadow"><i class="fa-solid fa-crown text-amber-900"></i></span>`;
+                if (index === 1) rankBadge = `<span class="w-7 h-7 flex items-center justify-center rounded-lg font-extrabold text-xs bg-slate-300 text-slate-800">2</span>`;
+                if (index === 2) rankBadge = `<span class="w-7 h-7 flex items-center justify-center rounded-lg font-extrabold text-xs bg-amber-700 text-white">3</span>`;
+
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        ${rankBadge}
+                        <img src="${user.avatar}" class="w-9 h-9 rounded-full object-cover border border-slate-300">
+                        <div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="font-extrabold text-sm text-slate-800">@${user.username}</span>
+                                ${isCurrent ? '<span class="bg-red-700 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase">You</span>' : ''}
+                            </div>
+                            <p class="text-[11px] text-slate-500 line-clamp-1">${user.interests || 'Taxation Scholar'}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-extrabold text-base text-red-700">${user.totalPoints || 0}</span>
+                        <span class="text-[10px] text-slate-400 block uppercase font-bold">pts</span>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // Firestore real-time snapshot subscription
+        window.listenToLiveLeaderboard = function() {
+            if (!window.dbInstance) return;
+            try {
+                const colRef = collection(window.dbInstance, 'artifacts', window.appId, 'public', 'data', 'leaderboard');
+                onSnapshot(colRef, (snapshot) => {
+                    snapshot.forEach((docSnap) => {
+                        const data = docSnap.data();
+                        if (data.username) {
+                            allUsersStore[data.username] = {
+                                ...allUsersStore[data.username],
+                                ...data
+                            };
+                        }
+                    });
+                    if (!document.getElementById('leaderboard-modal').classList.contains('hidden')) {
+                        renderLeaderboard();
+                    }
+                }, (err) => console.log("Leaderboard live stream error: ", err));
+            } catch(e) {}
+        };
+
+        function selectWeek(weekNum) {
+            if (weekNum !== 1) {
+                showLockedNotification(`Week ${weekNum}`);
+                return;
+            }
+            document.querySelectorAll('.week-view').forEach(v => v.classList.add('hidden'));
+            document.getElementById(`view-week-1`).classList.remove('hidden');
+        }
+
+        function showLockedNotification(topicTitle) {
+            playSound('wrong');
+            showToast("Module Locked", `${topicTitle} is locked by your instructor until scheduled release.`);
+        }
+
+        function showToast(title, msg) {
+            const toast = document.getElementById('locked-toast');
+            document.getElementById('locked-toast-title').textContent = title;
+            document.getElementById('locked-toast-msg').textContent = msg;
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 3500);
         }
 
         function showSummaryModal() {
@@ -599,7 +1217,6 @@
             currentScore = 0;
             correctAnswersCount = 0;
             document.getElementById('w1-score-display').textContent = '0 pts';
-            document.getElementById('global-score').textContent = '0';
             closeSummaryModal();
             initHangmanQuestion();
         }
