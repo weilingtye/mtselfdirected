@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malaysian Taxation TU - Interactive Weekly Tax Quizzes</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .letter-btn {
+            transition: all 0.15s ease-in-out;
+        }
+        .letter-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            transform: scale(0.95);
+        }
+        @keyframes pulse-success {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .animate-success {
+            animation: pulse-success 0.4s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+    <header class="bg-gradient-to-r from-red-800 via-red-900 to-neutral-950 text-white shadow-lg sticky top-0 z-30 border-b border-red-700/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <!-- Taylor's University Official 'T' Pillar Vector SVG Logo -->
+                <div class="bg-white p-1.5 rounded-xl shadow-md flex items-center justify-center w-11 h-11 border-2 border-red-500/20">
+                    <svg viewBox="0 0 100 110" class="w-full h-full">
+                        <!-- Top Horizontal Bar of 'T' -->
+                        <rect x="18" y="10" width="64" height="15" rx="1" fill="#221f1f"/>
+                        <!-- Left Pillar (Red/Orange) -->
+                        <polygon points="26,29 38,29 38,80 32,87 26,80" fill="#d9381e"/>
+                        <!-- Middle Pillar (Dark Slate - Longer Center) -->
+                        <polygon points="44,29 56,29 56,92 50,100 44,92" fill="#221f1f"/>
+                        <!-- Right Pillar (Red/Orange) -->
+                        <polygon points="62,29 74,29 74,80 68,87 62,80" fill="#d9381e"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg leading-tight tracking-wide flex items-center gap-1.5">
+                        <span>Malaysian Taxation TU</span>
+                    </h1>
+                    <p class="text-xs text-red-200/90 font-medium">Taylor's University • School of Accounting & Finance</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="bg-black/40 backdrop-blur px-3.5 py-1.5 rounded-lg border border-red-500/30 flex items-center gap-2 text-xs sm:text-sm">
+                    <i class="fa-solid fa-trophy text-amber-400"></i>
+                    <span>Total Score: <strong id="global-score" class="text-amber-300 font-bold">0</strong> pts</span>
+                </div>
+                <button onclick="toggleSound()" id="sound-btn" class="p-2 rounded-lg bg-black/40 hover:bg-black/60 transition text-red-200 hover:text-white border border-red-500/30" title="Toggle Sound Effects">
+                    <i class="fa-solid fa-volume-high" id="sound-icon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
+
+        <!-- Weekly Navigation Selector (With Weeks 2-4 Locked & Hidden Topic Titles) -->
+        <nav class="bg-white p-2 rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
+            <div class="flex space-x-2 min-w-max">
+                <!-- Active Topic: Week 1 -->
+                <button onclick="selectWeek(1)" id="tab-week-1" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all bg-red-700 text-white shadow">
+                    <span class="bg-red-900 text-white text-xs px-2 py-0.5 rounded-full font-bold">Week 1</span>
+                    <span>Individual Resident Status (ITA 1967 S.7)</span>
+                    <span class="text-xs bg-amber-400 text-slate-950 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider">Hangman</span>
+                </button>
+
+                <!-- Locked Topic: Week 2 -->
+                <button onclick="showLockedNotification('Week 2')" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all text-slate-400 bg-slate-50 border border-slate-200 opacity-75 cursor-not-allowed">
+                    <span class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-lock text-[10px]"></i> Week 2
+                    </span>
+                    <span>Locked Module</span>
+                    <span class="text-xs bg-slate-200 text-slate-500 px-2 py-0.5 rounded-md font-medium uppercase">Locked</span>
+                </button>
+
+                <!-- Locked Topic: Week 3 -->
+                <button onclick="showLockedNotification('Week 3')" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all text-slate-400 bg-slate-50 border border-slate-200 opacity-75 cursor-not-allowed">
+                    <span class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-lock text-[10px]"></i> Week 3
+                    </span>
+                    <span>Locked Module</span>
+                    <span class="text-xs bg-slate-200 text-slate-500 px-2 py-0.5 rounded-md font-medium uppercase">Locked</span>
+                </button>
+
+                <!-- Locked Topic: Week 4 -->
+                <button onclick="showLockedNotification('Week 4')" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all text-slate-400 bg-slate-50 border border-slate-200 opacity-75 cursor-not-allowed">
+                    <span class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-lock text-[10px]"></i> Week 4
+                    </span>
+                    <span>Locked Module</span>
+                    <span class="text-xs bg-slate-200 text-slate-500 px-2 py-0.5 rounded-md font-medium uppercase">Locked</span>
+                </button>
+            </div>
+        </nav>
+
+        <section id="view-week-1" class="week-view space-y-6">
+            
+            <!-- Game Status & Progress Header -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-red-700">Topic 1 Progress</span>
+                        <h2 class="text-lg font-extrabold text-slate-800" id="q-number-display">Question 1 of 10</h2>
+                    </div>
+                    <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
+                    <div class="text-right sm:text-left">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Streak / Score</span>
+                        <p class="text-base font-extrabold text-emerald-600" id="w1-score-display">0 pts</p>
+                    </div>
+                </div>
+
+                <!-- Progress bar -->
+                <div class="w-full md:w-64 bg-slate-100 rounded-full h-3 overflow-hidden border border-slate-200">
+                    <div id="w1-progress-bar" class="bg-red-700 h-full transition-all duration-500 rounded-full" style="width: 10%;"></div>
+                </div>
+            </div>
+
+            <!-- Main Interactive Game Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- Left Column: Hangman Graphic Canvas -->
+                <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-between space-y-4">
+                    <div class="w-full flex justify-between items-center border-b pb-3">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Hangman Penalty Visual</span>
+                        <span class="text-xs font-semibold text-rose-600 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200">
+                            Mistakes Allowed: <strong id="lives-display">6</strong> / 6
+                        </span>
+                    </div>
+
+                    <!-- SVG Hangman Graphic Canvas -->
+                    <div class="relative w-56 h-64 flex items-center justify-center my-2">
+                        <svg class="w-full h-full" viewBox="0 0 200 230">
+                            <!-- Base & Gallows (Always visible) -->
+                            <path d="M 20 210 L 180 210" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+                            <path d="M 50 210 L 50 20" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+                            <path d="M 48 20 L 130 20" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+                            <path d="M 50 60 L 90 20" stroke="#64748b" stroke-width="3" stroke-linecap="round"/>
+                            <path d="M 130 20 L 130 50" stroke="#dc2626" stroke-width="3" stroke-dasharray="4" stroke-linecap="round"/>
+
+                            <!-- Part 1: Head -->
+                            <circle id="hm-head" cx="130" cy="70" r="18" stroke="#334155" stroke-width="3.5" fill="#f8fafc" class="hidden"/>
+                            <!-- Part 2: Body -->
+                            <path id="hm-body" d="M 130 88 L 130 140" stroke="#334155" stroke-width="3.5" stroke-linecap="round" class="hidden"/>
+                            <!-- Part 3: Left Arm -->
+                            <path id="hm-arm-left" d="M 130 100 L 100 120" stroke="#334155" stroke-width="3.5" stroke-linecap="round" class="hidden"/>
+                            <!-- Part 4: Right Arm -->
+                            <path id="hm-arm-right" d="M 130 100 L 160 120" stroke="#334155" stroke-width="3.5" stroke-linecap="round" class="hidden"/>
+                            <!-- Part 5: Left Leg -->
+                            <path id="hm-leg-left" d="M 130 140 L 105 180" stroke="#334155" stroke-width="3.5" stroke-linecap="round" class="hidden"/>
+                            <!-- Part 6: Right Leg -->
+                            <path id="hm-leg-right" d="M 130 140 L 155 180" stroke="#334155" stroke-width="3.5" stroke-linecap="round" class="hidden"/>
+                        </svg>
+                    </div>
+
+                    <div class="w-full text-center">
+                        <p class="text-xs text-slate-500 font-medium">Guess the underlying tax law term or provision to save the taxpayer!</p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
+                    
+                    <!-- Question Scenario / Hint -->
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-red-100 text-red-800 text-xs font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider">Tax Law Scenario</span>
+                            <span id="category-badge" class="bg-slate-100 text-slate-600 text-xs font-semibold px-2.5 py-1 rounded-md">182-Day Rule</span>
+                        </div>
+                        <p id="question-hint" class="text-slate-700 font-medium text-base sm:text-lg leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            Loading tax scenario...
+                        </p>
+                    </div>
+
+                    <!-- Hidden Phrase Display Slots -->
+                    <div id="word-slots-container" class="flex flex-wrap gap-2 justify-center my-4 min-h-[70px] items-center p-4 bg-slate-900 rounded-xl shadow-inner overflow-x-auto">
+                        <!-- Letters injected dynamically -->
+                    </div>
+
+                    <!-- On-Screen Virtual Keyboard -->
+                    <div class="space-y-2">
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider text-center">Select Letters</div>
+                        <div id="keyboard" class="flex flex-wrap gap-1.5 justify-center">
+                            <!-- Dynamic Key Buttons -->
+                        </div>
+                    </div>
+
+                    <!-- Next Question Action Bar -->
+                    <div id="action-bar" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div id="status-message" class="font-bold text-sm"></div>
+                        <button onclick="nextQuestion()" class="w-full sm:w-auto bg-red-700 hover:bg-red-800 text-white font-bold px-6 py-2.5 rounded-xl shadow transition-colors flex items-center justify-center gap-2">
+                            <span>Next Question</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="explanation-box" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-6 shadow-sm space-y-2">
+                <div class="flex items-center gap-2 text-emerald-800 font-bold text-base">
+                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                    <span>Tax Rationale & Statutory Explanation</span>
+                </div>
+                <p id="explanation-text" class="text-emerald-950 text-sm leading-relaxed">
+                    <!-- Dynamic tax explanation -->
+                </p>
+            </div>
+
+        </section>
+
+        <div id="summary-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 text-center space-y-5 animate-success">
+                <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-extrabold text-slate-800">Topic 1 Complete!</h3>
+                    <p class="text-sm text-slate-500 mt-1">Malaysian Taxation TU — Individual Resident Status (ITA 1967 S.7).</p>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-2 gap-4">
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase">Final Score</span>
+                        <p class="text-2xl font-extrabold text-red-700" id="final-score">0 pts</p>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-slate-400 uppercase">Correct Answers</span>
+                        <p class="text-2xl font-extrabold text-emerald-600" id="final-accuracy">0 / 10</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2 pt-2">
+                    <button onclick="restartWeek1()" class="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-3 rounded-xl shadow transition">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Play Again
+                    </button>
+                    <button onclick="closeSummaryModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition">
+                        Review Results
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification for Locked Weeks -->
+        <div id="locked-toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700 hidden items-center gap-3 z-50 transition-all transform duration-300">
+            <div class="w-8 h-8 bg-amber-500/20 text-amber-400 rounded-lg flex items-center justify-center font-bold">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-slate-400 uppercase">Module Locked</p>
+                <p id="locked-toast-msg" class="text-sm font-semibold text-white">This week's quiz topic is currently locked.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // 10 Comprehensive Questions on Individual Resident Status (ITA 1967 S.7)
+        const week1Questions = [
+            {
+                phrase: "ONE HUNDRED EIGHTY TWO DAYS",
+                category: "S.7(1)(a) Main Rule",
+                hint: "To qualify as a tax resident under Section 7(1)(a) ITA 1967, an individual must be physically present in Malaysia for a total of at least how many days in the basis year?",
+                explanation: "Under S.7(1)(a) ITA 1967, an individual is a tax resident in Malaysia for a basis year if they are physically present in Malaysia for 182 days or more during that basis year."
+            },
+            {
+                phrase: "TEMPORARY ABSENCE",
+                category: "S.7(1)(b) Exception",
+                hint: "Short periods away from Malaysia due to official duties, ill health, or social visits <= 14 days are treated as continuous presence under what concept?",
+                explanation: "Under S.7(1)(b), temporary absences count as physical presence in Malaysia if connected with service duties, ill health of individual/family, or social visits not exceeding 14 days in aggregate."
+            },
+            {
+                phrase: "LINKED YEAR",
+                category: "S.7(1)(b) Rule",
+                hint: "Section 7(1)(b) allows a presence of less than 182 days to be deemed resident if linked with an adjacent 182+ day resident year under which requirement?",
+                explanation: "Under S.7(1)(b), a presence period < 182 days is deemed resident if linked with a 182+ consecutive resident year immediately preceding or following."
+            },
+            {
+                phrase: "THREE OUT OF FOUR YEARS",
+                category: "S.7(1)(c) Provision",
+                hint: "Section 7(1)(c) deems an individual resident if they were tax resident for how many years out of the immediate 4 preceding basis years?",
+                explanation: "Under S.7(1)(c), an individual is resident for a basis year if resident in Malaysia for 3 out of the 4 immediately preceding basis years."
+            },
+            {
+                phrase: "DEEMED RESIDENT",
+                category: "S.7(1)(d) Status",
+                hint: "An individual resident for the 3 immediately following basis years and the preceding year is treated as what for the gap year under Section 7(1)(d)?",
+                explanation: "S.7(1)(d) applies when an individual is resident for the 3 consecutive following years and was resident in the year preceding the target year, deeming them resident despite zero presence."
+            },
+            {
+                phrase: "SIXTY DAYS RULE",
+                category: "Exemption Provision",
+                hint: "Non-resident employees present in Malaysia for less than how many days in total in a calendar year are exempt from Malaysian tax on employment income?",
+                explanation: "Under Schedule 6 Paragraph 21 ITA 1967, short-term employment income of a non-resident is tax exempt if the employment period in Malaysia does not exceed 60 days."
+            },
+            {
+                phrase: "SOCIAL VISITS",
+                category: "S.7(1)(b) Absence",
+                hint: "Temporary absence for personal/vacation trips during a consecutive resident period is permitted for up to 14 days under which specific exception?",
+                explanation: "Under S.7(1)(b)(iii), temporary absence for social visits not exceeding 14 days in aggregate forms part of the consecutive physical presence period."
+            },
+            {
+                phrase: "BASIS YEAR",
+                category: "Taxation Period",
+                hint: "In Malaysian individual tax law, the calendar year coinciding with the year of assessment is referred to as the what?",
+                explanation: "For individuals, the basis year for a year of assessment is the calendar year ending 31 December (ITA 1967 S.21)."
+            },
+            {
+                phrase: "PUBLIC ENTERTAINER",
+                category: "Exemption Exception",
+                hint: "Which category of non-resident individuals is strictly excluded from the 60-day tax exemption rule on Malaysian-sourced income?",
+                explanation: "Public entertainers (e.g. stage, radio, or screen artists, athletes) do not qualify for the 60-day short-term employment exemption under Schedule 6 Paragraph 21."
+            },
+            {
+                phrase: "QUALIFYING DAY",
+                category: "Presence Calculation",
+                hint: "Physical presence in Malaysia for any part of a calendar day constitutes how many days for residency calculation under S.7?",
+                explanation: "If an individual is physically present in Malaysia for any part of a calendar day (even a few minutes), that day counts as 1 full day of physical presence."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let guessedLetters = new Set();
+        let lives = 6;
+        let currentScore = 0;
+        let correctAnswersCount = 0;
+        let soundEnabled = true;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                icon.className = "fa-solid fa-volume-high";
+            } else {
+                icon.className = "fa-solid fa-volume-xmark";
+            }
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, now); // D5
+                    osc.frequency.setValueAtTime(880, now + 0.08); // A5
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.setValueAtTime(120, now + 0.1);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'win') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.1);
+                    osc.frequency.setValueAtTime(783.99, now + 0.2);
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                }
+            } catch (e) {
+                console.log("Audio play deferred or unavailable");
+            }
+        }
+
+        function initHangmanQuestion() {
+            guessedLetters.clear();
+            lives = 6;
+
+            const q = week1Questions[currentQuestionIndex];
+            
+            document.getElementById('q-number-display').textContent = `Question ${currentQuestionIndex + 1} of ${week1Questions.length}`;
+            document.getElementById('category-badge').textContent = q.category;
+            document.getElementById('question-hint').textContent = q.hint;
+            
+            const progressPercent = ((currentQuestionIndex + 1) / week1Questions.length) * 100;
+            document.getElementById('w1-progress-bar').style.width = `${progressPercent}%`;
+
+            document.getElementById('action-bar').classList.add('hidden');
+            document.getElementById('explanation-box').classList.add('hidden');
+
+            renderHangmanSVG();
+            renderWordSlots();
+            renderKeyboard();
+        }
+
+        function selectWeek(weekNum) {
+            if (weekNum !== 1) {
+                showLockedNotification(`Week ${weekNum}`);
+                return;
+            }
+            document.querySelectorAll('.week-view').forEach(v => v.classList.add('hidden'));
+            document.getElementById(`view-week-1`).classList.remove('hidden');
+        }
+
+        function showLockedNotification(topicTitle) {
+            playSound('wrong');
+            const toast = document.getElementById('locked-toast');
+            const msg = document.getElementById('locked-toast-msg');
+            msg.textContent = `${topicTitle} is locked by your instructor until scheduled release.`;
+            
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 3500);
+        }
+
+        function renderWordSlots() {
+            const container = document.getElementById('word-slots-container');
+            container.innerHTML = '';
+            const q = week1Questions[currentQuestionIndex];
+            const words = q.phrase.split(' ');
+
+            words.forEach((word, wIdx) => {
+                const wordGroup = document.createElement('div');
+                wordGroup.className = "flex gap-1.5 my-1";
+
+                for (let i = 0; i < word.length; i++) {
+                    const char = word[i];
+                    const slot = document.createElement('div');
+                    
+                    if (guessedLetters.has(char)) {
+                        slot.className = "w-8 h-10 sm:w-9 sm:h-11 bg-red-700 border-2 border-red-500 text-white rounded-lg flex items-center justify-center font-black text-base sm:text-lg shadow animate-success";
+                        slot.textContent = char;
+                    } else {
+                        slot.className = "w-8 h-10 sm:w-9 sm:h-11 bg-slate-800 border-2 border-slate-700 text-transparent rounded-lg flex items-center justify-center font-bold text-base sm:text-lg";
+                        slot.textContent = "_";
+                    }
+                    wordGroup.appendChild(slot);
+                }
+                container.appendChild(wordGroup);
+
+                if (wIdx < words.length - 1) {
+                    const space = document.createElement('div');
+                    space.className = "w-4";
+                    container.appendChild(space);
+                }
+            });
+        }
+
+        function renderKeyboard() {
+            const kb = document.getElementById('keyboard');
+            kb.innerHTML = '';
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+            for (let letter of alphabet) {
+                const btn = document.createElement('button');
+                btn.textContent = letter;
+                btn.onclick = () => handleGuess(letter);
+                
+                if (guessedLetters.has(letter)) {
+                    btn.disabled = true;
+                    btn.className = "letter-btn w-8 h-10 sm:w-10 sm:h-11 rounded-lg font-bold text-sm bg-slate-200 text-slate-400 border border-slate-300";
+                } else {
+                    btn.className = "letter-btn w-8 h-10 sm:w-10 sm:h-11 rounded-lg font-bold text-sm bg-red-50 hover:bg-red-700 hover:text-white text-red-950 border border-red-200 shadow-sm active:scale-95";
+                }
+                kb.appendChild(btn);
+            }
+        }
+
+        function renderHangmanSVG() {
+            document.getElementById('lives-display').textContent = lives;
+            const parts = ['hm-head', 'hm-body', 'hm-arm-left', 'hm-arm-right', 'hm-leg-left', 'hm-leg-right'];
+            const mistakesMade = 6 - lives;
+
+            parts.forEach((partId, idx) => {
+                const elem = document.getElementById(partId);
+                if (idx < mistakesMade) {
+                    elem.classList.remove('hidden');
+                } else {
+                    elem.classList.add('hidden');
+                }
+            });
+        }
+
+        function handleGuess(letter) {
+            if (guessedLetters.has(letter) || lives <= 0) return;
+
+            guessedLetters.add(letter);
+            const q = week1Questions[currentQuestionIndex];
+            const cleanPhrase = q.phrase.replace(/\s+/g, '');
+
+            if (cleanPhrase.includes(letter)) {
+                playSound('correct');
+            } else {
+                lives--;
+                playSound('wrong');
+            }
+
+            renderHangmanSVG();
+            renderWordSlots();
+            renderKeyboard();
+
+            checkQuestionStatus();
+        }
+
+        function checkQuestionStatus() {
+            const q = week1Questions[currentQuestionIndex];
+            const cleanPhrase = q.phrase.replace(/\s+/g, '');
+            const isWon = [...cleanPhrase].every(char => guessedLetters.has(char));
+            const isLost = lives <= 0;
+
+            if (isWon || isLost) {
+                document.querySelectorAll('.letter-btn').forEach(btn => btn.disabled = true);
+
+                const actionBar = document.getElementById('action-bar');
+                const statusMsg = document.getElementById('status-message');
+                const explanationBox = document.getElementById('explanation-box');
+                const explanationText = document.getElementById('explanation-text');
+
+                actionBar.classList.remove('hidden');
+                explanationBox.classList.remove('hidden');
+                explanationText.textContent = q.explanation;
+
+                if (isWon) {
+                    playSound('win');
+                    currentScore += 100 + (lives * 10);
+                    correctAnswersCount++;
+                    statusMsg.className = "font-extrabold text-sm text-emerald-600 flex items-center gap-2";
+                    statusMsg.innerHTML = `<i class="fa-solid fa-circle-check text-lg"></i> Correct! +${100 + (lives * 10)} pts`;
+                } else {
+                    [...cleanPhrase].forEach(c => guessedLetters.add(c));
+                    renderWordSlots();
+
+                    statusMsg.className = "font-extrabold text-sm text-rose-600 flex items-center gap-2";
+                    statusMsg.innerHTML = `<i class="fa-solid fa-circle-xmark text-lg"></i> Out of attempts! Solution revealed above.`;
+                }
+
+                document.getElementById('w1-score-display').textContent = `${currentScore} pts`;
+                document.getElementById('global-score').textContent = currentScore;
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < week1Questions.length - 1) {
+                currentQuestionIndex++;
+                initHangmanQuestion();
+            } else {
+                showSummaryModal();
+            }
+        }
+
+        function showSummaryModal() {
+            document.getElementById('summary-modal').classList.remove('hidden');
+            document.getElementById('summary-modal').classList.add('flex');
+            document.getElementById('final-score').textContent = `${currentScore} pts`;
+            document.getElementById('final-accuracy').textContent = `${correctAnswersCount} / 10`;
+        }
+
+        function closeSummaryModal() {
+            document.getElementById('summary-modal').classList.add('hidden');
+            document.getElementById('summary-modal').classList.remove('flex');
+        }
+
+        function restartWeek1() {
+            currentQuestionIndex = 0;
+            currentScore = 0;
+            correctAnswersCount = 0;
+            document.getElementById('w1-score-display').textContent = '0 pts';
+            document.getElementById('global-score').textContent = '0';
+            closeSummaryModal();
+            initHangmanQuestion();
+        }
+
+        window.onload = function() {
+            initHangmanQuestion();
+        };
+    </script>
+</body>
+</html>
