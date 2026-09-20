@@ -2028,12 +2028,18 @@
         function toggleWeek2Unlock() {
             week2Unlocked = !week2Unlocked;
             const btn = document.getElementById('unlock-w2-btn');
+            const tabBadgeIcon = document.getElementById('tab-week-2-icon');
+            
             if (week2Unlocked) {
                 btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-emerald-600 text-white shadow";
                 btn.textContent = "Unlocked";
+                if (tabBadgeIcon) tabBadgeIcon.className = "fa-solid fa-unlock text-[10px]";
+                showToast("Module Unlocked", "Week 2 is now accessible to all students.");
             } else {
-                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-slate-300 text-slate-700 shadow";
+                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-rose-600 text-white shadow";
                 btn.textContent = "Locked";
+                if (tabBadgeIcon) tabBadgeIcon.className = "fa-solid fa-lock text-[10px]";
+                showToast("Module Locked", "Week 2 access restricted.");
             }
         }
 
@@ -2041,18 +2047,41 @@
             const list = document.getElementById('answer-key-list');
             list.innerHTML = '';
 
-            const sectionTitle1 = document.createElement('div');
-            sectionTitle1.className = "font-black text-sm text-red-800 border-b border-red-200 pb-1 mt-2";
-            sectionTitle1.textContent = "Week 1: Resident Status Questions";
-            list.appendChild(sectionTitle1);
+            // Week 1 Keys
+            const w1Header = document.createElement('div');
+            w1Header.className = "font-black text-xs text-red-800 uppercase tracking-wider bg-red-50 p-2 rounded-lg border border-red-200 mt-1";
+            w1Header.textContent = "Week 1: Resident Status (Hangman Solutions)";
+            list.appendChild(w1Header);
 
             week1Questions.forEach((q, i) => {
                 const card = document.createElement('div');
-                card.className = "p-3 bg-slate-50 border rounded-xl text-xs space-y-1";
+                card.className = "p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1";
                 card.innerHTML = `
-                    <div class="font-extrabold text-slate-800">Q${i+1}: ${q.category}</div>
-                    <div class="text-slate-600"><strong>Answer:</strong> <span class="text-emerald-700 font-bold">${q.answer}</span></div>
-                    <div class="text-slate-500">${q.explanation}</div>
+                    <div class="flex justify-between font-extrabold text-slate-800">
+                        <span>Q${i+1}: ${q.category}</span>
+                        <span class="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded font-black">${q.answer}</span>
+                    </div>
+                    <p class="text-slate-600 text-[11px]">${q.explanation}</p>
+                `;
+                list.appendChild(card);
+            });
+
+            // Week 2 Keys
+            const w2Header = document.createElement('div');
+            w2Header.className = "font-black text-xs text-indigo-800 uppercase tracking-wider bg-indigo-50 p-2 rounded-lg border border-indigo-200 mt-4";
+            w2Header.textContent = "Week 2: Employment Income (MCQ Solutions)";
+            list.appendChild(w2Header);
+
+            week2Questions.forEach((q, i) => {
+                const card = document.createElement('div');
+                card.className = "p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1";
+                card.innerHTML = `
+                    <div class="flex justify-between font-extrabold text-slate-800">
+                        <span>Q${i+1}: ${q.category}</span>
+                        <span class="text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded font-black">Option ${String.fromCharCode(65 + q.correct)}</span>
+                    </div>
+                    <p class="text-slate-700 font-semibold">${q.question}</p>
+                    <p class="text-slate-600 text-[11px]">${q.explanation}</p>
                 `;
                 list.appendChild(card);
             });
@@ -2069,15 +2098,16 @@
         function openSummaryModal() {
             const title = document.getElementById('summary-modal-title');
             const scoreVal = document.getElementById('summary-score-val');
-            
+
             if (currentWeek === 1) {
-                title.textContent = "Week 1 Complete!";
+                title.textContent = "Week 1 Module Complete!";
                 scoreVal.textContent = `${w1Score} pts`;
             } else {
-                title.textContent = "Week 2 Complete!";
-                scoreVal.textContent = `Tile ${w2TilePosition} Reached`;
+                title.textContent = "Week 2 Module Complete!";
+                scoreVal.textContent = `Tile ${w2TilePosition} reached!`;
             }
 
+            playCuteSfx('win');
             document.getElementById('summary-modal').classList.remove('hidden');
             document.getElementById('summary-modal').classList.add('flex');
         }
@@ -2088,11 +2118,8 @@
         }
 
         function exportScoresCSV() {
-            if (allUsersStore.length === 0) {
-                showToast("Notice", "No student data to export.");
-                return;
-            }
-            let csvContent = "data:text/csv;charset=utf-8,Username,Student ID,Total Score\n";
+            if (!isInstructor) return;
+            let csvContent = "data:text/csv;charset=utf-8,Username,StudentID,Score\n";
             allUsersStore.forEach(u => {
                 csvContent += `"${u.username}","${u.studentId || ''}",${u.score || 0}\n`;
             });
@@ -2103,32 +2130,33 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            showToast("Exported CSV", "Leaderboard data downloaded successfully.");
         }
 
         function resetScoresOnly() {
-            if (!confirm("Are you sure you want to reset all user scores to 0?")) return;
-            allUsersStore.forEach(u => u.score = 0);
-            localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
-            if (loggedInUser) {
-                loggedInUser.score = 0;
+            if (!isInstructor) return;
+            if (confirm("Are you sure you want to reset all user scores to 0?")) {
+                allUsersStore.forEach(u => u.score = 0);
+                if (loggedInUser) loggedInUser.score = 0;
+                localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
                 localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
+                renderLeaderboard();
+                updateUserUI();
+                showToast("Scores Reset", "All student scores set back to 0.");
             }
-            updateUserUI();
-            renderLeaderboard();
-            showToast("Reset Complete", "All scores set to 0.");
         }
 
         function clearEntireLeaderboard() {
-            if (!confirm("Are you sure you want to delete all user records?")) return;
-            allUsersStore = [];
-            localStorage.removeItem('tax_tu_all_users');
-            if (loggedInUser) {
-                loggedInUser.score = 0;
-                localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
+            if (!isInstructor) return;
+            if (confirm("Delete all registered accounts and scores permanently?")) {
+                allUsersStore = [];
+                loggedInUser = null;
+                localStorage.removeItem('tax_tu_all_users');
+                localStorage.removeItem('tax_tu_user');
+                renderLeaderboard();
+                updateUserUI();
+                showToast("Data Cleared", "All user records removed.");
             }
-            updateUserUI();
-            renderLeaderboard();
-            showToast("Cleared", "All leaderboard data deleted.");
         }
     </script>
 </body>
