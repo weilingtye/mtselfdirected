@@ -815,6 +815,41 @@
         let auth = null;
         let currentUserUid = null;
 
+        // Define listenToLiveLeaderboard function on window
+        window.listenToLiveLeaderboard = function() {
+            if (!db) {
+                if (typeof window.renderLeaderboard === 'function') {
+                    window.renderLeaderboard();
+                }
+                return;
+            }
+            try {
+                const leaderboardCol = collection(db, 'artifacts', window.appId, 'users');
+                onSnapshot(leaderboardCol, (snapshot) => {
+                    const users = [];
+                    snapshot.forEach((docSnap) => {
+                        users.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+                    if (typeof window.updateAllUsersStore === 'function') {
+                        window.updateAllUsersStore(users);
+                    }
+                    if (typeof window.renderLeaderboard === 'function') {
+                        window.renderLeaderboard();
+                    }
+                }, (err) => {
+                    console.warn("Leaderboard listener notice:", err);
+                    if (typeof window.renderLeaderboard === 'function') {
+                        window.renderLeaderboard();
+                    }
+                });
+            } catch (err) {
+                console.error("Error setting up leaderboard listener:", err);
+                if (typeof window.renderLeaderboard === 'function') {
+                    window.renderLeaderboard();
+                }
+            }
+        };
+
         // Try initializing Firebase
         try {
             if (typeof __firebase_config !== 'undefined' && __firebase_config) {
@@ -835,12 +870,21 @@
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
                         currentUserUid = user.uid;
-                        window.listenToLiveLeaderboard();
+                        if (typeof window.listenToLiveLeaderboard === 'function') {
+                            window.listenToLiveLeaderboard();
+                        }
                     }
                 });
+            } else {
+                if (typeof window.listenToLiveLeaderboard === 'function') {
+                    window.listenToLiveLeaderboard();
+                }
             }
         } catch (e) {
             console.log("Firebase initialized in local fallback mode.");
+            if (typeof window.listenToLiveLeaderboard === 'function') {
+                window.listenToLiveLeaderboard();
+            }
         }
 
         window.dbInstance = db;
