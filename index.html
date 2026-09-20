@@ -209,23 +209,23 @@
                 <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
                     
                     <div class="space-y-2">
-                        <div class="flex items-center gap-2">
-                            <span class="bg-red-100 text-red-800 text-xs font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider">Tax Law Scenario</span>
-                            <span id="category-badge" class="bg-slate-100 text-slate-600 text-xs font-semibold px-2.5 py-1 rounded-md">182-Day Rule</span>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="bg-red-100 text-red-800 text-[10px] sm:text-xs font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0">Tax Law Scenario</span>
+                            <span id="category-badge" class="bg-slate-100 text-slate-600 text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-md break-words">182-Day Rule</span>
                         </div>
-                        <p id="question-hint" class="text-slate-700 font-medium text-base sm:text-lg leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <p id="question-hint" class="text-slate-700 font-medium text-sm sm:text-lg leading-relaxed bg-slate-50 p-3.5 sm:p-4 rounded-xl border border-slate-200 break-words">
                             Loading tax scenario...
                         </p>
                     </div>
 
                     <!-- Hidden Phrase Display Slots -->
-                    <div id="word-slots-container" class="flex flex-wrap gap-2 justify-center my-4 min-h-[70px] items-center p-4 bg-slate-900 rounded-xl shadow-inner overflow-x-auto custom-scrollbar">
+                    <div id="word-slots-container" class="flex flex-wrap gap-2 justify-center my-2 sm:my-4 min-h-[60px] sm:min-h-[70px] items-center p-2.5 sm:p-4 bg-slate-900 rounded-xl shadow-inner max-w-full overflow-x-auto custom-scrollbar">
                     </div>
 
                     <!-- On-Screen Keyboard -->
                     <div class="space-y-2">
                         <div class="text-xs font-bold text-slate-400 uppercase tracking-wider text-center">Select Letters</div>
-                        <div id="keyboard" class="flex flex-wrap gap-1.5 justify-center">
+                        <div id="keyboard" class="flex flex-wrap gap-1 sm:gap-1.5 justify-center max-w-full">
                         </div>
                     </div>
 
@@ -255,8 +255,69 @@
 
         <!-- Auth Modal (Login / Register) -->
         <div id="auth-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-5 relative">
-                <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 relative max-h-[90vh] flex flex-col">
+                <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 z-10">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+
+                <div class="text-center shrink-0">
+                    <div class="w-12 h-12 bg-red-100 text-red-700 rounded-2xl flex items-center justify-center text-xl mx-auto mb-2 font-bold">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <h3 id="auth-modal-title" class="text-xl font-extrabold text-slate-800">Student Account</h3>
+                    <p id="auth-modal-subtitle" class="text-xs text-slate-500">Sign in or register your unique username to save quiz points.</p>
+                </div>
+
+                <!-- Tab Toggle -->
+                <div class="flex bg-slate-100 p-1 rounded-xl shrink-0">
+                    <button id="tab-btn-login" onclick="switchAuthMode('login')" class="flex-1 py-1.5 font-bold text-xs rounded-lg bg-white shadow text-red-800 transition">Log In</button>
+                    <button id="tab-btn-register" onclick="switchAuthMode('register')" class="flex-1 py-1.5 font-bold text-xs rounded-lg text-slate-500 transition">Register</button>
+                </div>
+
+                <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4 overflow-y-auto custom-scrollbar pr-1 flex-grow">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Unique Username *</label>
+                        <input type="text" id="auth-username" required placeholder="e.g. alex_taxation" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-600 text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Password *</label>
+                        <input type="password" id="auth-password" required placeholder="••••••••" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-600 text-sm">
+                    </div>
+
+                    <!-- Registration Only Fields -->
+                    <div id="register-fields" class="space-y-3 hidden">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Student ID *</label>
+                            <input type="text" id="auth-student-id" placeholder="e.g. 0351234" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-600 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Taxation Interests</label>
+                            <input type="text" id="auth-interests" placeholder="e.g. Individual Tax, Corporate Tax, RPGT" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-600 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Student Bio</label>
+                            <textarea id="auth-bio" rows="2" placeholder="Tell your peers a bit about yourself..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-600 text-sm"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Avatar / Profile Image URL (Optional)</label>
+                            <input type="url" id="auth-avatar" placeholder="https://example.com/photo.jpg" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-600 text-sm">
+                        </div>
+                    </div>
+
+                    <p id="auth-error" class="text-xs text-rose-600 font-bold hidden text-center"></p>
+
+                    <button type="submit" id="auth-submit-btn" class="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-2.5 rounded-xl shadow transition text-sm">
+                        Log In
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- User Profile Drawer / Modal -->
+        <div id="profile-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-5 relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+                <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 z-10">
                     <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
 
@@ -769,19 +830,30 @@
             const q = week1Questions[currentQuestionIndex];
             const words = q.phrase.split(' ');
 
+            // Calculate longest word in phrase to adjust box size for mobile
+            const maxWordLength = Math.max(...words.map(w => w.length));
+
             words.forEach((word, wIdx) => {
                 const wordGroup = document.createElement('div');
-                wordGroup.className = "flex gap-1.5 my-1";
+                wordGroup.className = "flex flex-wrap gap-1 sm:gap-1.5 my-1 justify-center max-w-full";
 
                 for (let i = 0; i < word.length; i++) {
                     const char = word[i];
                     const slot = document.createElement('div');
                     
+                    // Responsive sizing: smaller slots for longer words on small screens
+                    let slotSizeClass = "w-7 h-9 text-xs sm:w-9 sm:h-11 sm:text-lg";
+                    if (maxWordLength >= 10) {
+                        slotSizeClass = "w-5.5 h-8 text-[11px] sm:w-8 sm:h-10 sm:text-base md:w-9 md:h-11 md:text-lg";
+                    } else if (maxWordLength >= 8) {
+                        slotSizeClass = "w-6 h-8.5 text-xs sm:w-8.5 sm:h-10.5 sm:text-base md:w-9 md:h-11 md:text-lg";
+                    }
+
                     if (guessedLetters.has(char)) {
-                        slot.className = "w-8 h-10 sm:w-9 sm:h-11 bg-red-700 border-2 border-red-500 text-white rounded-lg flex items-center justify-center font-black text-base sm:text-lg shadow animate-success";
+                        slot.className = `${slotSizeClass} bg-red-700 border-2 border-red-500 text-white rounded-lg flex items-center justify-center font-black shadow animate-success shrink-0`;
                         slot.textContent = char;
                     } else {
-                        slot.className = "w-8 h-10 sm:w-9 sm:h-11 bg-slate-800 border-2 border-slate-700 text-transparent rounded-lg flex items-center justify-center font-bold text-base sm:text-lg";
+                        slot.className = `${slotSizeClass} bg-slate-800 border-2 border-slate-700 text-transparent rounded-lg flex items-center justify-center font-bold shadow-inner shrink-0`;
                         slot.textContent = "_";
                     }
                     wordGroup.appendChild(slot);
@@ -790,7 +862,7 @@
 
                 if (wIdx < words.length - 1) {
                     const space = document.createElement('div');
-                    space.className = "w-4";
+                    space.className = "w-2 sm:w-4";
                     container.appendChild(space);
                 }
             });
@@ -808,9 +880,9 @@
                 
                 if (guessedLetters.has(letter)) {
                     btn.disabled = true;
-                    btn.className = "letter-btn w-8 h-10 sm:w-10 sm:h-11 rounded-lg font-bold text-sm bg-slate-200 text-slate-400 border border-slate-300";
+                    btn.className = "letter-btn w-7 h-9 text-xs sm:w-9 sm:h-10 sm:text-sm md:w-10 md:h-11 rounded-lg font-bold bg-slate-200 text-slate-400 border border-slate-300";
                 } else {
-                    btn.className = "letter-btn w-8 h-10 sm:w-10 sm:h-11 rounded-lg font-bold text-sm bg-red-50 hover:bg-red-700 hover:text-white text-red-950 border border-red-200 shadow-sm active:scale-95";
+                    btn.className = "letter-btn w-7 h-9 text-xs sm:w-9 sm:h-10 sm:text-sm md:w-10 md:h-11 rounded-lg font-bold bg-red-50 hover:bg-red-700 hover:text-white text-red-950 border border-red-200 shadow-sm active:scale-95";
                 }
                 kb.appendChild(btn);
             }
