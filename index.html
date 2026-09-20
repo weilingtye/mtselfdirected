@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Tone.js for synthesized cute sound effects & background music -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Tone.js/14.8.49/Tone.js"></script>
 
     <style>
         body {
@@ -1040,6 +1040,18 @@
         window.playSound = function(type) {
             playCuteSfx(type);
         };
+
+        function showToast(title, message) {
+            const toast = document.getElementById('locked-toast');
+            document.getElementById('locked-toast-title').textContent = title;
+            document.getElementById('locked-toast-msg').textContent = message;
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 3000);
+        }
     </script>
 
     <script>
@@ -1049,6 +1061,9 @@
         let week2Unlocked = true;
         let loggedInUser = JSON.parse(localStorage.getItem('tax_tu_user') || 'null');
         let allUsersStore = JSON.parse(localStorage.getItem('tax_tu_all_users') || '[]');
+
+        // Coin Flip Rotation Counter State Variable
+        let coinRotationDegrees = 0;
 
         // Week 1 Hangman Dataset (10 Questions on Resident Status)
         const week1Questions = [
@@ -1662,11 +1677,23 @@
         }
 
         function openCoinFlipModal() {
+            const coin = document.getElementById('coin-element');
+            const flipBtn = document.getElementById('flip-coin-btn');
+            
+            // Reset state for new attempts
+            document.getElementById('coin-face-text').textContent = '🪙';
+            document.getElementById('coin-result-text').textContent = '';
+            
+            // Reset transform smoothly
+            coin.style.transform = `rotateY(0deg)`;
+            coinRotationDegrees = 0;
+
+            flipBtn.disabled = false;
+            flipBtn.classList.remove('hidden');
+            document.getElementById('close-coin-btn').classList.add('hidden');
+
             document.getElementById('coin-flip-modal').classList.remove('hidden');
             document.getElementById('coin-flip-modal').classList.add('flex');
-            document.getElementById('coin-result-text').textContent = '';
-            document.getElementById('flip-coin-btn').classList.remove('hidden');
-            document.getElementById('close-coin-btn').classList.add('hidden');
         }
 
         function closeCoinFlipModal() {
@@ -1679,11 +1706,12 @@
             const flipBtn = document.getElementById('flip-coin-btn');
             flipBtn.disabled = true;
 
-            coin.classList.add('rotate-[1080deg]');
+            // Increment rotation by 1080 deg on every flip
+            coinRotationDegrees += 1080;
+            coin.style.transform = `rotateY(${coinRotationDegrees}deg)`;
 
             setTimeout(() => {
                 const isHeads = Math.random() > 0.5;
-                coin.classList.remove('rotate-[1080deg]');
                 document.getElementById('coin-face-text').textContent = isHeads ? '🪙 HEADS' : '💔 TAILS';
 
                 const resultText = document.getElementById('coin-result-text');
@@ -2028,7 +2056,7 @@
                 document.getElementById('instructor-toolbar').classList.remove('hidden');
                 document.getElementById('instructor-leaderboard-actions').classList.remove('hidden');
                 closeInstructorLoginModal();
-                showToast("Instructor Mode Active", "Controls unlocked!");
+                showToast("Instructor Mode", "Controls and answer features unlocked!");
             } else {
                 document.getElementById('instructor-pass-error').classList.remove('hidden');
             }
@@ -2038,7 +2066,7 @@
             isInstructor = false;
             document.getElementById('instructor-toolbar').classList.add('hidden');
             document.getElementById('instructor-leaderboard-actions').classList.add('hidden');
-            showToast("Instructor Mode Exited", "Returned to student view.");
+            showToast("Instructor Mode", "Exited instructor mode.");
         }
 
         function openTopicUnlockModal() {
@@ -2054,11 +2082,14 @@
         function toggleWeek2Unlock() {
             week2Unlocked = !week2Unlocked;
             const btn = document.getElementById('unlock-w2-btn');
+            const tabBtn = document.getElementById('tab-week-2');
+            
             if (week2Unlocked) {
                 btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-emerald-600 text-white shadow";
                 btn.textContent = "Unlocked";
+                if (tabBtn) tabBtn.classList.remove('opacity-75');
             } else {
-                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-rose-600 text-white shadow";
+                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-slate-300 text-slate-700 shadow";
                 btn.textContent = "Locked";
             }
         }
@@ -2066,33 +2097,41 @@
         function instructorRevealAnswer() {
             if (!isInstructor) return;
             if (currentWeek === 1) {
-                const answer = week1Questions[w1CurrentIndex].answer;
-                answer.split('').forEach(char => w1GuessedLetters.add(char));
+                w1AnswerSolved = true;
                 renderWordSlots();
                 renderKeyboard();
-                checkW1WinLoss();
+                document.getElementById('explanation-text').textContent = week1Questions[w1CurrentIndex].explanation;
+                document.getElementById('explanation-box').classList.remove('hidden');
+                document.getElementById('action-bar').classList.remove('hidden');
+            } else if (currentWeek === 2) {
+                selectW2Option(week2Questions[w2CurrentIndex].correct);
             }
         }
 
         function instructorSkipQuestion() {
             if (!isInstructor) return;
-            if (currentWeek === 1) nextQuestion();
-            if (currentWeek === 2) nextWeek2Question();
+            if (currentWeek === 1) {
+                nextQuestion();
+            } else if (currentWeek === 2) {
+                nextWeek2Question();
+            }
         }
 
         function openAnswerKeyModal() {
-            const container = document.getElementById('answer-key-list');
-            container.innerHTML = '';
+            const list = document.getElementById('answer-key-list');
+            list.innerHTML = '';
             week1Questions.forEach((q, idx) => {
-                const item = document.createElement('div');
-                item.className = "bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1 text-xs";
-                item.innerHTML = `
-                    <div class="font-bold text-slate-800">Q${idx + 1}: ${q.category}</div>
-                    <div class="text-slate-600">${q.hint}</div>
-                    <div class="font-extrabold text-emerald-700">Answer: ${q.answer}</div>
-                    <div class="text-[11px] text-slate-500 bg-white p-2 rounded border mt-1">${q.explanation}</div>
+                const card = document.createElement('div');
+                card.className = "p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 text-xs";
+                card.innerHTML = `
+                    <div class="flex items-center justify-between font-bold text-slate-800">
+                        <span>Q${idx + 1}: ${q.category}</span>
+                        <span class="text-emerald-700 font-black bg-emerald-100 px-2 py-0.5 rounded">${q.answer}</span>
+                    </div>
+                    <p class="text-slate-600">${q.hint}</p>
+                    <p class="text-[11px] text-slate-500 italic border-t pt-1 mt-1">${q.explanation}</p>
                 `;
-                container.appendChild(item);
+                list.appendChild(card);
             });
             document.getElementById('answer-key-modal').classList.remove('hidden');
             document.getElementById('answer-key-modal').classList.add('flex');
@@ -2104,28 +2143,14 @@
         }
 
         function openSummaryModal() {
+            document.getElementById('summary-score-val').textContent = currentWeek === 1 ? `${w1Score} pts` : `Tile ${w2TilePosition} / 20`;
             document.getElementById('summary-modal').classList.remove('hidden');
             document.getElementById('summary-modal').classList.add('flex');
-            playCuteSfx('win');
         }
 
         function closeSummaryModal() {
             document.getElementById('summary-modal').classList.add('hidden');
             document.getElementById('summary-modal').classList.remove('flex');
-        }
-
-        function showToast(title, message) {
-            const toast = document.getElementById('locked-toast');
-            document.getElementById('locked-toast-title').textContent = title;
-            document.getElementById('locked-toast-msg').textContent = message;
-
-            toast.classList.remove('hidden');
-            toast.classList.add('flex');
-
-            setTimeout(() => {
-                toast.classList.add('hidden');
-                toast.classList.remove('flex');
-            }, 3000);
         }
     </script>
 </body>
