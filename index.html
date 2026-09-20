@@ -2041,152 +2041,105 @@
         function toggleWeek2Unlock() {
             week2Unlocked = !week2Unlocked;
             const btn = document.getElementById('unlock-w2-btn');
-            const tabIcon = document.getElementById('tab-week-2-icon');
-            const tabBtn = document.getElementById('tab-week-2');
-
+            const tabWeek2 = document.getElementById('tab-week-2');
+            const tabWeek2Icon = document.getElementById('tab-week-2-icon');
+            
             if (week2Unlocked) {
-                if (btn) {
-                    btn.textContent = "Unlocked";
-                    btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-emerald-600 text-white shadow";
-                }
-                if (tabIcon) tabIcon.className = "fa-solid fa-unlock text-[10px]";
-                if (tabBtn) tabBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                showToast("Topic Unlocked", "Week 2 is now available to students!");
+                btn.textContent = "Unlocked";
+                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-emerald-600 text-white shadow";
+                tabWeek2.classList.remove('opacity-75', 'cursor-not-allowed');
+                tabWeek2Icon.className = "fa-solid fa-unlock text-[10px]";
+                showToast("Module Unlocked", "Week 2 is now accessible.");
             } else {
-                if (btn) {
-                    btn.textContent = "Locked";
-                    btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-rose-600 text-white shadow";
-                }
-                if (tabIcon) tabIcon.className = "fa-solid fa-lock text-[10px]";
-                showToast("Topic Locked", "Week 2 is now locked.");
+                btn.textContent = "Locked";
+                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-rose-600 text-white shadow";
+                tabWeek2.classList.add('opacity-75', 'cursor-not-allowed');
+                tabWeek2Icon.className = "fa-solid fa-lock text-[10px]";
+                if (currentWeek === 2) selectWeek(1);
+                showToast("Module Locked", "Week 2 is now restricted.");
             }
         }
 
         function openAnswerKeyModal() {
-            renderAnswerKey();
-            const modal = document.getElementById('answer-key-modal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            }
+            const list = document.getElementById('answer-key-list');
+            list.innerHTML = '';
+            
+            let html = '<h4 class="font-bold text-red-700 mt-2 mb-1">Week 1: Resident Status</h4>';
+            week1Questions.forEach((q, i) => {
+                html += `<div class="bg-slate-50 p-3 rounded-xl mb-2 border text-sm"><strong>Q${i+1}:</strong> ${q.hint}<br><span class="text-emerald-700 font-bold block mt-1">Ans: ${q.answer}</span><span class="text-xs text-slate-500 block mt-1">${q.explanation}</span></div>`;
+            });
+            
+            html += '<h4 class="font-bold text-indigo-700 mt-4 mb-1">Week 2: Employment Income</h4>';
+            week2Questions.forEach((q, i) => {
+                html += `<div class="bg-slate-50 p-3 rounded-xl mb-2 border text-sm"><strong>Q${i+1}:</strong> ${q.question}<br><span class="text-emerald-700 font-bold block mt-1">Ans: ${q.options[q.correct]}</span><span class="text-xs text-slate-500 block mt-1">${q.explanation}</span></div>`;
+            });
+            
+            list.innerHTML = html;
+            document.getElementById('answer-key-modal').classList.remove('hidden');
+            document.getElementById('answer-key-modal').classList.add('flex');
         }
 
         function closeAnswerKeyModal() {
-            const modal = document.getElementById('answer-key-modal');
-            if (modal) {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
-        }
-
-        function renderAnswerKey() {
-            const list = document.getElementById('answer-key-list');
-            if (!list) return;
-            list.innerHTML = '';
-
-            // Week 1 Key
-            const w1Header = document.createElement('div');
-            w1Header.className = "font-black text-sm text-red-800 border-b pb-1 mb-2";
-            w1Header.textContent = "Week 1: Resident Status (Hangman)";
-            list.appendChild(w1Header);
-
-            week1Questions.forEach((q, i) => {
-                const item = document.createElement('div');
-                item.className = "p-3 bg-slate-50 border rounded-xl text-xs space-y-1 mb-2";
-                item.innerHTML = `
-                    <p class="font-extrabold text-slate-800">Q${i+1}: ${q.category}</p>
-                    <p class="text-slate-600"><strong>Answer:</strong> <span class="text-emerald-700 font-bold">${q.answer}</span></p>
-                    <p class="text-slate-500 text-[11px]">${q.explanation}</p>
-                `;
-                list.appendChild(item);
-            });
-
-            // Week 2 Key
-            const w2Header = document.createElement('div');
-            w2Header.className = "font-black text-sm text-indigo-800 border-b pb-1 my-3";
-            w2Header.textContent = "Week 2: Employment Income (MCQ Board)";
-            list.appendChild(w2Header);
-
-            week2Questions.forEach((q, i) => {
-                const item = document.createElement('div');
-                item.className = "p-3 bg-slate-50 border rounded-xl text-xs space-y-1 mb-2";
-                item.innerHTML = `
-                    <p class="font-extrabold text-slate-800">Q${i+1}: ${q.question}</p>
-                    <p class="text-slate-600"><strong>Correct Answer:</strong> <span class="text-emerald-700 font-bold">${q.options[q.correct]}</span></p>
-                    <p class="text-slate-500 text-[11px]">${q.explanation}</p>
-                `;
-                list.appendChild(item);
-            });
-        }
-
-        function openSummaryModal() {
-            const scoreVal = document.getElementById('summary-score-val');
-            const title = document.getElementById('summary-modal-title');
-            const subtitle = document.getElementById('summary-modal-subtitle');
-
-            if (currentWeek === 1) {
-                title.textContent = "Week 1 Complete!";
-                subtitle.textContent = "Resident Status Hangman Module";
-                scoreVal.textContent = `${w1Score} pts`;
-            } else {
-                title.textContent = "Week 2 Complete!";
-                subtitle.textContent = "Employment Income Snakes & Ladders";
-                scoreVal.textContent = `Tile ${w2TilePosition} reached!`;
-            }
-
-            const modal = document.getElementById('summary-modal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-            }
-        }
-
-        function closeSummaryModal() {
-            const modal = document.getElementById('summary-modal');
-            if (modal) {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }
+            document.getElementById('answer-key-modal').classList.add('hidden');
+            document.getElementById('answer-key-modal').classList.remove('flex');
         }
 
         function exportScoresCSV() {
             if (allUsersStore.length === 0) {
-                showToast("Export CSV", "No score data available to export.");
+                showToast("Export Failed", "No user data available.");
                 return;
             }
-            let csv = "Username,Student ID,Total Score\n";
+            let csv = "Username,Student ID,Score\n";
             allUsersStore.forEach(u => {
-                csv += `"${u.username}","${u.studentId || ''}",${u.score || 0}\n`;
+                csv += `${u.username},${u.studentId},${u.score}\n`;
             });
-
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
+            a.setAttribute('hidden', '');
             a.setAttribute('href', url);
             a.setAttribute('download', 'taxation_tu_leaderboard.csv');
+            document.body.appendChild(a);
             a.click();
-            showToast("CSV Exported", "Leaderboard exported successfully.");
+            document.body.removeChild(a);
+            showToast("Export Complete", "Scores downloaded as CSV.");
         }
 
         function resetScoresOnly() {
-            if (!confirm("Are you sure you want to reset all student scores to 0?")) return;
-            allUsersStore.forEach(u => u.score = 0);
-            if (loggedInUser) loggedInUser.score = 0;
-
-            localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
-            if (loggedInUser) localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
-
-            renderLeaderboard();
-            updateUserUI();
-            showToast("Scores Reset", "All student scores have been reset to 0.");
+            if (confirm("Reset all user scores to 0?")) {
+                allUsersStore.forEach(u => u.score = 0);
+                localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
+                renderLeaderboard();
+                if (loggedInUser) {
+                    loggedInUser.score = 0;
+                    localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
+                    updateUserUI();
+                }
+                showToast("Scores Reset", "All scores are now 0.");
+            }
         }
 
         function clearEntireLeaderboard() {
-            if (!confirm("Warning: This will delete ALL registered student data permanently. Proceed?")) return;
-            allUsersStore = [];
-            localStorage.removeItem('tax_tu_all_users');
-            renderLeaderboard();
-            showToast("Data Cleared", "All student data deleted.");
+            if (confirm("WARNING: Delete all user data?")) {
+                allUsersStore = [];
+                localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
+                renderLeaderboard();
+                showToast("Data Cleared", "Leaderboard has been emptied.");
+            }
+        }
+
+        function openSummaryModal() {
+            const scoreVal = currentWeek === 1 ? `${w1Score} pts` : 'Completed';
+            document.getElementById('summary-score-val').textContent = scoreVal;
+            document.getElementById('summary-modal').classList.remove('hidden');
+            document.getElementById('summary-modal').classList.add('flex');
+            playCuteSfx('win');
+        }
+
+        function closeSummaryModal() {
+            document.getElementById('summary-modal').classList.add('hidden');
+            document.getElementById('summary-modal').classList.remove('flex');
+            selectWeek(currentWeek === 1 ? 2 : 1);
         }
     </script>
 </body>
