@@ -1951,19 +1951,47 @@
             document.getElementById('instructor-modal').classList.remove('flex');
         }
 
+/**
+ * Handles instructor login using a dynamically stored password.
+ * @param {Event} e - The form submission event.
+ */
+
         function handleInstructorLogin(e) {
-            e.preventDefault();
-            const pass = document.getElementById('instructor-pass-input').value;
-            if (pass === 'tye6632' || pass === 'admin') {
-                isInstructor = true;
-                document.getElementById('instructor-toolbar').classList.remove('hidden');
-                document.getElementById('instructor-leaderboard-actions').classList.remove('hidden');
-                closeInstructorLoginModal();
-                showToast("Instructor Mode Active", "Controls unlocked!");
-            } else {
-                document.getElementById('instructor-pass-error').classList.remove('hidden');
-            }
-        }
+    e.preventDefault();
+    
+    // Retrieve the input value
+    const passInput = document.getElementById('instructor-pass-input').value;
+    
+    // Retrieve stored password from localStorage, defaulting to 'taylors2026' if not set
+    const currentPassword = localStorage.getItem('instructorPassword') || 'tye6632';
+
+    // Verify password match
+    if (passInput === currentPassword) {
+        isInstructor = true;
+        document.getElementById('instructor-toolbar').classList.remove('hidden');
+        document.getElementById('instructor-leaderboard-actions').classList.remove('hidden');
+        closeInstructorLoginModal();
+        showToast("Instructor Mode Active", "Controls unlocked!");
+    } else {
+        document.getElementById('instructor-pass-error').classList.remove('hidden');
+    }
+}
+        /**
+ * Updates the instructor password stored in localStorage.
+ * @param {string} newPassword - The new password entered by the user.
+ */
+function changeInstructorPassword(newPassword) {
+    // Basic validation to ensure the password is not empty
+    if (!newPassword || newPassword.trim() === '') {
+        showToast("Error", "Password cannot be empty.");
+        return;
+    }
+
+    // Save the new password to local storage
+    localStorage.setItem('instructorPassword', newPassword.trim());
+    
+    showToast("Success", "Instructor password updated successfully!");
+}
 
         function exitInstructorMode() {
             isInstructor = false;
