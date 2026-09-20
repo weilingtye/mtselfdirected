@@ -11,6 +11,9 @@
     <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Tone.js for synthesized cute sound effects & background music -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -92,9 +95,10 @@
                     </button>
                 </div>
 
-                <!-- Sound Toggle Button -->
-                <button onclick="toggleSound()" id="sound-btn" class="p-2 rounded-xl bg-black/40 hover:bg-black/60 transition text-red-200 hover:text-white border border-red-500/30 text-xs sm:text-sm" title="Toggle Sound">
-                    <i class="fa-solid fa-volume-high" id="sound-icon"></i>
+                <!-- Sound Settings Trigger Button -->
+                <button onclick="openSoundSettingsModal()" id="sound-btn" class="p-2 rounded-xl bg-black/40 hover:bg-black/60 transition text-red-200 hover:text-white border border-red-500/30 text-xs sm:text-sm flex items-center gap-1.5" title="Audio & Music Settings">
+                    <i class="fa-solid fa-sliders" id="sound-icon"></i>
+                    <span class="hidden lg:inline text-xs font-bold">Audio</span>
                 </button>
             </div>
         </div>
@@ -106,7 +110,10 @@
                 <span class="bg-slate-950 text-amber-400 px-2.5 py-0.5 rounded-lg uppercase tracking-wider text-[10px] font-black">Instructor Mode Active</span>
                 <span>Welcome, Lecturer! Quick controls enabled.</span>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
+                <button onclick="openTopicUnlockModal()" class="bg-slate-950 hover:bg-slate-800 text-amber-300 px-3 py-1 rounded-lg transition flex items-center gap-1">
+                    <i class="fa-solid fa-lock-open text-emerald-400"></i> Manage Topic Unlocks
+                </button>
                 <button onclick="instructorRevealAnswer()" class="bg-slate-950 hover:bg-slate-800 text-amber-300 px-3 py-1 rounded-lg transition flex items-center gap-1">
                     <i class="fa-solid fa-eye"></i> Reveal Answer
                 </button>
@@ -125,7 +132,6 @@
 
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
 
-        <!-- Weekly Navigation Selector -->
         <nav class="bg-white p-2 rounded-2xl shadow-sm border border-slate-200 overflow-x-auto custom-scrollbar">
             <div class="flex space-x-2 min-w-max">
                 <!-- Available Week 1: Topic displayed as "Resident Status" -->
@@ -135,15 +141,16 @@
                     <span class="text-xs bg-amber-400 text-slate-950 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider">Hangman</span>
                 </button>
 
-                <!-- Locked Week 2: No topic displayed -->
-                <button onclick="showLockedNotification('Week 2')" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all text-slate-400 bg-slate-50 border border-slate-200 opacity-75 cursor-not-allowed">
-                    <span class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
-                        <i class="fa-solid fa-lock text-[10px]"></i> Week 2
+                <!-- Dynamic Week 2 Button -->
+                <button onclick="selectWeek(2)" id="tab-week-2" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all text-slate-400 bg-slate-50 border border-slate-200 opacity-75">
+                    <span id="tab-week-2-badge" class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                        <i id="tab-week-2-icon" class="fa-solid fa-lock text-[10px]"></i> Week 2
                     </span>
-                    <span class="text-xs bg-slate-200 text-slate-500 px-2 py-0.5 rounded-md font-medium uppercase">Locked</span>
+                    <span id="tab-week-2-title" class="font-bold">Topic Locked</span>
+                    <span id="tab-week-2-game" class="text-xs bg-slate-200 text-slate-500 px-2 py-0.5 rounded-md font-medium uppercase">Locked</span>
                 </button>
 
-                <!-- Locked Week 3: No topic displayed -->
+                <!-- Locked Week 3 -->
                 <button onclick="showLockedNotification('Week 3')" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all text-slate-400 bg-slate-50 border border-slate-200 opacity-75 cursor-not-allowed">
                     <span class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
                         <i class="fa-solid fa-lock text-[10px]"></i> Week 3
@@ -257,6 +264,210 @@
             </div>
 
         </section>
+
+        <section id="view-week-2" class="week-view space-y-6 hidden">
+            
+            <!-- Week 2 Header Bar -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Week 2: Employment Income</span>
+                        <h2 class="text-lg font-extrabold text-slate-800" id="w2-q-number-display">Question 1 of 10</h2>
+                    </div>
+                    <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block">Board Tile Position</span>
+                        <p class="text-base font-extrabold text-indigo-700" id="w2-tile-display">Tile 1 / 20</p>
+                    </div>
+                </div>
+
+                <!-- 10 Hearts Life Tracker -->
+                <div class="flex items-center gap-2 bg-rose-50 px-4 py-2 rounded-xl border border-rose-200 shadow-sm">
+                    <span class="text-xs font-black text-rose-800 uppercase mr-1">Lives:</span>
+                    <div id="w2-hearts-container" class="flex gap-1 text-rose-600 text-sm sm:text-base">
+                        <!-- 10 Hearts populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <!-- Left 5 Columns: Snakes & Ladders Interactive Board -->
+                <div class="lg:col-span-5 bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-lg text-white flex flex-col justify-between space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-gamepad"></i> Tax Ladder Board
+                        </span>
+                        <span class="text-[10px] bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full border border-slate-700">
+                            20-Tile Challenge
+                        </span>
+                    </div>
+
+                    <!-- 20-Tile Grid Board (4 rows x 5 cols) -->
+                    <div id="snakes-board-grid" class="grid grid-cols-5 gap-1.5 bg-slate-950 p-2.5 rounded-xl border border-slate-800 shadow-inner my-auto">
+                        <!-- Tiles generated dynamically -->
+                    </div>
+
+                    <!-- Legend & Instructions -->
+                    <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/60 text-[11px] space-y-1">
+                        <div class="font-extrabold text-amber-300 flex items-center justify-between">
+                            <span><i class="fa-solid fa-map-pin mr-1"></i> Board Symbols</span>
+                            <span class="text-[10px] text-slate-400">Ans Correct = Advance</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-slate-300">
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-arrow-up-right-dots text-emerald-400"></i> Ladder (Jump ahead)</span>
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-worm text-rose-400"></i> Snake (Slide back)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right 7 Columns: MCQ Question, Options & Side Reference Guide -->
+                <div class="lg:col-span-7 space-y-6">
+                    
+                    <!-- Side Reference Guide Box (Short & Simple Guide for Employment Income) -->
+                    <div class="bg-indigo-900/10 border border-indigo-200 p-3.5 rounded-2xl space-y-1.5">
+                        <div class="flex items-center justify-between text-indigo-950 font-bold text-xs">
+                            <span class="flex items-center gap-1.5">
+                                <i class="fa-solid fa-book-bookmark text-indigo-700"></i>
+                                Quick Tax Guide: Employment Income (ITA 1967)
+                            </span>
+                            <span class="text-[10px] bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-md font-black">Ref Sheet</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px] text-indigo-900 leading-tight">
+                            <div class="bg-white p-2 rounded-xl border border-indigo-100 shadow-xs">
+                                <strong class="text-indigo-950 block border-b border-indigo-100 pb-0.5 mb-1">S.13(1)(a) Cash Pay</strong>
+                                Salaries, wages, bonus, gratuity, perquisites, commissions, & leave pay.
+                            </div>
+                            <div class="bg-white p-2 rounded-xl border border-indigo-100 shadow-xs">
+                                <strong class="text-indigo-950 block border-b border-indigo-100 pb-0.5 mb-1">S.13(1)(b) Benefits-In-Kind</strong>
+                                Non-cash amenities (car, driver, furniture, utilities) provided by employer.
+                            </div>
+                            <div class="bg-white p-2 rounded-xl border border-indigo-100 shadow-xs">
+                                <strong class="text-indigo-950 block border-b border-indigo-100 pb-0.5 mb-1">Key Exemptions</strong>
+                                Medical (Full), Childcare (RM2.4k), Petrol (RM6k), Phone (Full), Leave Passage.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MCQ Question Card -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                            <span id="w2-category-badge" class="bg-indigo-100 text-indigo-800 text-xs font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider">
+                                Sec 13(1)(a) Gross Income
+                            </span>
+                            <span class="text-xs font-bold text-slate-400">Multiple Choice Question</span>
+                        </div>
+
+                        <p id="w2-question-text" class="text-slate-800 font-semibold text-base sm:text-lg leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            Loading employment income question...
+                        </p>
+
+                        <!-- MCQ Options Container -->
+                        <div id="w2-mcq-options" class="space-y-2.5">
+                            <!-- Populated dynamically -->
+                        </div>
+
+                        <!-- Action Bar for Next Question -->
+                        <div id="w2-action-bar" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div id="w2-status-message" class="font-bold text-sm"></div>
+                            <button onclick="nextWeek2Question()" class="w-full sm:w-auto bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-6 py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
+                                <span>Next Tile & Question</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Statutory Explanation Card -->
+                    <div id="w2-explanation-box" class="hidden bg-indigo-50 border border-indigo-200 rounded-2xl p-5 shadow-sm space-y-2">
+                        <div class="flex items-center gap-2 text-indigo-900 font-bold text-sm">
+                            <i class="fa-solid fa-graduation-cap text-lg text-indigo-700"></i>
+                            <span>Statutory Rationale & Public Ruling Explanation</span>
+                        </div>
+                        <p id="w2-explanation-text" class="text-indigo-950 text-xs sm:text-sm leading-relaxed">
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+        <div id="coin-flip-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 relative border border-slate-100">
+                <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-2xl flex items-center justify-center text-xl mx-auto font-bold shadow-sm">
+                    <i class="fa-solid fa-coins"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-extrabold text-slate-800">Incorrect Answer!</h3>
+                    <p class="text-xs text-slate-500 mt-1">Flip the coin to determine your retry penalty:</p>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs text-amber-900 font-medium space-y-1">
+                    <p>• <strong>HEADS:</strong> Free Retry! Try question again with NO life cost.</p>
+                    <p>• <strong>TAILS:</strong> Deducts 1 Heart ❤️ & try question again.</p>
+                </div>
+
+                <!-- Coin Animation Area -->
+                <div class="py-4 flex justify-center">
+                    <div id="coin-element" class="w-20 h-20 bg-gradient-to-tr from-amber-500 to-yellow-300 border-4 border-amber-600 rounded-full flex items-center justify-center shadow-lg font-black text-slate-900 text-lg transition-transform duration-700">
+                        <span id="coin-face-text">🪙</span>
+                    </div>
+                </div>
+
+                <div id="coin-result-text" class="min-h-[24px] font-extrabold text-sm text-slate-800"></div>
+
+                <div class="space-y-2">
+                    <button id="flip-coin-btn" onclick="executeCoinFlip()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black py-2.5 rounded-xl shadow transition text-sm">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Flip Coin Now
+                    </button>
+                    <button id="close-coin-btn" onclick="closeCoinFlipModal()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 rounded-xl transition text-xs hidden">
+                        Continue Question
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="topic-unlock-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 relative border border-slate-100">
+                <button onclick="closeTopicUnlockModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+
+                <div class="flex items-center gap-3 border-b pb-3">
+                    <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-lock-open"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-extrabold text-slate-800">Manage Topic Unlocks</h3>
+                        <p class="text-xs text-slate-500">Toggle student access and unlock weekly modules.</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="p-3 bg-slate-50 border rounded-xl flex items-center justify-between">
+                        <div>
+                            <span class="font-extrabold text-sm text-slate-800 block">Week 1: Resident Status</span>
+                            <span class="text-xs text-emerald-600 font-bold">Always Unlocked</span>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-800 text-xs font-black px-2.5 py-1 rounded-lg">Active</span>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 border rounded-xl flex items-center justify-between">
+                        <div>
+                            <span class="font-extrabold text-sm text-slate-800 block">Week 2: Employment Income</span>
+                            <span class="text-xs text-slate-500">Sec 13(1)(a) & 13(1)(b) MCQ Game</span>
+                        </div>
+                        <button onclick="toggleWeek2Unlock()" id="unlock-w2-btn" class="px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-rose-600 text-white shadow">
+                            Locked
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-2 text-center border-t">
+                    <p class="text-[11px] text-slate-400">Topic titles are hidden from students until unlocked by instructor.</p>
+                </div>
+            </div>
+        </div>
 
         <!-- Auth Modal (Login / Register) -->
         <div id="auth-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 sm:p-6 overflow-y-auto">
@@ -499,32 +710,82 @@
                     <i class="fa-solid fa-award"></i>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-extrabold text-slate-800">Resident Status Complete!</h3>
-                    <p class="text-sm text-slate-500 mt-1">Malaysian Taxation TU — Week 1 Challenge.</p>
+                    <h3 class="text-2xl font-extrabold text-slate-800" id="summary-modal-title">Module Complete!</h3>
+                    <p class="text-sm text-slate-500 mt-1" id="summary-modal-subtitle">Malaysian Taxation TU Challenge.</p>
                 </div>
 
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-2 gap-4">
-                    <div>
-                        <span class="text-xs font-bold text-slate-400 uppercase">Session Score</span>
-                        <p class="text-2xl font-extrabold text-red-700" id="final-score">0 pts</p>
+        <!-- Sound & BGM Settings Modal -->
+        <div id="sound-settings-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-5 relative border border-slate-100">
+                <button onclick="closeSoundSettingsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+
+                <div class="flex items-center gap-3 border-b pb-3">
+                    <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center text-lg font-bold">
+                        <i class="fa-solid fa-music"></i>
                     </div>
                     <div>
-                        <span class="text-xs font-bold text-slate-400 uppercase">Correct Answers</span>
-                        <p class="text-2xl font-extrabold text-emerald-600" id="final-accuracy">0 / 10</p>
+                        <h3 class="text-lg font-extrabold text-slate-800">Audio & Music</h3>
+                        <p class="text-xs text-slate-500">Volume controls and audio theme settings</p>
                     </div>
                 </div>
 
-                <!-- Attempt Bonus Callout -->
-                <div id="bonus-callout-box" class="hidden bg-amber-50 border border-amber-300 rounded-xl p-3 text-amber-900 text-xs font-extrabold">
-                    <span id="bonus-callout-text">🎉 Bonus Awarded!</span>
+                <!-- Active Topic Theme Display -->
+                <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-xl flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] font-extrabold text-indigo-600 uppercase tracking-wider block">Current Topic Theme</span>
+                        <span id="active-bgm-track-title" class="text-xs font-bold text-indigo-950">Week 1: Resident Status Chiptune</span>
+                    </div>
+                    <span class="text-xs bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded-md font-bold uppercase">Active</span>
                 </div>
 
-                <div class="space-y-2 pt-2">
-                    <button onclick="restartWeek1()" class="w-full bg-red-700 hover:bg-red-800 text-white font-bold py-3 rounded-xl shadow transition">
-                        <i class="fa-solid fa-rotate-right mr-2"></i> Play Again
-                    </button>
-                    <button onclick="closeSummaryModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl transition">
-                        Review Results
+                <!-- Silence / Master Mute Toggle -->
+                <div class="p-3 bg-slate-50 border rounded-xl flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-volume-xmark text-slate-500 text-sm"></i>
+                        <div>
+                            <span class="font-extrabold text-xs text-slate-800 block">Master Silence Mode</span>
+                            <span class="text-[10px] text-slate-400">Mute all audio & music immediately</span>
+                        </div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="master-silence-toggle" onchange="toggleMasterSilence(this.checked)" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-rose-600"></div>
+                    </label>
+                </div>
+
+                <!-- Background Music Volume Controls -->
+                <div class="space-y-2 bg-slate-50 p-3 rounded-xl border">
+                    <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-compact-disc text-indigo-600"></i> Background Music</span>
+                        <span id="music-vol-percentage" class="text-indigo-600 font-extrabold">50%</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input type="range" id="music-vol-slider" min="0" max="100" value="50" oninput="updateMusicVolume(this.value)" class="w-full accent-indigo-600 h-1.5 bg-slate-200 rounded-lg cursor-pointer">
+                        <button onclick="toggleMusicMute()" id="music-mute-btn" class="p-1.5 text-xs text-slate-600 hover:text-indigo-600 transition">
+                            <i id="music-mute-icon" class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sound Effects Volume Controls -->
+                <div class="space-y-2 bg-slate-50 p-3 rounded-xl border">
+                    <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> Sound Effects (SFX)</span>
+                        <span id="sfx-vol-percentage" class="text-amber-600 font-extrabold">80%</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input type="range" id="sfx-vol-slider" min="0" max="100" value="80" oninput="updateSfxVolume(this.value)" class="w-full accent-amber-500 h-1.5 bg-slate-200 rounded-lg cursor-pointer">
+                        <button onclick="toggleSfxMute()" id="sfx-mute-btn" class="p-1.5 text-xs text-slate-600 hover:text-amber-600 transition">
+                            <i id="sfx-mute-icon" class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="text-center pt-1 border-t">
+                    <button onclick="startAudioContextAndPlay()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold py-2 rounded-xl text-xs shadow transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play"></i> Enable Audio / Test Sound
                     </button>
                 </div>
             </div>
@@ -588,979 +849,207 @@
     </script>
 
     <script>
-        const week1Questions = [
-            {
-                phrase: "ONE HUNDRED EIGHTY TWO DAYS",
-                category: "S.7(1)(a) Main Rule",
-                hint: "To qualify as a tax resident under Section 7(1)(a) ITA 1967, an individual must be physically present in Malaysia for a total of at least how many days in the basis year?",
-                explanation: "Under S.7(1)(a) ITA 1967, an individual is a tax resident in Malaysia for a basis year if they are physically present in Malaysia for 182 days or more during that basis year."
+        // Sound & Audio Engine using Tone.js Synthesizers
+        let audioInitialized = false;
+        let masterSilent = false;
+        let musicMuted = false;
+        let sfxMuted = false;
+        let musicVol = 0.5; // 0 to 1
+        let sfxVol = 0.8;   // 0 to 1
+
+        let bgmVolumeNode = null;
+        let sfxVolumeNode = null;
+        let sfxSynth = null;
+        let bgmSynth = null;
+        let bgmLoopPattern = null;
+        let currentTopicBgmIndex = 1;
+
+        // BGM Melody Patterns for Each Topic
+        const bgmThemes = {
+            1: {
+                title: "Week 1: Resident Status Chiptune",
+                bpm: 108,
+                notes: ["C4", "E4", "G4", "B4", "C5", "G4", "E4", "G4", "A4", "C5", "E5", "D5", "B4", "G4", "A4", "B4"],
+                durations: "8n"
             },
-            {
-                phrase: "TEMPORARY ABSENCE",
-                category: "S.7(1)(b) Exception",
-                hint: "Short periods away from Malaysia due to official duties, ill health, or social visits <= 14 days are treated as continuous presence under what concept?",
-                explanation: "Under S.7(1)(b), temporary absences count as physical presence in Malaysia if connected with service duties, ill health of individual/family, or social visits not exceeding 14 days in aggregate."
-            },
-            {
-                phrase: "LINKED YEAR",
-                category: "S.7(1)(b) Rule",
-                hint: "Section 7(1)(b) allows a presence of less than 182 days to be deemed resident if linked with an adjacent 182+ day resident year under which requirement?",
-                explanation: "Under S.7(1)(b), a presence period < 182 days is deemed resident if linked with a 182+ consecutive resident year immediately preceding or following."
-            },
-            {
-                phrase: "THREE OUT OF FOUR YEARS",
-                category: "S.7(1)(c) Provision",
-                hint: "Section 7(1)(c) deems an individual resident if they were tax resident for how many years out of the immediate 4 preceding basis years?",
-                explanation: "Under S.7(1)(c), an individual is resident for a basis year if resident in Malaysia for 3 out of the 4 immediately preceding basis years."
-            },
-            {
-                phrase: "DEEMED RESIDENT",
-                category: "S.7(1)(d) Status",
-                hint: "An individual resident for the 3 immediately preceding basis years and the 1 immediately following basis year is treated as what for the gap year under Section 7(1)(d)?",
-                explanation: "Under S.7(1)(d) ITA 1967, an individual who was resident for the 3 immediately preceding basis years and the 1 immediately following basis year is deemed resident for the gap year, even if physically absent from Malaysia for the entire gap year."
-            },
-            {
-                phrase: "SIXTY DAYS RULE",
-                category: "Exemption Provision",
-                hint: "Non-resident employees present in Malaysia for less than how many days in total in a calendar year are exempt from Malaysian tax on employment income?",
-                explanation: "Under Schedule 6 Paragraph 21 ITA 1967, short-term employment income of a non-resident is tax exempt if the employment period in Malaysia does not exceed 60 days."
-            },
-            {
-                phrase: "SOCIAL VISITS",
-                category: "S.7(1)(b) Absence",
-                hint: "Temporary absence for personal/vacation trips during a consecutive resident period is permitted for up to 14 days under which specific exception?",
-                explanation: "Under S.7(1)(b)(iii), temporary absence for social visits not exceeding 14 days in aggregate forms part of the consecutive physical presence period."
-            },
-            {
-                phrase: "BASIS YEAR",
-                category: "Taxation Period",
-                hint: "In Malaysian individual tax law, the calendar year coinciding with the year of assessment is referred to as the what?",
-                explanation: "For individuals, the basis year for a year of assessment is the calendar year ending 31 December (ITA 1967 S.21)."
-            },
-            {
-                phrase: "PUBLIC ENTERTAINER",
-                category: "Exemption Exception",
-                hint: "Which category of non-resident individuals is strictly excluded from the 60-day tax exemption rule on Malaysian-sourced income?",
-                explanation: "Public entertainers (e.g. stage, radio, or screen artists, athletes) do not qualify for the 60-day short-term employment exemption under Schedule 6 Paragraph 21."
-            },
-            {
-                phrase: "QUALIFYING DAY",
-                category: "Presence Calculation",
-                hint: "Physical presence in Malaysia for any part of a calendar day constitutes how many days for residency calculation under S.7?",
-                explanation: "If an individual is physically present in Malaysia for any part of a calendar day (even a few minutes), that day counts as 1 full day of physical presence."
+            2: {
+                title: "Week 2: Employment Arcade Jump",
+                bpm: 124,
+                notes: ["F4", "A4", "C5", "D5", "F5", "D5", "C5", "A4", "G4", "Bb4", "D5", "C5", "Bb4", "A4", "G4", "C4"],
+                durations: "8n"
             }
-        ];
-
-        let currentQuestionIndex = 0;
-        let guessedLetters = new Set();
-        let lives = 6;
-        let currentScore = 0;
-        let correctAnswersCount = 0;
-        let soundEnabled = true;
-        let audioCtx = null;
-        let isInstructorMode = false;
-        let userQuizAttemptCount = 1;
-
-        // Current Active Student User Account
-        let activeUser = null;
-        let allUsersStore = {}; // Fallback in-memory storage
-
-        // Comprehensive profanity list including English and local Malaysian slang/vulgarities
-        const profanityList = [
-            "damn", "hell", "shit", "fuck", "bitch", "bastard", "crap", "asshole", "dick", "pussy",
-            "cunt", "cock", "idiot", "stupid", "fool", "puki", "lanjiao", "pukimak", "babi", "anjing",
-            "sial", "bodoh", "pantat", "jubor", "kimak", "pukima", "solok", "sohai", "pukim@k", "fck",
-            "b1tch", "sh1t", "ass", "slut", "whore", "nigger", "nigga"
-        ];
-
-        function containsProfanity(text) {
-            if (!text) return false;
-            const cleaned = text.toLowerCase().replace(/[^a-z0-9]/g, '');
-            const words = text.toLowerCase().split(/[\s_.-]+/);
-
-            return profanityList.some(badWord => {
-                const cleanedBadWord = badWord.toLowerCase().replace(/[^a-z0-9]/g, '');
-                return words.includes(cleanedBadWord) || cleaned.includes(cleanedBadWord);
-            });
-        }
-
-        // Load persisted users from localStorage if available
-        try {
-            const stored = localStorage.getItem('tu_tax_users');
-            if (stored) allUsersStore = JSON.parse(stored);
-            const activeUsername = localStorage.getItem('tu_tax_active_user');
-            if (activeUsername && allUsersStore[activeUsername]) {
-                activeUser = allUsersStore[activeUsername];
-            }
-        } catch(e) {}
-
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-        }
-
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            const icon = document.getElementById('sound-icon');
-            icon.className = soundEnabled ? "fa-solid fa-volume-high" : "fa-solid fa-volume-xmark";
-        }
-
-        function playSound(type) {
-            if (!soundEnabled) return;
-            try {
-                initAudio();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                const now = audioCtx.currentTime;
-
-                if (type === 'correct') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(587.33, now);
-                    osc.frequency.setValueAtTime(880, now + 0.08);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-                    osc.start(now);
-                    osc.stop(now + 0.25);
-                } else if (type === 'wrong') {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(180, now);
-                    osc.frequency.setValueAtTime(120, now + 0.1);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                    osc.start(now);
-                    osc.stop(now + 0.3);
-                } else if (type === 'win') {
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(523.25, now);
-                    osc.frequency.setValueAtTime(659.25, now + 0.1);
-                    osc.frequency.setValueAtTime(783.99, now + 0.2);
-                    gain.gain.setValueAtTime(0.25, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-                    osc.start(now);
-                    osc.stop(now + 0.5);
-                }
-            } catch (e) {}
-        }
-
-        function initHangmanQuestion() {
-            guessedLetters.clear();
-            lives = 6;
-
-            const q = week1Questions[currentQuestionIndex];
-            
-            document.getElementById('q-number-display').textContent = `Question ${currentQuestionIndex + 1} of ${week1Questions.length}`;
-            document.getElementById('attempt-num-display').textContent = userQuizAttemptCount;
-            document.getElementById('category-badge').textContent = q.category;
-            document.getElementById('question-hint').textContent = q.hint;
-            
-            const progressPercent = ((currentQuestionIndex + 1) / week1Questions.length) * 100;
-            document.getElementById('w1-progress-bar').style.width = `${progressPercent}%`;
-
-            document.getElementById('action-bar').classList.add('hidden');
-            document.getElementById('explanation-box').classList.add('hidden');
-
-            renderHangmanSVG();
-            renderWordSlots();
-            renderKeyboard();
-            updateUserHeaderUI();
-        }
-
-        function renderWordSlots() {
-            const container = document.getElementById('word-slots-container');
-            container.innerHTML = '';
-            const q = week1Questions[currentQuestionIndex];
-            const words = q.phrase.split(' ');
-
-            // Calculate longest word in phrase to adjust box size for mobile
-            const maxWordLength = Math.max(...words.map(w => w.length));
-
-            words.forEach((word, wIdx) => {
-                const wordGroup = document.createElement('div');
-                wordGroup.className = "flex flex-wrap gap-1 sm:gap-1.5 my-1 justify-center max-w-full";
-
-                for (let i = 0; i < word.length; i++) {
-                    const char = word[i];
-                    const slot = document.createElement('div');
-                    
-                    // Responsive sizing: smaller slots for longer words on small screens
-                    let slotSizeClass = "w-7 h-9 text-xs sm:w-9 sm:h-11 sm:text-lg";
-                    if (maxWordLength >= 10) {
-                        slotSizeClass = "w-5.5 h-8 text-[11px] sm:w-8 sm:h-10 sm:text-base md:w-9 md:h-11 md:text-lg";
-                    } else if (maxWordLength >= 8) {
-                        slotSizeClass = "w-6 h-8.5 text-xs sm:w-8.5 sm:h-10.5 sm:text-base md:w-9 md:h-11 md:text-lg";
-                    }
-
-                    if (guessedLetters.has(char)) {
-                        slot.className = `${slotSizeClass} bg-red-700 border-2 border-red-500 text-white rounded-lg flex items-center justify-center font-black shadow animate-success shrink-0`;
-                        slot.textContent = char;
-                    } else {
-                        slot.className = `${slotSizeClass} bg-slate-800 border-2 border-slate-700 text-transparent rounded-lg flex items-center justify-center font-bold shadow-inner shrink-0`;
-                        slot.textContent = "_";
-                    }
-                    wordGroup.appendChild(slot);
-                }
-                container.appendChild(wordGroup);
-
-                if (wIdx < words.length - 1) {
-                    const space = document.createElement('div');
-                    space.className = "w-2 sm:w-4";
-                    container.appendChild(space);
-                }
-            });
-        }
-
-        function renderKeyboard() {
-            const kb = document.getElementById('keyboard');
-            kb.innerHTML = '';
-            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-            for (let letter of alphabet) {
-                const btn = document.createElement('button');
-                btn.textContent = letter;
-                btn.onclick = () => handleGuess(letter);
-                
-                if (guessedLetters.has(letter)) {
-                    btn.disabled = true;
-                    btn.className = "letter-btn w-7 h-9 text-xs sm:w-9 sm:h-10 sm:text-sm md:w-10 md:h-11 rounded-lg font-bold bg-slate-200 text-slate-400 border border-slate-300";
-                } else {
-                    btn.className = "letter-btn w-7 h-9 text-xs sm:w-9 sm:h-10 sm:text-sm md:w-10 md:h-11 rounded-lg font-bold bg-red-50 hover:bg-red-700 hover:text-white text-red-950 border border-red-200 shadow-sm active:scale-95";
-                }
-                kb.appendChild(btn);
-            }
-        }
-
-        function renderHangmanSVG() {
-            document.getElementById('lives-display').textContent = lives;
-            const parts = ['hm-head', 'hm-body', 'hm-arm-left', 'hm-arm-right', 'hm-leg-left', 'hm-leg-right'];
-            const mistakesMade = 6 - lives;
-
-            parts.forEach((partId, idx) => {
-                const elem = document.getElementById(partId);
-                if (idx < mistakesMade) {
-                    elem.classList.remove('hidden');
-                } else {
-                    elem.classList.add('hidden');
-                }
-            });
-        }
-
-        function handleGuess(letter) {
-            if (guessedLetters.has(letter) || lives <= 0) return;
-
-            guessedLetters.add(letter);
-            const q = week1Questions[currentQuestionIndex];
-            const cleanPhrase = q.phrase.replace(/\s+/g, '');
-
-            if (cleanPhrase.includes(letter)) {
-                playSound('correct');
-            } else {
-                lives--;
-                playSound('wrong');
-            }
-
-            renderHangmanSVG();
-            renderWordSlots();
-            renderKeyboard();
-            checkQuestionStatus();
-        }
-
-        function checkQuestionStatus() {
-            const q = week1Questions[currentQuestionIndex];
-            const cleanPhrase = q.phrase.replace(/\s+/g, '');
-            const isWon = [...cleanPhrase].every(char => guessedLetters.has(char));
-            const isLost = lives <= 0;
-
-            if (isWon || isLost) {
-                document.querySelectorAll('.letter-btn').forEach(btn => btn.disabled = true);
-
-                const actionBar = document.getElementById('action-bar');
-                const statusMsg = document.getElementById('status-message');
-                const explanationBox = document.getElementById('explanation-box');
-                const explanationText = document.getElementById('explanation-text');
-
-                actionBar.classList.remove('hidden');
-                explanationBox.classList.remove('hidden');
-                explanationText.textContent = q.explanation;
-
-                if (isWon) {
-                    playSound('win');
-                    const addedPts = 100 + (lives * 10);
-                    currentScore += addedPts;
-                    correctAnswersCount++;
-                    
-                    statusMsg.className = "font-extrabold text-sm text-emerald-600 flex items-center gap-2";
-                    statusMsg.innerHTML = `<i class="fa-solid fa-circle-check text-lg"></i> Correct! +${addedPts} pts`;
-                    
-                    if (activeUser) {
-                        activeUser.totalPoints = (activeUser.totalPoints || 0) + addedPts;
-                        saveActiveUserData();
-                    }
-                } else {
-                    [...cleanPhrase].forEach(c => guessedLetters.add(c));
-                    renderWordSlots();
-
-                    statusMsg.className = "font-extrabold text-sm text-rose-600 flex items-center gap-2";
-                    statusMsg.innerHTML = `<i class="fa-solid fa-circle-xmark text-lg"></i> Out of attempts! Solution revealed above.`;
-                }
-
-                document.getElementById('w1-score-display').textContent = `${currentScore} pts`;
-                updateUserHeaderUI();
-            }
-        }
-
-        function nextQuestion() {
-            if (currentQuestionIndex < week1Questions.length - 1) {
-                currentQuestionIndex++;
-                initHangmanQuestion();
-            } else {
-                showSummaryModal();
-            }
-        }
-
-        let authMode = 'login';
-
-        function openAuthModal() {
-            document.getElementById('auth-modal').classList.remove('hidden');
-            document.getElementById('auth-modal').classList.add('flex');
-            document.getElementById('auth-error').classList.add('hidden');
-        }
-
-        function closeAuthModal() {
-            document.getElementById('auth-modal').classList.add('hidden');
-            document.getElementById('auth-modal').classList.remove('flex');
-        }
-
-        function switchAuthMode(mode) {
-            authMode = mode;
-            const regFields = document.getElementById('register-fields');
-            const submitBtn = document.getElementById('auth-submit-btn');
-            const tabLogin = document.getElementById('tab-btn-login');
-            const tabRegister = document.getElementById('tab-btn-register');
-
-            if (mode === 'register') {
-                regFields.classList.remove('hidden');
-                submitBtn.textContent = 'Create Profile & Register';
-                tabRegister.className = "flex-1 py-1.5 font-bold text-xs rounded-lg bg-white shadow text-red-800 transition";
-                tabLogin.className = "flex-1 py-1.5 font-bold text-xs rounded-lg text-slate-500 transition";
-            } else {
-                regFields.classList.add('hidden');
-                submitBtn.textContent = 'Log In';
-                tabLogin.className = "flex-1 py-1.5 font-bold text-xs rounded-lg bg-white shadow text-red-800 transition";
-                tabRegister.className = "flex-1 py-1.5 font-bold text-xs rounded-lg text-slate-500 transition";
-            }
-        }
-
-        function handleAuthSubmit(e) {
-            e.preventDefault();
-            const username = document.getElementById('auth-username').value.trim().toLowerCase();
-            const password = document.getElementById('auth-password').value;
-            const errorElem = document.getElementById('auth-error');
-
-            if (!username || !password) {
-                errorElem.textContent = "Please fill in all required fields.";
-                errorElem.classList.remove('hidden');
-                return;
-            }
-
-            // Check for profanity in username
-            if (containsProfanity(username)) {
-                errorElem.textContent = "⚠️ Inappropriate language or profanity is strictly prohibited in usernames.";
-                errorElem.classList.remove('hidden');
-                return;
-            }
-
-            if (authMode === 'register') {
-                const studentId = document.getElementById('auth-student-id').value.trim();
-                
-                if (!studentId) {
-                    errorElem.textContent = "Student ID is compulsory for registration.";
-                    errorElem.classList.remove('hidden');
-                    return;
-                }
-
-                if (allUsersStore[username]) {
-                    errorElem.textContent = "Username already taken! Please pick another.";
-                    errorElem.classList.remove('hidden');
-                    return;
-                }
-
-                const isStudentIdTaken = Object.values(allUsersStore).some(
-                    u => u.studentId && u.studentId.toLowerCase() === studentId.toLowerCase()
-                );
-                if (isStudentIdTaken) {
-                    errorElem.textContent = "This Student ID is already registered to another account!";
-                    errorElem.classList.remove('hidden');
-                    return;
-                }
-
-                const avatar = document.getElementById('auth-avatar').value.trim() || `https://placehold.co/100x100/dc2626/ffffff?text=${username.charAt(0).toUpperCase()}`;
-
-                activeUser = {
-                    username: username,
-                    studentId: studentId,
-                    password: password,
-                    avatar: avatar,
-                    totalPoints: currentScore || 0
-                };
-                allUsersStore[username] = activeUser;
-                saveActiveUserData();
-                showToast("Account Created", `Welcome @${username}!`);
-            } else { // Login
-                if (!allUsersStore[username]) {
-                    errorElem.textContent = "Username not found. Please register first.";
-                    errorElem.classList.remove('hidden');
-                    return;
-                }
-                if (allUsersStore[username].password !== password) {
-                    errorElem.textContent = "Incorrect password!";
-                    errorElem.classList.remove('hidden');
-                    return;
-                }
-                activeUser = allUsersStore[username];
-                if (currentScore > 0) {
-                    activeUser.totalPoints = (activeUser.totalPoints || 0) + currentScore;
-                }
-                saveActiveUserData();
-                showToast("Logged In", `Welcome back, @${username}!`);
-            }
-
-            localStorage.setItem('tu_tax_active_user', activeUser.username);
-            updateUserHeaderUI();
-            closeAuthModal();
-        }
-
-        function saveActiveUserData() {
-            if (!activeUser) return;
-            allUsersStore[activeUser.username] = activeUser;
-            try {
-                localStorage.setItem('tu_tax_users', JSON.stringify(allUsersStore));
-            } catch(e) {}
-
-            // Sync to Firestore if available
-            if (window.dbInstance) {
-                try {
-                    const userRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'public', 'data', 'leaderboard', activeUser.username);
-                    setDoc(userRef, {
-                        username: activeUser.username,
-                        studentId: activeUser.studentId || 'N/A',
-                        totalPoints: activeUser.totalPoints || 0,
-                        avatar: activeUser.avatar,
-                        updatedAt: new Date().toISOString()
-                    }, { merge: true }).catch(() => {});
-                } catch(e) {}
-            }
-        }
-
-        function updateUserHeaderUI() {
-            const container = document.getElementById('user-header-profile');
-            const accumScoreElem = document.getElementById('user-accumulated-score');
-
-            if (activeUser) {
-                accumScoreElem.textContent = activeUser.totalPoints || 0;
-                container.innerHTML = `
-                    <button onclick="openProfileModal()" class="bg-black/40 hover:bg-black/60 backdrop-blur px-2.5 py-1 rounded-xl border border-red-500/30 flex items-center gap-2 text-xs transition">
-                        <img src="${activeUser.avatar}" class="w-6 h-6 rounded-full object-cover border border-red-400">
-                        <span class="font-bold text-white max-w-[100px] truncate">@${activeUser.username}</span>
-                    </button>
-                `;
-            } else {
-                accumScoreElem.textContent = '0';
-                container.innerHTML = `
-                    <button onclick="openAuthModal()" class="bg-red-700 hover:bg-red-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5 shadow">
-                        <i class="fa-solid fa-right-to-bracket"></i>
-                        <span>Login / Register</span>
-                    </button>
-                `;
-            }
-        }
-
-        function openProfileModal() {
-            if (!activeUser) return openAuthModal();
-            document.getElementById('prof-display-img').src = activeUser.avatar;
-            document.getElementById('prof-display-username').textContent = `@${activeUser.username}`;
-            document.getElementById('prof-display-studentid').textContent = activeUser.studentId || 'Not set';
-            document.getElementById('prof-display-points').textContent = activeUser.totalPoints || 0;
-
-            document.getElementById('edit-studentid').value = activeUser.studentId || '';
-            document.getElementById('edit-avatar').value = activeUser.avatar || '';
-
-            document.getElementById('profile-modal').classList.remove('hidden');
-            document.getElementById('profile-modal').classList.add('flex');
-        }
-
-        function closeProfileModal() {
-            document.getElementById('profile-modal').classList.add('hidden');
-            document.getElementById('profile-modal').classList.remove('flex');
-            document.getElementById('edit-profile-form').classList.add('hidden');
-        }
-
-        function toggleEditProfileForm() {
-            const form = document.getElementById('edit-profile-form');
-            form.classList.toggle('hidden');
-        }
-
-        function handleProfileUpdate(e) {
-            e.preventDefault();
-            if (!activeUser) return;
-
-            const editError = document.getElementById('edit-profile-error');
-            editError.classList.add('hidden');
-
-            const newStudentId = document.getElementById('edit-studentid').value.trim();
-            const newAvatar = document.getElementById('edit-avatar').value.trim();
-            const newPass = document.getElementById('edit-password').value;
-
-            if (!newStudentId) {
-                editError.textContent = "Student ID is compulsory.";
-                editError.classList.remove('hidden');
-                return;
-            }
-
-            const isStudentIdTaken = Object.values(allUsersStore).some(
-                u => u.username !== activeUser.username && u.studentId && u.studentId.toLowerCase() === newStudentId.toLowerCase()
-            );
-            if (isStudentIdTaken) {
-                editError.textContent = "This Student ID is already registered to another account.";
-                editError.classList.remove('hidden');
-                return;
-            }
-
-            activeUser.studentId = newStudentId;
-            if (newAvatar) activeUser.avatar = newAvatar;
-            if (newPass) activeUser.password = newPass;
-
-            saveActiveUserData();
-            openProfileModal();
-            showToast("Profile Updated", "Your Student ID and profile changes have been saved.");
-        }
-
-        function logoutUser() {
-            activeUser = null;
-            localStorage.removeItem('tu_tax_active_user');
-            closeProfileModal();
-            updateUserHeaderUI();
-            showToast("Logged Out", "You have signed out.");
-        }
-
-        function openInstructorLoginModal() {
-            if (isInstructorMode) {
-                showToast("Instructor Mode", "You are already in Instructor Mode.");
-                return;
-            }
-            document.getElementById('instructor-modal').classList.remove('hidden');
-            document.getElementById('instructor-modal').classList.add('flex');
-            document.getElementById('instructor-pass-error').classList.add('hidden');
-        }
-
-        function closeInstructorLoginModal() {
-            document.getElementById('instructor-modal').classList.add('hidden');
-            document.getElementById('instructor-modal').classList.remove('flex');
-        }
-
-        function handleInstructorLogin(e) {
-            e.preventDefault();
-            const pass = document.getElementById('instructor-pass-input').value;
-            if (pass === 'tye6632') {
-                isInstructorMode = true;
-                closeInstructorLoginModal();
-                document.getElementById('instructor-toolbar').classList.remove('hidden');
-                document.getElementById('instructor-btn-label').textContent = "Lecturer Active";
-                showToast("Instructor Unlocked", "Skip, reveal, and scoreboard reset controls are active.");
-            } else {
-                document.getElementById('instructor-pass-error').classList.remove('hidden');
-            }
-        }
-
-        function exitInstructorMode() {
-            isInstructorMode = false;
-            document.getElementById('instructor-toolbar').classList.add('hidden');
-            document.getElementById('instructor-btn-label').textContent = "Instructor";
-            showToast("Instructor Mode Exited", "Returned to standard student view.");
-        }
-
-        function instructorRevealAnswer() {
-            if (!isInstructorMode) return;
-            const q = week1Questions[currentQuestionIndex];
-            const cleanPhrase = q.phrase.replace(/\s+/g, '');
-            [...cleanPhrase].forEach(char => guessedLetters.add(char));
-            renderWordSlots();
-            renderKeyboard();
-            checkQuestionStatus();
-            showToast("Instructor Action", "Answer phrase revealed!");
-        }
-
-        function instructorSkipQuestion() {
-            if (!isInstructorMode) return;
-            showToast("Instructor Action", "Skipping to next question...");
-            nextQuestion();
-        }
-
-        function openAnswerKeyModal() {
-            const list = document.getElementById('answer-key-list');
-            list.innerHTML = '';
-
-            week1Questions.forEach((q, idx) => {
-                const item = document.createElement('div');
-                item.className = "bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1.5";
-                item.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-red-700 uppercase">Q${idx + 1}. ${q.category}</span>
-                        <span class="text-xs bg-red-100 text-red-800 font-extrabold px-2 py-0.5 rounded-md">${q.phrase}</span>
-                    </div>
-                    <p class="text-xs text-slate-700"><strong>Scenario:</strong> ${q.hint}</p>
-                    <p class="text-xs text-emerald-800 bg-emerald-50 p-2 rounded-lg border border-emerald-100"><strong>Statutory Basis:</strong> ${q.explanation}</p>
-                `;
-                list.appendChild(item);
-            });
-
-            document.getElementById('answer-key-modal').classList.remove('hidden');
-            document.getElementById('answer-key-modal').classList.add('flex');
-        }
-
-        function closeAnswerKeyModal() {
-            document.getElementById('answer-key-modal').classList.add('hidden');
-            document.getElementById('answer-key-modal').classList.remove('flex');
-        }
-
-        function openLeaderboardModal() {
-            // Toggle instructor management banner
-            const instActions = document.getElementById('instructor-leaderboard-actions');
-            if (isInstructorMode) {
-                instActions.classList.remove('hidden');
-            } else {
-                instActions.classList.add('hidden');
-            }
-
-            renderLeaderboard();
-            document.getElementById('leaderboard-modal').classList.remove('hidden');
-            document.getElementById('leaderboard-modal').classList.add('flex');
-        }
-
-        function closeLeaderboardModal() {
-            document.getElementById('leaderboard-modal').classList.add('hidden');
-            document.getElementById('leaderboard-modal').classList.remove('flex');
-        }
-
-        function renderLeaderboard() {
-            const list = document.getElementById('leaderboard-list');
-            list.innerHTML = '';
-
-            // Combine all local and loaded users
-            let usersArray = Object.values(allUsersStore);
-            usersArray.sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
-
-            if (usersArray.length === 0) {
-                list.innerHTML = `
-                    <div class="text-center py-8 text-slate-400 font-medium">
-                        <i class="fa-solid fa-users text-3xl mb-2 block"></i>
-                        No registered students yet. Be the first to register and top the scoreboard!
-                    </div>
-                `;
-                document.getElementById('my-rank-banner').classList.add('hidden');
-                return;
-            }
-
-            usersArray.forEach((user, index) => {
-                const item = document.createElement('div');
-                const isCurrent = activeUser && activeUser.username === user.username;
-                item.className = `p-3 rounded-xl border flex items-center justify-between transition ${
-                    isCurrent ? 'bg-red-50 border-red-300 ring-2 ring-red-400/30' : 'bg-slate-50 border-slate-200'
-                }`;
-
-                let rankBadge = `<span class="w-7 h-7 flex items-center justify-center rounded-lg font-bold text-xs bg-slate-200 text-slate-600">${index + 1}</span>`;
-                if (index === 0) rankBadge = `<span class="w-7 h-7 flex items-center justify-center rounded-lg font-extrabold text-xs bg-amber-400 text-slate-950 shadow"><i class="fa-solid fa-crown text-amber-900"></i></span>`;
-                if (index === 1) rankBadge = `<span class="w-7 h-7 flex items-center justify-center rounded-lg font-extrabold text-xs bg-slate-300 text-slate-800">2</span>`;
-                if (index === 2) rankBadge = `<span class="w-7 h-7 flex items-center justify-center rounded-lg font-extrabold text-xs bg-amber-700 text-white">3</span>`;
-
-                let instructorDeleteBtn = '';
-                if (isInstructorMode) {
-                    instructorDeleteBtn = `
-                        <button onclick="deleteLeaderboardEntry('${user.username}')" class="text-rose-600 hover:text-rose-800 hover:bg-rose-100 p-1.5 rounded-lg border border-rose-200 transition text-xs ml-2" title="Delete entry from scoreboard">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    `;
-                }
-
-                item.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        ${rankBadge}
-                        <img src="${user.avatar}" class="w-9 h-9 rounded-full object-cover border border-slate-300">
-                        <div>
-                            <div class="flex items-center gap-1.5">
-                                <span class="font-extrabold text-sm text-slate-800">@${user.username}</span>
-                                ${isCurrent ? '<span class="bg-red-700 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase">You</span>' : ''}
-                            </div>
-                            <p class="text-[11px] text-slate-500 line-clamp-1">ID: ${user.studentId || 'N/A'}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="text-right">
-                            <span class="font-extrabold text-base text-red-700">${user.totalPoints || 0}</span>
-                            <span class="text-[10px] text-slate-400 block uppercase font-bold">pts</span>
-                        </div>
-                        ${instructorDeleteBtn}
-                    </div>
-                `;
-                list.appendChild(item);
-            });
-
-            // Render bottom "Your Standing" relative rank card (Rank above, Student Rank in middle, Rank below)
-            const myRankBanner = document.getElementById('my-rank-banner');
-            const myRankSummary = document.getElementById('my-rank-summary');
-            const myRankNeighbors = document.getElementById('my-rank-neighbors');
-
-            if (activeUser && usersArray.length > 0) {
-                const myIndex = usersArray.findIndex(u => u.username === activeUser.username);
-                if (myIndex !== -1) {
-                    myRankBanner.classList.remove('hidden');
-                    myRankSummary.textContent = `Rank #${myIndex + 1} of ${usersArray.length}`;
-
-                    let startIndex = Math.max(0, myIndex - 1);
-                    let endIndex = Math.min(usersArray.length - 1, myIndex + 1);
-
-                    // If at the top or bottom edge, adjust range to always display up to 3 entries
-                    if (myIndex === 0) endIndex = Math.min(usersArray.length - 1, 2);
-                    if (myIndex === usersArray.length - 1) startIndex = Math.max(0, usersArray.length - 3);
-
-                    myRankNeighbors.innerHTML = '';
-                    for (let i = startIndex; i <= endIndex; i++) {
-                        const u = usersArray[i];
-                        const isMe = u.username === activeUser.username;
-                        const row = document.createElement('div');
-                        row.className = `flex items-center justify-between p-1.5 rounded-lg ${
-                            isMe ? 'bg-red-700 text-white font-extrabold shadow-sm' : 'bg-white text-slate-700 font-medium border border-slate-200'
-                        }`;
-
-                        row.innerHTML = `
-                            <div class="flex items-center gap-2">
-                                <span class="${isMe ? 'bg-white text-red-800' : 'bg-slate-200 text-slate-700'} text-[10px] font-black px-1.5 py-0.5 rounded">
-                                    #${i + 1}
-                                </span>
-                                <span>@${u.username}</span>
-                                ${isMe ? '<span class="text-[9px] bg-red-900 text-white px-1 rounded uppercase font-black">You</span>' : ''}
-                            </div>
-                            <span>${u.totalPoints || 0} pts</span>
-                        `;
-                        myRankNeighbors.appendChild(row);
-                    }
-                } else {
-                    myRankBanner.classList.add('hidden');
-                }
-            } else {
-                myRankBanner.classList.add('hidden');
-            }
-        }
-
-        function resetScoresOnly() {
-            if (!isInstructorMode) return;
-            if (!confirm("⚠️ RESET SCORES WARNING:\n\nAre you sure you want to reset all student scores to 0 points? Student profiles, passwords, and IDs will be KEPT.")) return;
-
-            Object.keys(allUsersStore).forEach(username => {
-                allUsersStore[username].totalPoints = 0;
-                if (window.dbInstance) {
-                    try {
-                        const userRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'public', 'data', 'leaderboard', username);
-                        setDoc(userRef, { totalPoints: 0, updatedAt: new Date().toISOString() }, { merge: true }).catch(() => {});
-                    } catch(e) {}
-                }
-            });
-
-            if (activeUser) {
-                activeUser.totalPoints = 0;
-            }
-
-            try {
-                localStorage.setItem('tu_tax_users', JSON.stringify(allUsersStore));
-            } catch(e) {}
-
-            renderLeaderboard();
-            updateUserHeaderUI();
-            showToast("Scores Reset", "All scores reset to 0 pts. Profiles and Student IDs were kept.");
-        }
-
-        function exportScoresCSV() {
-            if (!isInstructorMode) return;
-            let usersArray = Object.values(allUsersStore);
-            if (usersArray.length === 0) {
-                showToast("Export Failed", "No student data available to export.");
-                return;
-            }
-            usersArray.sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
-
-            let csvContent = "data:text/csv;charset=utf-8,Rank,Username,Student ID,Total Points\n";
-            usersArray.forEach((u, i) => {
-                const username = `"${(u.username || '').replace(/"/g, '""')}"`;
-                const studentId = `"${(u.studentId || 'N/A').replace(/"/g, '""')}"`;
-                const points = u.totalPoints || 0;
-                csvContent += `${i + 1},${username},${studentId},${points}\n`;
-            });
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "Malaysian_Taxation_TU_Scoreboard.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showToast("Export Successful", "Scoreboard exported as a CSV spreadsheet.");
-        }
-
-        // Instructor deletion functions
-        function deleteLeaderboardEntry(username) {
-            if (!isInstructorMode) return;
-            if (!confirm(`Are you sure you want to delete @${username} from the scoreboard?`)) return;
-
-            delete allUsersStore[username];
-            try {
-                localStorage.setItem('tu_tax_users', JSON.stringify(allUsersStore));
-            } catch(e) {}
-
-            if (activeUser && activeUser.username === username) {
-                logoutUser();
-            }
-
-            // Sync deletion to Firestore if connected
-            if (window.dbInstance && window.deleteDocRef) {
-                try {
-                    const userRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'public', 'data', 'leaderboard', username);
-                    window.deleteDocRef(userRef).catch(() => {});
-                } catch(e) {}
-            }
-
-            renderLeaderboard();
-            showToast("Entry Deleted", `Removed @${username} from scoreboard.`);
-        }
-
-        function clearEntireLeaderboard() {
-            if (!isInstructorMode) return;
-            if (!confirm("⚠️ SEMESTER RESET WARNING:\n\nAre you sure you want to wipe ALL student scores and entries for a new semester? This action cannot be undone.")) return;
-
-            const usernames = Object.keys(allUsersStore);
-            usernames.forEach(username => {
-                if (window.dbInstance && window.deleteDocRef) {
-                    try {
-                        const userRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'public', 'data', 'leaderboard', username);
-                        window.deleteDocRef(userRef).catch(() => {});
-                    } catch(e) {}
-                }
-            });
-
-            allUsersStore = {};
-            try {
-                localStorage.setItem('tu_tax_users', JSON.stringify(allUsersStore));
-            } catch(e) {}
-
-            if (activeUser) {
-                logoutUser();
-            }
-
-            renderLeaderboard();
-            showToast("Scoreboard Wiped", "All student scores cleared for the new semester.");
-        }
-
-        // Firestore real-time snapshot subscription
-        window.listenToLiveLeaderboard = function() {
-            if (!window.dbInstance) return;
-            try {
-                const colRef = collection(window.dbInstance, 'artifacts', window.appId, 'public', 'data', 'leaderboard');
-                onSnapshot(colRef, (snapshot) => {
-                    snapshot.forEach((docSnap) => {
-                        const data = docSnap.data();
-                        if (data.username) {
-                            allUsersStore[data.username] = {
-                                ...allUsersStore[data.username],
-                                ...data
-                            };
-                        }
-                    });
-                    if (!document.getElementById('leaderboard-modal').classList.contains('hidden')) {
-                        renderLeaderboard();
-                    }
-                }, (err) => console.log("Leaderboard live stream error: ", err));
-            } catch(e) {}
         };
 
-        function selectWeek(weekNum) {
-            if (weekNum !== 1) {
-                showLockedNotification(`Week ${weekNum}`);
-                return;
+        function setupAudioEngine() {
+            if (audioInitialized) return;
+            try {
+                // Main Gain Nodes for Music & SFX
+                bgmVolumeNode = new Tone.Volume(Tone.gainToDb(musicVol)).toDestination();
+                sfxVolumeNode = new Tone.Volume(Tone.gainToDb(sfxVol)).toDestination();
+
+                // Cute BGM Synth (PolySynth with warm triangle wave)
+                bgmSynth = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: "triangle" },
+                    envelope: { attack: 0.05, decay: 0.2, sustain: 0.3, release: 0.4 }
+                }).connect(bgmVolumeNode);
+
+                // Cute SFX Synth (AMSynth / Synth for bright pops & chimes)
+                sfxSynth = new Tone.Synth({
+                    oscillator: { type: "sine" },
+                    envelope: { attack: 0.01, decay: 0.15, sustain: 0.0, release: 0.1 }
+                }).connect(sfxVolumeNode);
+
+                audioInitialized = true;
+                updateTopicBgm(currentTopicBgmIndex);
+            } catch (err) {
+                console.log("Audio initialization waiting for user interaction.", err);
             }
-            document.querySelectorAll('.week-view').forEach(v => v.classList.add('hidden'));
-            document.getElementById(`view-week-1`).classList.remove('hidden');
         }
 
-        function showLockedNotification(topicTitle) {
-            playSound('wrong');
-            showToast("Module Locked", `${topicTitle} is locked by your instructor until scheduled release.`);
+        async function startAudioContextAndPlay() {
+            if (!audioInitialized) setupAudioEngine();
+            if (Tone.context.state !== 'running') {
+                await Tone.start();
+            }
+            playCuteSfx('pop');
+            if (!masterSilent && !musicMuted) {
+                Tone.Transport.start();
+            }
+            showToast("Audio Active", "Sound effects & topic music enabled!");
         }
 
-        function showToast(title, msg) {
-            const toast = document.getElementById('locked-toast');
-            document.getElementById('locked-toast-title').textContent = title;
-            document.getElementById('locked-toast-msg').textContent = msg;
-            toast.classList.remove('hidden');
-            toast.classList.add('flex');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-                toast.classList.remove('flex');
-            }, 3500);
-        }
+        function updateTopicBgm(topicNum) {
+            currentTopicBgmIndex = topicNum;
+            const theme = bgmThemes[topicNum] || bgmThemes[1];
+            
+            const titleDisplay = document.getElementById('active-bgm-track-title');
+            if (titleDisplay) titleDisplay.textContent = theme.title;
 
-        function showSummaryModal() {
-            let attemptBonus = 0;
-            const calloutBox = document.getElementById('bonus-callout-box');
-            const calloutText = document.getElementById('bonus-callout-text');
+            if (!audioInitialized) return;
 
-            // Check if player scored 100% correct (10/10)
-            if (correctAnswersCount === week1Questions.length) {
-                if (userQuizAttemptCount === 1) attemptBonus = 10;
-                else if (userQuizAttemptCount === 2) attemptBonus = 8;
-                else if (userQuizAttemptCount === 3) attemptBonus = 6;
-                else if (userQuizAttemptCount === 4) attemptBonus = 4;
-                else if (userQuizAttemptCount === 5) attemptBonus = 2;
-                else attemptBonus = 0;
+            // Stop existing pattern loop
+            if (bgmLoopPattern) {
+                bgmLoopPattern.dispose();
+            }
 
-                if (attemptBonus > 0) {
-                    currentScore += attemptBonus;
-                    if (activeUser) {
-                        activeUser.totalPoints = (activeUser.totalPoints || 0) + attemptBonus;
-                        saveActiveUserData();
-                    }
-                    calloutText.textContent = `🏆 Perfect 10/10 Bonus! You earned +${attemptBonus} extra bonus points for completing in Try #${userQuizAttemptCount}!`;
-                    calloutBox.classList.remove('hidden');
-                } else {
-                    calloutBox.classList.add('hidden');
+            Tone.Transport.bpm.value = theme.bpm;
+            let noteIdx = 0;
+
+            bgmLoopPattern = new Tone.Loop((time) => {
+                if (!masterSilent && !musicMuted && musicVol > 0) {
+                    const note = theme.notes[noteIdx % theme.notes.length];
+                    bgmSynth.triggerAttackRelease(note, "16n", time, 0.25);
                 }
-            } else {
-                calloutBox.classList.add('hidden');
+                noteIdx++;
+            }, theme.durations);
+
+            bgmLoopPattern.start(0);
+        }
+
+        function playCuteSfx(type) {
+            if (masterSilent || sfxMuted || sfxVol <= 0) return;
+            if (!audioInitialized) setupAudioEngine();
+            if (Tone.context.state !== 'running') return;
+
+            const now = Tone.now();
+            if (type === 'pop') {
+                sfxSynth.triggerAttackRelease("C5", "16n", now);
+            } else if (type === 'correct') {
+                sfxSynth.triggerAttackRelease("E5", "16n", now);
+                sfxSynth.triggerAttackRelease("G5", "16n", now + 0.08);
+                sfxSynth.triggerAttackRelease("C6", "8n", now + 0.16);
+            } else if (type === 'wrong') {
+                sfxSynth.triggerAttackRelease("E3", "16n", now);
+                sfxSynth.triggerAttackRelease("Eb3", "8n", now + 0.1);
+            } else if (type === 'ladder') {
+                sfxSynth.triggerAttackRelease("C4", "16n", now);
+                sfxSynth.triggerAttackRelease("E4", "16n", now + 0.06);
+                sfxSynth.triggerAttackRelease("G4", "16n", now + 0.12);
+                sfxSynth.triggerAttackRelease("C5", "8n", now + 0.18);
+            } else if (type === 'snake') {
+                sfxSynth.triggerAttackRelease("G4", "16n", now);
+                sfxSynth.triggerAttackRelease("Eb4", "16n", now + 0.08);
+                sfxSynth.triggerAttackRelease("C4", "8n", now + 0.16);
+            } else if (type === 'win') {
+                sfxSynth.triggerAttackRelease("G4", "16n", now);
+                sfxSynth.triggerAttackRelease("C5", "16n", now + 0.1);
+                sfxSynth.triggerAttackRelease("E5", "16n", now + 0.2);
+                sfxSynth.triggerAttackRelease("G5", "4n", now + 0.3);
             }
-
-            document.getElementById('summary-modal').classList.remove('hidden');
-            document.getElementById('summary-modal').classList.add('flex');
-            document.getElementById('final-score').textContent = `${currentScore} pts`;
-            document.getElementById('final-accuracy').textContent = `${correctAnswersCount} / 10`;
         }
 
-        function closeSummaryModal() {
-            document.getElementById('summary-modal').classList.add('hidden');
-            document.getElementById('summary-modal').classList.remove('flex');
+        function openSoundSettingsModal() {
+            document.getElementById('sound-settings-modal').classList.remove('hidden');
+            document.getElementById('sound-settings-modal').classList.add('flex');
+            if (Tone.context.state !== 'running') {
+                Tone.start();
+            }
         }
 
-        function restartWeek1() {
-            userQuizAttemptCount++;
-            currentQuestionIndex = 0;
-            currentScore = 0;
-            correctAnswersCount = 0;
-            document.getElementById('w1-score-display').textContent = '0 pts';
-            closeSummaryModal();
-            initHangmanQuestion();
+        function closeSoundSettingsModal() {
+            document.getElementById('sound-settings-modal').classList.add('hidden');
+            document.getElementById('sound-settings-modal').classList.remove('flex');
         }
 
-        window.onload = function() {
-            initHangmanQuestion();
+        function toggleMasterSilence(isSilent) {
+            masterSilent = isSilent;
+            if (masterSilent) {
+                Tone.Destination.mute = true;
+                showToast("Silence Mode", "All audio muted.");
+            } else {
+                Tone.Destination.mute = false;
+                Tone.Transport.start();
+                showToast("Audio Restored", "Sound enabled.");
+            }
+        }
+
+        function updateMusicVolume(val) {
+            musicVol = val / 100;
+            document.getElementById('music-vol-percentage').textContent = `${val}%`;
+            if (bgmVolumeNode) {
+                bgmVolumeNode.volume.value = musicVol === 0 ? -Infinity : Tone.gainToDb(musicVol);
+            }
+        }
+
+        function updateSfxVolume(val) {
+            sfxVol = val / 100;
+            document.getElementById('sfx-vol-percentage').textContent = `${val}%`;
+            if (sfxVolumeNode) {
+                sfxVolumeNode.volume.value = sfxVol === 0 ? -Infinity : Tone.gainToDb(sfxVol);
+            }
+        }
+
+        function toggleMusicMute() {
+            musicMuted = !musicMuted;
+            const icon = document.getElementById('music-mute-icon');
+            if (musicMuted) {
+                icon.className = "fa-solid fa-volume-xmark text-rose-500";
+            } else {
+                icon.className = "fa-solid fa-volume-high text-indigo-600";
+            }
+        }
+
+        function toggleSfxMute() {
+            sfxMuted = !sfxMuted;
+            const icon = document.getElementById('sfx-mute-icon');
+            if (sfxMuted) {
+                icon.className = "fa-solid fa-volume-xmark text-rose-500";
+            } else {
+                icon.className = "fa-solid fa-volume-high text-amber-600";
+            }
+        }
+
+        // Hook topic selection to audio switcher
+        const originalSelectWeek = window.selectWeek;
+        window.selectWeek = function(weekNum) {
+            originalSelectWeek(weekNum);
+            updateTopicBgm(weekNum);
+            playCuteSfx('pop');
+        };
+
+        // Standard sound trigger compatibility function
+        window.playSound = function(type) {
+            playCuteSfx(type);
         };
     </script>
 </body>
