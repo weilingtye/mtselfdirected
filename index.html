@@ -34,6 +34,13 @@
         .animate-success {
             animation: pulse-success 0.4s ease-in-out;
         }
+        @keyframes leg-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        .animate-legs {
+            animation: leg-bounce 0.4s infinite alternate ease-in-out;
+        }
         .custom-scrollbar {
             scrollbar-width: thin;
             scrollbar-color: #cbd5e1 #f1f5f9;
@@ -134,14 +141,12 @@
 
         <nav class="bg-white p-2 rounded-2xl shadow-sm border border-slate-200 overflow-x-auto custom-scrollbar">
             <div class="flex space-x-2 min-w-max">
-                <!-- Available Week 1: Topic displayed as "Resident Status" -->
                 <button onclick="selectWeek(1)" id="tab-week-1" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all bg-red-700 text-white shadow">
                     <span class="bg-red-900 text-white text-xs px-2 py-0.5 rounded-full font-bold">Week 1</span>
                     <span>Resident Status</span>
                     <span class="text-xs bg-amber-400 text-slate-950 px-2 py-0.5 rounded-md font-bold uppercase tracking-wider">Hangman</span>
                 </button>
 
-                <!-- Dynamic Week 2 Button -->
                 <button onclick="selectWeek(2)" id="tab-week-2" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all text-slate-400 bg-slate-50 border border-slate-200 opacity-75">
                     <span id="tab-week-2-badge" class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
                         <i id="tab-week-2-icon" class="fa-solid fa-lock text-[10px]"></i> Week 2
@@ -150,7 +155,6 @@
                     <span id="tab-week-2-game" class="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-md font-medium uppercase">Snakes & Ladders</span>
                 </button>
 
-                <!-- Locked Week 3 -->
                 <button onclick="showLockedNotification('Week 3')" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all text-slate-400 bg-slate-50 border border-slate-200 opacity-75 cursor-not-allowed">
                     <span class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
                         <i class="fa-solid fa-lock text-[10px]"></i> Week 3
@@ -162,7 +166,6 @@
 
         <section id="view-week-1" class="week-view space-y-6">
             
-            <!-- Game Status & Progress Header -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
                     <div>
@@ -186,7 +189,6 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-                <!-- Left Column: Hangman Graphic Canvas -->
                 <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-between space-y-4">
                     <div class="w-full flex justify-between items-center border-b pb-3">
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Hangman Visual</span>
@@ -195,7 +197,6 @@
                         </span>
                     </div>
 
-                    <!-- SVG Hangman Graphic -->
                     <div class="relative w-56 h-64 flex items-center justify-center my-2">
                         <svg class="w-full h-full" viewBox="0 0 200 230">
                             <path d="M 20 210 L 180 210" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
@@ -219,7 +220,6 @@
                 </div>
 
                 <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
-                    
                     <div class="space-y-2">
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="bg-red-100 text-red-800 text-[10px] sm:text-xs font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider shrink-0">Tax Law Scenario</span>
@@ -230,18 +230,15 @@
                         </p>
                     </div>
 
-                    <!-- Hidden Phrase Display Slots -->
                     <div id="word-slots-container" class="flex flex-wrap gap-2 justify-center my-2 sm:my-4 min-h-[60px] sm:min-h-[70px] items-center p-2.5 sm:p-4 bg-slate-900 rounded-xl shadow-inner max-w-full overflow-x-auto custom-scrollbar">
                     </div>
 
-                    <!-- On-Screen Keyboard -->
                     <div class="space-y-2">
                         <div class="text-xs font-bold text-slate-400 uppercase tracking-wider text-center">Select Letters</div>
                         <div id="keyboard" class="flex flex-wrap gap-1 sm:gap-1.5 justify-center max-w-full">
                         </div>
                     </div>
 
-                    <!-- Next Question Action Bar -->
                     <div id="action-bar" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div id="status-message" class="font-bold text-sm"></div>
                         <button onclick="nextQuestion()" class="w-full sm:w-auto bg-red-700 hover:bg-red-800 text-white font-bold px-6 py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
@@ -253,7 +250,6 @@
                 </div>
             </div>
 
-            <!-- Tax Rationale Box -->
             <div id="explanation-box" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl p-6 shadow-sm space-y-2">
                 <div class="flex items-center gap-2 text-emerald-800 font-bold text-base">
                     <i class="fa-solid fa-graduation-cap text-lg"></i>
@@ -267,7 +263,6 @@
 
         <section id="view-week-2" class="week-view space-y-6 hidden">
             
-            <!-- Week 2 Header Bar -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
                     <div>
@@ -281,7 +276,6 @@
                     </div>
                 </div>
 
-                <!-- 10 Hearts Life Tracker -->
                 <div class="flex items-center gap-2 bg-rose-50 px-4 py-2 rounded-xl border border-rose-200 shadow-sm">
                     <span class="text-xs font-black text-rose-800 uppercase mr-1">Lives:</span>
                     <div id="w2-hearts-container" class="flex gap-1 text-rose-600 text-sm sm:text-base">
@@ -291,38 +285,33 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-                <!-- Left 5 Columns: Snakes & Ladders Interactive Board -->
                 <div class="lg:col-span-5 bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-lg text-white flex flex-col justify-between space-y-4">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-2">
                         <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-gamepad"></i> Tax Ladder Board
+                            <i class="fa-solid fa-gamepad"></i> Cartoon Tax Ladder Board
                         </span>
                         <span class="text-[10px] bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full border border-slate-700">
                             20-Tile Challenge
                         </span>
                     </div>
 
-                    <!-- 20-Tile Grid Board (4 rows x 5 cols) -->
+                    <!-- 20-Tile Grid Board -->
                     <div id="snakes-board-grid" class="grid grid-cols-5 gap-1.5 bg-slate-950 p-2.5 rounded-xl border border-slate-800 shadow-inner my-auto">
                     </div>
 
-                    <!-- Legend & Instructions -->
                     <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/60 text-[11px] space-y-1">
                         <div class="font-extrabold text-amber-300 flex items-center justify-between">
-                            <span><i class="fa-solid fa-map-pin mr-1"></i> Board Symbols</span>
-                            <span class="text-[10px] text-slate-400">Ans Correct = Advance</span>
+                            <span><i class="fa-solid fa-map-pin mr-1"></i> Cartoon Board Legend</span>
+                            <span class="text-[10px] text-slate-400">Correct = Advance</span>
                         </div>
-                        <div class="flex items-center gap-3 text-slate-300">
-                            <span class="flex items-center gap-1"><i class="fa-solid fa-arrow-up-right-dots text-emerald-400"></i> Ladder (Jump ahead)</span>
-                            <span class="flex items-center gap-1"><i class="fa-solid fa-worm text-rose-400"></i> Snake (Slide back)</span>
+                        <div class="flex items-center gap-3 text-slate-300 flex-wrap">
+                            <span class="flex items-center gap-1 text-emerald-300 font-bold"><i class="fa-solid fa-stairs text-emerald-400"></i> Ladder (Jump ahead)</span>
+                            <span class="flex items-center gap-1 text-rose-300 font-bold"><i class="fa-solid fa-staff-snake text-rose-400"></i> Snake (Slide back)</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right 7 Columns: MCQ Question, Options & Side Reference Guide -->
                 <div class="lg:col-span-7 space-y-6">
-                    
-                    <!-- Side Reference Guide Box (Short & Simple Guide for Employment Income) -->
                     <div class="bg-indigo-900/10 border border-indigo-200 p-3.5 rounded-2xl space-y-1.5">
                         <div class="flex items-center justify-between text-indigo-950 font-bold text-xs">
                             <span class="flex items-center gap-1.5">
@@ -347,7 +336,6 @@
                         </div>
                     </div>
 
-                    <!-- MCQ Question Card -->
                     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
                         <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
                             <span id="w2-category-badge" class="bg-indigo-100 text-indigo-800 text-xs font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider">
@@ -360,11 +348,9 @@
                             Loading employment income question...
                         </p>
 
-                        <!-- MCQ Options Container -->
                         <div id="w2-mcq-options" class="space-y-2.5">
                         </div>
 
-                        <!-- Action Bar for Next Question -->
                         <div id="w2-action-bar" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div id="w2-status-message" class="font-bold text-sm"></div>
                             <button onclick="nextWeek2Question()" class="w-full sm:w-auto bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-6 py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
@@ -374,7 +360,6 @@
                         </div>
                     </div>
 
-                    <!-- Statutory Explanation Card -->
                     <div id="w2-explanation-box" class="hidden bg-indigo-50 border border-indigo-200 rounded-2xl p-5 shadow-sm space-y-2">
                         <div class="flex items-center gap-2 text-indigo-900 font-bold text-sm">
                             <i class="fa-solid fa-graduation-cap text-lg text-indigo-700"></i>
@@ -405,7 +390,6 @@
                     <p>• <strong>TAILS:</strong> Deducts 1 Heart ❤️ & try question again.</p>
                 </div>
 
-                <!-- Coin Animation Area -->
                 <div class="py-4 flex justify-center">
                     <div id="coin-element" class="w-20 h-20 bg-gradient-to-tr from-amber-500 to-yellow-300 border-4 border-amber-600 rounded-full flex items-center justify-center shadow-lg font-black text-slate-900 text-lg transition-transform duration-700">
                         <span id="coin-face-text">🪙</span>
@@ -468,7 +452,7 @@
             </div>
         </div>
 
-        <!-- Auth Modal (Login / Register) -->
+        <!-- Auth Modal -->
         <div id="auth-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 sm:p-6 overflow-y-auto">
             <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-5 sm:p-6 space-y-4 relative max-h-[85vh] sm:max-h-[90vh] flex flex-col my-auto border border-slate-100">
                 <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 z-10 p-1">
@@ -483,7 +467,6 @@
                     <p id="auth-modal-subtitle" class="text-xs text-slate-500">Sign in or register your unique username to save quiz points.</p>
                 </div>
 
-                <!-- Tab Toggle -->
                 <div class="flex bg-slate-100 p-1 rounded-xl shrink-0">
                     <button id="tab-btn-login" type="button" onclick="switchAuthMode('login')" class="flex-1 py-1.5 font-bold text-xs rounded-lg bg-white shadow text-red-800 transition">Log In</button>
                     <button id="tab-btn-register" type="button" onclick="switchAuthMode('register')" class="flex-1 py-1.5 font-bold text-xs rounded-lg text-slate-500 transition">Register</button>
@@ -500,7 +483,6 @@
                         <input type="password" id="auth-password" required placeholder="••••••••" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-600 text-sm">
                     </div>
 
-                    <!-- Registration Only Fields -->
                     <div id="register-fields" class="space-y-3 hidden">
                         <div>
                             <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Student ID *</label>
@@ -523,7 +505,7 @@
             </div>
         </div>
 
-        <!-- User Profile Drawer / Modal -->
+        <!-- User Profile Drawer -->
         <div id="profile-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 overflow-y-auto">
             <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-5 relative my-auto border border-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
                 <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1">
@@ -550,7 +532,6 @@
                         <i class="fa-solid fa-pen-to-square"></i> Edit Profile & Password
                     </button>
                     
-                    <!-- Edit Profile Form -->
                     <form id="edit-profile-form" onsubmit="handleProfileUpdate(event)" class="space-y-3 hidden bg-slate-50 p-3 rounded-xl border border-slate-200">
                         <div>
                             <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Student ID *</label>
@@ -603,7 +584,7 @@
             </div>
         </div>
 
-        <!-- Leaderboard / Scoreboard Modal -->
+        <!-- Scoreboard Modal (Top 5 + Player Standing Section) -->
         <div id="leaderboard-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 space-y-4 relative max-h-[90vh] flex flex-col">
                 <button onclick="closeLeaderboardModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
@@ -615,12 +596,12 @@
                         <i class="fa-solid fa-trophy"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-extrabold text-slate-800">Taxation TU Scoreboard</h3>
-                        <p class="text-xs text-slate-500">Accumulated total points across all weekly tax modules.</p>
+                        <h3 class="text-lg font-extrabold text-slate-800">Taxation TU Leaderboard</h3>
+                        <p class="text-xs text-slate-500">Top 5 performers across all tax modules</p>
                     </div>
                 </div>
 
-                <!-- Instructor Scoreboard Reset & Export Banner -->
+                <!-- Instructor Controls -->
                 <div id="instructor-leaderboard-actions" class="hidden bg-amber-100 border border-amber-300 p-3 rounded-xl shrink-0 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
                     <div class="flex items-center gap-2 font-bold text-amber-950">
                         <i class="fa-solid fa-user-shield text-amber-700 text-sm"></i>
@@ -642,28 +623,28 @@
                     </div>
                 </div>
 
-                <!-- Scrollable Participant List -->
-                <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-1.5 custom-scrollbar min-h-[180px] max-h-[280px] border-y border-slate-100 py-2">
+                <!-- Scrollable Participant List (Top 5) -->
+                <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-1.5 custom-scrollbar min-h-[160px] max-h-[260px] border-y border-slate-100 py-2">
                 </div>
 
-                <!-- Active Student Rank Card -->
+                <!-- Active Student Rank Card at Bottom (1 Up & 1 Down View) -->
                 <div id="my-rank-banner" class="hidden bg-red-50/90 border border-red-200 rounded-xl p-3 shrink-0 space-y-2">
                     <div class="flex items-center justify-between border-b border-red-200/60 pb-1.5 text-xs font-black text-red-900 uppercase">
-                        <span><i class="fa-solid fa-user-tag text-red-600 mr-1"></i> Your Standing</span>
+                        <span><i class="fa-solid fa-user-tag text-red-600 mr-1"></i> Your Relative Standing</span>
                         <span id="my-rank-summary" class="text-red-700">Rank #-- of --</span>
                     </div>
-                    <div id="my-rank-neighbors" class="space-y-1 text-xs">
+                    <div id="my-rank-neighbors" class="space-y-1.5 text-xs">
                     </div>
                 </div>
 
-                <!-- Scoring Disclaimer Box -->
+                <!-- Scoring Rules Box -->
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 shrink-0 text-amber-950 text-xs space-y-1">
                     <div class="font-extrabold flex items-center gap-1.5 text-amber-900">
                         <i class="fa-solid fa-circle-info text-amber-600"></i>
                         <span>Scoring Rules</span>
                     </div>
                     <p class="text-[11px] leading-relaxed text-amber-800">
-                        Base points awarded per question solved. Perfect module completions award performance bonus points.
+                        Base points awarded per question solved. Points sync dynamically across modules.
                     </p>
                 </div>
 
@@ -715,7 +696,7 @@
             </div>
         </div>
 
-        <!-- Sound & BGM Settings Modal -->
+        <!-- Audio Settings Modal -->
         <div id="sound-settings-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-5 relative border border-slate-100">
                 <button onclick="closeSoundSettingsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
@@ -732,7 +713,6 @@
                     </div>
                 </div>
 
-                <!-- Active Topic Theme Display -->
                 <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-xl flex items-center justify-between">
                     <div>
                         <span class="text-[10px] font-extrabold text-indigo-600 uppercase tracking-wider block">Current Topic Theme</span>
@@ -741,7 +721,6 @@
                     <span class="text-xs bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded-md font-bold uppercase">Active</span>
                 </div>
 
-                <!-- Silence / Master Mute Toggle -->
                 <div class="p-3 bg-slate-50 border rounded-xl flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-volume-xmark text-slate-500 text-sm"></i>
@@ -756,7 +735,6 @@
                     </label>
                 </div>
 
-                <!-- Background Music Volume Controls -->
                 <div class="space-y-2 bg-slate-50 p-3 rounded-xl border">
                     <div class="flex items-center justify-between text-xs font-bold text-slate-700">
                         <span class="flex items-center gap-1.5"><i class="fa-solid fa-compact-disc text-indigo-600"></i> Background Music</span>
@@ -770,7 +748,6 @@
                     </div>
                 </div>
 
-                <!-- Sound Effects Volume Controls -->
                 <div class="space-y-2 bg-slate-50 p-3 rounded-xl border">
                     <div class="flex items-center justify-between text-xs font-bold text-slate-700">
                         <span class="flex items-center gap-1.5"><i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> Sound Effects (SFX)</span>
@@ -1318,7 +1295,6 @@
 
             currentWeek = weekNum;
 
-            // Toggle Tab Visuals
             document.querySelectorAll('.week-tab').forEach(tab => {
                 tab.classList.remove('bg-red-700', 'text-white', 'bg-indigo-700', 'shadow');
                 tab.classList.add('text-slate-400', 'bg-slate-50');
@@ -1331,7 +1307,6 @@
                 if (weekNum === 2) activeTab.classList.add('bg-indigo-700', 'text-white', 'shadow');
             }
 
-            // Toggle Views
             document.querySelectorAll('.week-view').forEach(view => view.classList.add('hidden'));
             const activeView = document.getElementById(`view-week-${weekNum}`);
             if (activeView) activeView.classList.remove('hidden');
@@ -1499,6 +1474,7 @@
             }
         }
 
+        /* Cute Animated Cartoon Tile Board Renderer */
         function initWeek2Board() {
             const grid = document.getElementById('snakes-board-grid');
             grid.innerHTML = '';
@@ -1506,21 +1482,23 @@
             for (let tile = 1; tile <= 20; tile++) {
                 const tileDiv = document.createElement('div');
                 tileDiv.id = `board-tile-${tile}`;
-                tileDiv.className = "h-11 sm:h-14 rounded-lg bg-slate-800 border border-slate-700 flex flex-col items-center justify-between p-1 relative font-bold text-xs text-slate-300";
+                tileDiv.className = "h-12 sm:h-16 rounded-xl bg-slate-800 border-2 border-slate-700 flex flex-col items-center justify-between p-1 relative font-bold text-xs text-slate-300 shadow-md transition-all";
 
-                let iconHtml = '';
+                let badgeHtml = '';
                 if (boardLadders[tile]) {
-                    iconHtml = `<i class="fa-solid fa-arrow-up-right-dots text-emerald-400 text-[10px]" title="Ladder to ${boardLadders[tile]}"></i>`;
+                    tileDiv.classList.add('border-emerald-500/50', 'bg-emerald-950/30');
+                    badgeHtml = `<span class="bg-emerald-500 text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded-full shadow flex items-center gap-0.5" title="Jump to Tile ${boardLadders[tile]}"><i class="fa-solid fa-stairs"></i> ${boardLadders[tile]}</span>`;
                 } else if (boardSnakes[tile]) {
-                    iconHtml = `<i class="fa-solid fa-worm text-rose-400 text-[10px]" title="Snake to ${boardSnakes[tile]}"></i>`;
+                    tileDiv.classList.add('border-rose-500/50', 'bg-rose-950/30');
+                    badgeHtml = `<span class="bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full shadow flex items-center gap-0.5" title="Slide to Tile ${boardSnakes[tile]}"><i class="fa-solid fa-staff-snake"></i> ${boardSnakes[tile]}</span>`;
                 }
 
                 tileDiv.innerHTML = `
-                    <div class="w-full flex justify-between items-center text-[9px] text-slate-400">
-                        <span>${tile}</span>
-                        ${iconHtml}
+                    <div class="w-full flex justify-between items-center text-[9px] text-slate-400 font-extrabold px-0.5">
+                        <span class="bg-slate-900/80 px-1 rounded text-amber-300">${tile}</span>
+                        ${badgeHtml}
                     </div>
-                    <div id="tile-player-${tile}" class="min-h-[16px]"></div>
+                    <div id="tile-player-${tile}" class="min-h-[22px] flex items-center justify-center"></div>
                 `;
                 grid.appendChild(tileDiv);
             }
@@ -1542,6 +1520,38 @@
             }
         }
 
+        /* SVG Cute Player Character: 'T' shape with smiley face & walking legs */
+        function getCuteTSmileySVG() {
+            return `
+                <div class="relative flex flex-col items-center justify-center animate-legs" title="Cute Tax Hero T">
+                    <svg viewBox="0 0 40 45" class="w-7 h-7 filter drop-shadow-md">
+                        <!-- T Horizontal Top Bar -->
+                        <rect x="2" y="4" width="36" height="10" rx="3" fill="#f59e0b" stroke="#78350f" stroke-width="2"/>
+                        <!-- T Vertical Stem -->
+                        <rect x="14" y="12" width="12" height="20" rx="2" fill="#f59e0b" stroke="#78350f" stroke-width="2"/>
+                        
+                        <!-- Cute Eyes -->
+                        <circle cx="10" cy="9" r="1.8" fill="#1e293b"/>
+                        <circle cx="30" cy="9" r="1.8" fill="#1e293b"/>
+                        <circle cx="10.6" cy="8.4" r="0.6" fill="#ffffff"/>
+                        <circle cx="30.6" cy="8.4" r="0.6" fill="#ffffff"/>
+
+                        <!-- Cheeks -->
+                        <circle cx="7" cy="11" r="1.5" fill="#f43f5e" opacity="0.8"/>
+                        <circle cx="33" cy="11" r="1.5" fill="#f43f5e" opacity="0.8"/>
+
+                        <!-- Happy Smile -->
+                        <path d="M 16 10 Q 20 14 24 10" stroke="#1e293b" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+                        <!-- Animated Cartoon Feet/Legs -->
+                        <path d="M 17 32 L 15 40 M 23 32 L 25 40" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round"/>
+                        <ellipse cx="14" cy="41" rx="2.5" ry="1.5" fill="#1e293b"/>
+                        <ellipse cx="26" cy="41" rx="2.5" ry="1.5" fill="#1e293b"/>
+                    </svg>
+                </div>
+            `;
+        }
+
         function updateBoardPlayerPosition() {
             for (let t = 1; t <= 20; t++) {
                 const container = document.getElementById(`tile-player-${t}`);
@@ -1550,7 +1560,7 @@
 
             const activeContainer = document.getElementById(`tile-player-${w2TilePosition}`);
             if (activeContainer) {
-                activeContainer.innerHTML = `<div class="bg-indigo-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shadow-md border border-white animate-bounce">📍</div>`;
+                activeContainer.innerHTML = getCuteTSmileySVG();
             }
             document.getElementById('w2-tile-display').textContent = `Tile ${w2TilePosition} / 20`;
         }
@@ -1611,7 +1621,6 @@
                 playCuteSfx('correct');
                 saveUserScore(10);
 
-                // Advance Tile
                 w2TilePosition = Math.min(20, w2TilePosition + 2);
                 if (boardLadders[w2TilePosition]) {
                     setTimeout(() => {
@@ -1720,7 +1729,6 @@
             loggedInUser.score = (loggedInUser.score || 0) + points;
             localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
 
-            // Sync with allUsersStore
             const idx = allUsersStore.findIndex(u => u.username === loggedInUser.username);
             if (idx >= 0) {
                 allUsersStore[idx].score = loggedInUser.score;
@@ -1729,7 +1737,6 @@
             }
             localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
 
-            // Sync to Firestore if online
             if (window.dbInstance && window.docRef) {
                 try {
                     const uRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'users', loggedInUser.username);
@@ -1865,6 +1872,7 @@
             localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
         }
 
+        /* Always Render Top 5 Leaderboard & Player's Relative Standing (+1 / -1 Rank) */
         function renderLeaderboard() {
             const list = document.getElementById('leaderboard-list');
             list.innerHTML = '';
@@ -1873,10 +1881,14 @@
 
             if (sorted.length === 0) {
                 list.innerHTML = `<p class="text-center text-xs text-slate-400 py-6">No scores registered yet. Be the first!</p>`;
+                document.getElementById('my-rank-banner').classList.add('hidden');
                 return;
             }
 
-            sorted.forEach((u, idx) => {
+            // Always display Top 5 users on main leaderboard
+            const top5 = sorted.slice(0, 5);
+
+            top5.forEach((u, idx) => {
                 const item = document.createElement('div');
                 item.className = "flex items-center justify-between p-2.5 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-100/80 transition text-xs";
                 item.innerHTML = `
@@ -1886,7 +1898,7 @@
                         </span>
                         <img src="${u.avatar || 'https://placehold.co/100x100/dc2626/ffffff?text=TU'}" class="w-7 h-7 rounded-full object-cover">
                         <div>
-                            <strong class="text-slate-800 block">@${u.username}</strong>
+                            <strong class="text-slate-800 block">@${u.username} ${loggedInUser && u.username === loggedInUser.username ? '<span class="text-[10px] text-red-600 font-extrabold">(You)</span>' : ''}</strong>
                             <span class="text-[10px] text-slate-400">ID: ${u.studentId || 'N/A'}</span>
                         </div>
                     </div>
@@ -1896,6 +1908,61 @@
                 `;
                 list.appendChild(item);
             });
+
+            // Display Player Standing Banner with 1 Rank Up & 1 Rank Down
+            const myRankBanner = document.getElementById('my-rank-banner');
+            const myRankNeighbors = document.getElementById('my-rank-neighbors');
+            const myRankSummary = document.getElementById('my-rank-summary');
+
+            if (loggedInUser) {
+                const myIdx = sorted.findIndex(u => u.username === loggedInUser.username);
+                if (myIdx >= 0) {
+                    myRankBanner.classList.remove('hidden');
+                    myRankSummary.textContent = `Rank #${myIdx + 1} of ${sorted.length}`;
+
+                    myRankNeighbors.innerHTML = '';
+
+                    // Rank Above (1 Up)
+                    if (myIdx - 1 >= 0) {
+                        const prevUser = sorted[myIdx - 1];
+                        myRankNeighbors.appendChild(createNeighborRankCard(prevUser, myIdx, 'Up'));
+                    }
+
+                    // Active User
+                    myRankNeighbors.appendChild(createNeighborRankCard(sorted[myIdx], myIdx + 1, 'Self'));
+
+                    // Rank Below (1 Down)
+                    if (myIdx + 1 < sorted.length) {
+                        const nextUser = sorted[myIdx + 1];
+                        myRankNeighbors.appendChild(createNeighborRankCard(nextUser, myIdx + 2, 'Down'));
+                    }
+                } else {
+                    myRankBanner.classList.add('hidden');
+                }
+            } else {
+                myRankBanner.classList.add('hidden');
+            }
+        }
+
+        function createNeighborRankCard(u, rankNum, type) {
+            const div = document.createElement('div');
+            const isSelf = type === 'Self';
+            div.className = `flex items-center justify-between p-2 rounded-lg border text-xs ${isSelf ? 'bg-red-100/80 border-red-300 font-extrabold' : 'bg-white border-slate-200 text-slate-600'}`;
+            
+            let labelTag = '';
+            if (type === 'Up') labelTag = '<span class="text-[9px] bg-emerald-100 text-emerald-800 font-black px-1.5 py-0.5 rounded mr-1">1 UP</span>';
+            if (type === 'Down') labelTag = '<span class="text-[9px] bg-amber-100 text-amber-800 font-black px-1.5 py-0.5 rounded mr-1">1 DOWN</span>';
+            if (type === 'Self') labelTag = '<span class="text-[9px] bg-red-600 text-white font-black px-1.5 py-0.5 rounded mr-1">YOU</span>';
+
+            div.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <span class="w-5 font-black text-slate-700">#${rankNum}</span>
+                    <img src="${u.avatar || 'https://placehold.co/100x100/dc2626/ffffff?text=TU'}" class="w-5 h-5 rounded-full object-cover">
+                    <span>${labelTag} @${u.username}</span>
+                </div>
+                <span class="font-bold text-emerald-700">${u.score || 0} pts</span>
+            `;
+            return div;
         }
 
         function exportScoresCSV() {
@@ -1951,47 +2018,21 @@
             document.getElementById('instructor-modal').classList.remove('flex');
         }
 
-/**
- * Handles instructor login using a dynamically stored password.
- * @param {Event} e - The form submission event.
- */
-
         function handleInstructorLogin(e) {
-    e.preventDefault();
-    
-    // Retrieve the input value
-    const passInput = document.getElementById('instructor-pass-input').value;
-    
-    // Retrieve stored password from localStorage, defaulting to 'taylors2026' if not set
-    const currentPassword = localStorage.getItem('instructorPassword') || 'tye6632';
+            e.preventDefault();
+            const passInput = document.getElementById('instructor-pass-input').value;
+            const currentPassword = localStorage.getItem('instructorPassword') || 'tye6632';
 
-    // Verify password match
-    if (passInput === currentPassword) {
-        isInstructor = true;
-        document.getElementById('instructor-toolbar').classList.remove('hidden');
-        document.getElementById('instructor-leaderboard-actions').classList.remove('hidden');
-        closeInstructorLoginModal();
-        showToast("Instructor Mode Active", "Controls unlocked!");
-    } else {
-        document.getElementById('instructor-pass-error').classList.remove('hidden');
-    }
-}
-        /**
- * Updates the instructor password stored in localStorage.
- * @param {string} newPassword - The new password entered by the user.
- */
-function changeInstructorPassword(newPassword) {
-    // Basic validation to ensure the password is not empty
-    if (!newPassword || newPassword.trim() === '') {
-        showToast("Error", "Password cannot be empty.");
-        return;
-    }
-
-    // Save the new password to local storage
-    localStorage.setItem('instructorPassword', newPassword.trim());
-    
-    showToast("Success", "Instructor password updated successfully!");
-}
+            if (passInput === currentPassword) {
+                isInstructor = true;
+                document.getElementById('instructor-toolbar').classList.remove('hidden');
+                document.getElementById('instructor-leaderboard-actions').classList.remove('hidden');
+                closeInstructorLoginModal();
+                showToast("Instructor Mode Active", "Controls unlocked!");
+            } else {
+                document.getElementById('instructor-pass-error').classList.remove('hidden');
+            }
+        }
 
         function exitInstructorMode() {
             isInstructor = false;
