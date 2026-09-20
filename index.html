@@ -10,8 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Tone.js for synthesized cute sound effects & background music -->
+    <!-- Tone.js for sound effects & music -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Tone.js/14.8.49/Tone.js"></script>
 
     <style>
@@ -82,19 +81,16 @@
             </div>
             
             <div class="flex items-center gap-2 sm:gap-3">
-                <!-- Leaderboard Trigger -->
                 <button onclick="openLeaderboardModal()" class="bg-black/40 hover:bg-black/60 backdrop-blur px-3 py-1.5 rounded-xl border border-amber-500/40 flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-amber-300 transition shadow">
                     <i class="fa-solid fa-trophy text-amber-400"></i>
                     <span class="hidden md:inline">Scoreboard</span>
                 </button>
 
-                <!-- Instructor Mode Toggle Button -->
                 <button onclick="openInstructorLoginModal()" id="instructor-btn" class="bg-black/40 hover:bg-black/60 backdrop-blur px-3 py-1.5 rounded-xl border border-red-500/30 flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-red-200 transition">
                     <i class="fa-solid fa-user-shield text-red-400"></i>
                     <span id="instructor-btn-label" class="hidden sm:inline">Instructor</span>
                 </button>
 
-                <!-- User Profile / Auth Button -->
                 <div id="user-header-profile" class="flex items-center">
                     <button onclick="openAuthModal()" class="bg-red-700 hover:bg-red-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5 shadow">
                         <i class="fa-solid fa-right-to-bracket"></i>
@@ -102,7 +98,6 @@
                     </button>
                 </div>
 
-                <!-- Sound Settings Trigger Button -->
                 <button onclick="openSoundSettingsModal()" id="sound-btn" class="p-2 rounded-xl bg-black/40 hover:bg-black/60 transition text-red-200 hover:text-white border border-red-500/30 text-xs sm:text-sm flex items-center gap-1.5" title="Audio & Music Settings">
                     <i class="fa-solid fa-sliders" id="sound-icon"></i>
                     <span class="hidden lg:inline text-xs font-bold">Audio</span>
@@ -149,16 +144,12 @@
 
                 <button onclick="selectWeek(2)" id="tab-week-2" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all text-slate-400 bg-slate-50 border border-slate-200 opacity-75">
                     <span id="tab-week-2-badge" class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
-                        <i id="tab-week-2-icon" class="fa-solid fa-lock text-[10px]"></i> Week 2
+                        <i id="tab-week-2-icon" class="fa-solid fa-unlock text-[10px]"></i> Week 2
                     </span>
                     <span id="tab-week-2-title" class="font-bold">Employment Income</span>
                     <span id="tab-week-2-game" class="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-md font-medium uppercase">Snakes & Ladders</span>
                 </button>
 
-                <!-- =========================================================================
-                     UI NAVIGATION PLACEHOLDER FOR FUTURE WEEKS (e.g., WEEK 3 & BEYOND)
-                     Duplicate the tab button below and update IDs (tab-week-3) to add new weeks.
-                     ========================================================================= -->
                 <button onclick="showLockedNotification('Week 3')" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all text-slate-400 bg-slate-50 border border-slate-200 opacity-75 cursor-not-allowed">
                     <span class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
                         <i class="fa-solid fa-lock text-[10px]"></i> Week 3
@@ -168,6 +159,7 @@
             </div>
         </nav>
 
+        <!-- View Week 1: Hangman -->
         <section id="view-week-1" class="week-view space-y-6">
             
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
@@ -265,6 +257,7 @@
 
         </section>
 
+        <!-- View Week 2: Employment Income MCQ Board -->
         <section id="view-week-2" class="week-view space-y-6 hidden">
             
             <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
@@ -299,13 +292,12 @@
                         </span>
                     </div>
 
-                    <!-- 20-Tile Grid Board -->
                     <div id="snakes-board-grid" class="grid grid-cols-5 gap-1.5 bg-slate-950 p-2.5 rounded-xl border border-slate-800 shadow-inner my-auto">
                     </div>
 
                     <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/60 text-[11px] space-y-1">
                         <div class="font-extrabold text-amber-300 flex items-center justify-between">
-                            <span><i class="fa-solid fa-map-pin mr-1"></i> Cartoon Board Legend</span>
+                            <span><i class="fa-solid fa-map-pin mr-1"></i> Board Legend</span>
                             <span class="text-[10px] text-slate-400">Correct = Advance</span>
                         </div>
                         <div class="flex items-center gap-3 text-slate-300 flex-wrap">
@@ -378,11 +370,6 @@
 
         </section>
 
-        <!-- =========================================================================
-             FUTURE WEEKLY GAME MODULE SECTION PLACEHOLDER
-             Add <section id="view-week-3" class="week-view space-y-6 hidden"> ... </section>
-             ========================================================================= -->
-
         <!-- Coin Flip Modal -->
         <div id="coin-flip-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 relative border border-slate-100">
@@ -408,7 +395,6 @@
                 <div id="coin-result-text" class="min-h-[24px] font-extrabold text-sm text-slate-800"></div>
 
                 <div class="space-y-2">
-                    <!-- FIXED: Added onclick="executeCoinFlip()" trigger to button below -->
                     <button id="flip-coin-btn" onclick="executeCoinFlip()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black py-2.5 rounded-xl shadow transition text-sm">
                         <i class="fa-solid fa-rotate-right mr-1"></i> Flip Coin Now
                     </button>
@@ -454,11 +440,6 @@
                             Unlocked
                         </button>
                     </div>
-
-                    <!-- =========================================================================
-                         INSTRUCTOR UNLOCK MODAL PLACEHOLDER FOR FUTURE WEEKS
-                         Insert new week unlock toggles here for Week 3, 4, etc.
-                         ========================================================================= -->
                 </div>
 
                 <div class="pt-2 text-center border-t">
@@ -589,7 +570,7 @@
                 <form onsubmit="handleInstructorLogin(event)" class="space-y-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Instructor Password</label>
-                        <input type="password" id="instructor-pass-input" required placeholder="Enter password" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
+                        <input type="password" id="instructor-pass-input" required placeholder="Enter password (default: admin123)" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
                     </div>
                     <p id="instructor-pass-error" class="text-xs text-rose-600 font-bold hidden text-center">Incorrect password.</p>
                     <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold py-2.5 rounded-xl shadow transition text-sm">
@@ -599,7 +580,7 @@
             </div>
         </div>
 
-        <!-- Scoreboard Modal (Top 5 + Player Standing Section) -->
+        <!-- Scoreboard Modal -->
         <div id="leaderboard-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 space-y-4 relative max-h-[90vh] flex flex-col">
                 <button onclick="closeLeaderboardModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
@@ -638,11 +619,9 @@
                     </div>
                 </div>
 
-                <!-- Scrollable Participant List (Top 5) -->
                 <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-1.5 custom-scrollbar min-h-[160px] max-h-[260px] border-y border-slate-100 py-2">
                 </div>
 
-                <!-- Active Student Rank Card at Bottom (1 Up & 1 Down View) -->
                 <div id="my-rank-banner" class="hidden bg-red-50/90 border border-red-200 rounded-xl p-3 shrink-0 space-y-2">
                     <div class="flex items-center justify-between border-b border-red-200/60 pb-1.5 text-xs font-black text-red-900 uppercase">
                         <span><i class="fa-solid fa-user-tag text-red-600 mr-1"></i> Your Relative Standing</span>
@@ -652,7 +631,6 @@
                     </div>
                 </div>
 
-                <!-- Scoring Rules Box -->
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 shrink-0 text-amber-950 text-xs space-y-1">
                     <div class="font-extrabold flex items-center gap-1.5 text-amber-900">
                         <i class="fa-solid fa-circle-info text-amber-600"></i>
@@ -681,8 +659,8 @@
                         <i class="fa-solid fa-book-open"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-extrabold text-slate-800">Instructor Answer Key — Week 1</h3>
-                        <p class="text-xs text-slate-500">Week 1 Solutions & Statutory Explanations</p>
+                        <h3 class="text-lg font-extrabold text-slate-800">Instructor Answer Key — Week 1 & 2</h3>
+                        <p class="text-xs text-slate-500">Solutions & Statutory Explanations</p>
                     </div>
                 </div>
 
@@ -797,6 +775,7 @@
 
     </main>
 
+    <!-- Firebase Integration Module -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -867,6 +846,7 @@
         window.setDoc = setDoc;
     </script>
 
+    <!-- Audio Settings & Sound Engine -->
     <script>
         let audioInitialized = false;
         let masterSilent = false;
@@ -882,10 +862,6 @@
         let bgmLoopPattern = null;
         let currentTopicBgmIndex = 1;
 
-        /* =========================================================================
-           AUDIO THEMES PLACEHOLDER FOR FUTURE WEEKS
-           Add new themes (e.g., 3: { title: "Week 3 Theme", ... }) here.
-           ========================================================================= */
         const bgmThemes = {
             1: {
                 title: "Week 1: Resident Status Chiptune",
@@ -1073,6 +1049,7 @@
         }
     </script>
 
+    <!-- Main Game Logic Script -->
     <script>
         // Global Game State
         let currentWeek = 1;
@@ -1081,14 +1058,8 @@
         let loggedInUser = JSON.parse(localStorage.getItem('tax_tu_user') || 'null');
         let allUsersStore = JSON.parse(localStorage.getItem('tax_tu_all_users') || '[]');
 
-        // Coin Flip Rotation Counter State Variable
         let coinRotationDegrees = 0;
 
-        /* =========================================================================
-           QUESTION BANK MODIFICATION PLACEHOLDER — WEEK 1 (HANGMAN)
-           Add or edit objects in week1Questions array below.
-           Format: { id: N, category: "", hint: "", answer: "", explanation: "" }
-           ========================================================================= */
         const week1Questions = [
             {
                 id: 1,
@@ -1162,11 +1133,6 @@
             }
         ];
 
-        /* =========================================================================
-           QUESTION BANK MODIFICATION PLACEHOLDER — WEEK 2 (MCQ)
-           Add or edit objects in week2Questions array below.
-           Format: { id: N, category: "", question: "", options: [...], correct: Index (0-3), explanation: "" }
-           ========================================================================= */
         const week2Questions = [
             {
                 id: 1,
@@ -1200,12 +1166,12 @@
                 question: "What is the annual statutory exemption limit for childcare allowance received by an employee?",
                 options: [
                     "RM1,000",
-                    "RM3,000",
+                    "RM2,400",
                     "RM6,000",
                     "Fully Exempt"
                 ],
                 correct: 1,
-                explanation: "Childcare allowance for children up to 12 years old is exempt up to RM3,000 per year."
+                explanation: "Childcare allowance for children up to 12 years old is exempt up to RM2,400 per year."
             },
             {
                 id: 4,
@@ -1270,7 +1236,7 @@
                     "Age 65"
                 ],
                 correct: 1,
-                explanation: "Gratuity on retirement is fully exempt if due to ill health, or compulsory retirement upon reaching age 55 (or official retirement age) with 10+ years with the same employer."
+                explanation: "Gratuity on retirement is fully exempt if due to ill health, or compulsory retirement upon reaching age 55 with 10+ years with the same employer."
             },
             {
                 id: 9,
@@ -1300,16 +1266,9 @@
             }
         ];
 
-        /* =========================================================================
-           QUESTION BANK MODIFICATION PLACEHOLDER — WEEK 3 & FUTURE WEEKS
-           Define your future question arrays here (e.g., const week3Questions = [...];)
-           ========================================================================= */
+        const boardLadders = { 3: 8, 7: 12, 13: 17 };
+        const boardSnakes = { 11: 4, 16: 9, 19: 10 };
 
-        // Snakes & Ladders Board Layout Definition (20 tiles)
-        const boardLadders = { 3: 8, 7: 12, 13: 17 }; // Tile -> Jump Target
-        const boardSnakes = { 11: 4, 16: 9, 19: 10 }; // Tile -> Slide Target
-
-        // Week 1 Hangman State Variables
         let w1CurrentIndex = 0;
         let w1Score = 0;
         let w1Lives = 6;
@@ -1317,11 +1276,9 @@
         let w1Attempts = 1;
         let w1AnswerSolved = false;
 
-        // Week 2 Snakes State Variables
         let w2CurrentIndex = 0;
         let w2TilePosition = 1;
         let w2Hearts = 10;
-        let w2SelectedOption = null;
 
         window.onload = function() {
             updateUserUI();
@@ -1357,6 +1314,8 @@
             document.querySelectorAll('.week-view').forEach(view => view.classList.add('hidden'));
             const activeView = document.getElementById(`view-week-${weekNum}`);
             if (activeView) activeView.classList.remove('hidden');
+
+            updateTopicBgm(weekNum);
 
             if (weekNum === 1) initWeek1();
             if (weekNum === 2) loadWeek2Question();
@@ -1521,7 +1480,6 @@
             }
         }
 
-        /* Cute Animated Cartoon Tile Board Renderer */
         function initWeek2Board() {
             const grid = document.getElementById('snakes-board-grid');
             grid.innerHTML = '';
@@ -1567,30 +1525,19 @@
             }
         }
 
-        /* SVG Cute Player Character: 'T' shape with smiley face & walking legs */
         function getCuteTSmileySVG() {
             return `
                 <div class="relative flex flex-col items-center justify-center animate-legs" title="Cute Tax Hero T">
                     <svg viewBox="0 0 40 45" class="w-7 h-7 filter drop-shadow-md">
-                        <!-- T Horizontal Top Bar -->
                         <rect x="2" y="4" width="36" height="10" rx="3" fill="#f59e0b" stroke="#78350f" stroke-width="2"/>
-                        <!-- T Vertical Stem -->
                         <rect x="14" y="12" width="12" height="20" rx="2" fill="#f59e0b" stroke="#78350f" stroke-width="2"/>
-                        
-                        <!-- Cute Eyes -->
                         <circle cx="10" cy="9" r="1.8" fill="#1e293b"/>
                         <circle cx="30" cy="9" r="1.8" fill="#1e293b"/>
                         <circle cx="10.6" cy="8.4" r="0.6" fill="#ffffff"/>
                         <circle cx="30.6" cy="8.4" r="0.6" fill="#ffffff"/>
-
-                        <!-- Cheeks -->
                         <circle cx="7" cy="11" r="1.5" fill="#f43f5e" opacity="0.8"/>
                         <circle cx="33" cy="11" r="1.5" fill="#f43f5e" opacity="0.8"/>
-
-                        <!-- Happy Smile -->
                         <path d="M 16 10 Q 20 14 24 10" stroke="#1e293b" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-
-                        <!-- Animated Cartoon Feet/Legs -->
                         <path d="M 17 32 L 15 40 M 23 32 L 25 40" stroke="#1e293b" stroke-width="2.5" stroke-linecap="round"/>
                         <ellipse cx="14" cy="41" rx="2.5" ry="1.5" fill="#1e293b"/>
                         <ellipse cx="26" cy="41" rx="2.5" ry="1.5" fill="#1e293b"/>
@@ -1712,11 +1659,9 @@
             const coin = document.getElementById('coin-element');
             const flipBtn = document.getElementById('flip-coin-btn');
             
-            // Reset state for new attempts
             document.getElementById('coin-face-text').textContent = '🪙';
             document.getElementById('coin-result-text').textContent = '';
             
-            // Reset transform smoothly
             coin.style.transform = `rotateY(0deg)`;
             coinRotationDegrees = 0;
 
@@ -1738,7 +1683,6 @@
             const flipBtn = document.getElementById('flip-coin-btn');
             flipBtn.disabled = true;
 
-            // Increment rotation by 1080 deg on every flip
             coinRotationDegrees += 1080;
             coin.style.transform = `rotateY(${coinRotationDegrees}deg)`;
 
@@ -1932,7 +1876,6 @@
             localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
         }
 
-        /* Always Render Top 5 Leaderboard & Player's Relative Standing (+1 / -1 Rank) */
         function renderLeaderboard() {
             const list = document.getElementById('leaderboard-list');
             list.innerHTML = '';
@@ -1945,7 +1888,6 @@
                 return;
             }
 
-            // Always display Top 5 users on main leaderboard
             const top5 = sorted.slice(0, 5);
 
             top5.forEach((u, idx) => {
@@ -1969,7 +1911,6 @@
                 list.appendChild(item);
             });
 
-            // Display Player Standing Banner with 1 Rank Up & 1 Rank Down
             const myRankBanner = document.getElementById('my-rank-banner');
             const myRankNeighbors = document.getElementById('my-rank-neighbors');
             const myRankSummary = document.getElementById('my-rank-summary');
@@ -1982,16 +1923,13 @@
 
                     myRankNeighbors.innerHTML = '';
 
-                    // Rank Above (1 Up)
                     if (myIdx - 1 >= 0) {
                         const prevUser = sorted[myIdx - 1];
                         myRankNeighbors.appendChild(createNeighborRankCard(prevUser, myIdx, 'Up'));
                     }
 
-                    // Active User
                     myRankNeighbors.appendChild(createNeighborRankCard(sorted[myIdx], myIdx + 1, 'Self'));
 
-                    // Rank Below (1 Down)
                     if (myIdx + 1 < sorted.length) {
                         const nextUser = sorted[myIdx + 1];
                         myRankNeighbors.appendChild(createNeighborRankCard(nextUser, myIdx + 2, 'Down'));
@@ -2025,12 +1963,138 @@
             return div;
         }
 
-        function exportScoresCSV() {
+        // Instructor Actions & Controls
+        function openInstructorLoginModal() {
+            document.getElementById('instructor-modal').classList.remove('hidden');
+            document.getElementById('instructor-modal').classList.add('flex');
+        }
+
+        function closeInstructorLoginModal() {
+            document.getElementById('instructor-modal').classList.add('hidden');
+            document.getElementById('instructor-modal').classList.remove('flex');
+        }
+
+        function handleInstructorLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('instructor-pass-input').value;
+            if (pass === 'admin123' || pass === 'lecturer123') {
+                isInstructor = true;
+                document.getElementById('instructor-toolbar').classList.remove('hidden');
+                document.getElementById('instructor-btn-label').textContent = "Lecturer Mode";
+                document.getElementById('instructor-leaderboard-actions').classList.remove('hidden');
+                closeInstructorLoginModal();
+                showToast("Instructor Mode Active", "Controls enabled.");
+            } else {
+                document.getElementById('instructor-pass-error').classList.remove('hidden');
+            }
+        }
+
+        function exitInstructorMode() {
+            isInstructor = false;
+            document.getElementById('instructor-toolbar').classList.add('hidden');
+            document.getElementById('instructor-btn-label').textContent = "Instructor";
+            document.getElementById('instructor-leaderboard-actions').classList.add('hidden');
+            showToast("Exited Instructor Mode", "Standard mode active.");
+        }
+
+        function instructorRevealAnswer() {
             if (!isInstructor) return;
-            const sorted = [...allUsersStore].sort((a, b) => (b.score || 0) - (a.score || 0));
-            let csvContent = "data:text/csv;charset=utf-8,Rank,Username,Student ID,Total Score\n";
-            sorted.forEach((u, idx) => {
-                csvContent += `${idx + 1},"${u.username}","${u.studentId || 'N/A'}",${u.score || 0}\n`;
+            if (currentWeek === 1) {
+                const answer = week1Questions[w1CurrentIndex].answer;
+                answer.replace(/\s+/g, '').split('').forEach(char => w1GuessedLetters.add(char));
+                checkW1WinLoss();
+            } else if (currentWeek === 2) {
+                const q = week2Questions[w2CurrentIndex];
+                selectW2Option(q.correct);
+            }
+        }
+
+        function instructorSkipQuestion() {
+            if (!isInstructor) return;
+            if (currentWeek === 1) nextQuestion();
+            if (currentWeek === 2) nextWeek2Question();
+        }
+
+        function openTopicUnlockModal() {
+            document.getElementById('topic-unlock-modal').classList.remove('hidden');
+            document.getElementById('topic-unlock-modal').classList.add('flex');
+        }
+
+        function closeTopicUnlockModal() {
+            document.getElementById('topic-unlock-modal').classList.add('hidden');
+            document.getElementById('topic-unlock-modal').classList.remove('flex');
+        }
+
+        function toggleWeek2Unlock() {
+            week2Unlocked = !week2Unlocked;
+            const btn = document.getElementById('unlock-w2-btn');
+            if (week2Unlocked) {
+                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-emerald-600 text-white shadow";
+                btn.textContent = "Unlocked";
+            } else {
+                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-slate-300 text-slate-700 shadow";
+                btn.textContent = "Locked";
+            }
+        }
+
+        function openAnswerKeyModal() {
+            const list = document.getElementById('answer-key-list');
+            list.innerHTML = '';
+
+            const sectionTitle1 = document.createElement('div');
+            sectionTitle1.className = "font-black text-sm text-red-800 border-b border-red-200 pb-1 mt-2";
+            sectionTitle1.textContent = "Week 1: Resident Status Questions";
+            list.appendChild(sectionTitle1);
+
+            week1Questions.forEach((q, i) => {
+                const card = document.createElement('div');
+                card.className = "p-3 bg-slate-50 border rounded-xl text-xs space-y-1";
+                card.innerHTML = `
+                    <div class="font-extrabold text-slate-800">Q${i+1}: ${q.category}</div>
+                    <div class="text-slate-600"><strong>Answer:</strong> <span class="text-emerald-700 font-bold">${q.answer}</span></div>
+                    <div class="text-slate-500">${q.explanation}</div>
+                `;
+                list.appendChild(card);
+            });
+
+            document.getElementById('answer-key-modal').classList.remove('hidden');
+            document.getElementById('answer-key-modal').classList.add('flex');
+        }
+
+        function closeAnswerKeyModal() {
+            document.getElementById('answer-key-modal').classList.add('hidden');
+            document.getElementById('answer-key-modal').classList.remove('flex');
+        }
+
+        function openSummaryModal() {
+            const title = document.getElementById('summary-modal-title');
+            const scoreVal = document.getElementById('summary-score-val');
+            
+            if (currentWeek === 1) {
+                title.textContent = "Week 1 Complete!";
+                scoreVal.textContent = `${w1Score} pts`;
+            } else {
+                title.textContent = "Week 2 Complete!";
+                scoreVal.textContent = `Tile ${w2TilePosition} Reached`;
+            }
+
+            document.getElementById('summary-modal').classList.remove('hidden');
+            document.getElementById('summary-modal').classList.add('flex');
+        }
+
+        function closeSummaryModal() {
+            document.getElementById('summary-modal').classList.add('hidden');
+            document.getElementById('summary-modal').classList.remove('flex');
+        }
+
+        function exportScoresCSV() {
+            if (allUsersStore.length === 0) {
+                showToast("Notice", "No student data to export.");
+                return;
+            }
+            let csvContent = "data:text/csv;charset=utf-8,Username,Student ID,Total Score\n";
+            allUsersStore.forEach(u => {
+                csvContent += `"${u.username}","${u.studentId || ''}",${u.score || 0}\n`;
             });
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
@@ -2039,7 +2103,32 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            showToast("Export Complete", "Scores downloaded as CSV.");
+        }
+
+        function resetScoresOnly() {
+            if (!confirm("Are you sure you want to reset all user scores to 0?")) return;
+            allUsersStore.forEach(u => u.score = 0);
+            localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
+            if (loggedInUser) {
+                loggedInUser.score = 0;
+                localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
+            }
+            updateUserUI();
+            renderLeaderboard();
+            showToast("Reset Complete", "All scores set to 0.");
+        }
+
+        function clearEntireLeaderboard() {
+            if (!confirm("Are you sure you want to delete all user records?")) return;
+            allUsersStore = [];
+            localStorage.removeItem('tax_tu_all_users');
+            if (loggedInUser) {
+                loggedInUser.score = 0;
+                localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
+            }
+            updateUserUI();
+            renderLeaderboard();
+            showToast("Cleared", "All leaderboard data deleted.");
         }
     </script>
 </body>
