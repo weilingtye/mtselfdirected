@@ -410,20 +410,42 @@
                     </div>
                 </div>
 
-                <!-- Instructor Scoreboard Reset Banner (Visible only in Instructor Mode) -->
+                <!-- Instructor Scoreboard Reset & Export Banner (Visible only in Instructor Mode) -->
                 <div id="instructor-leaderboard-actions" class="hidden bg-amber-100 border border-amber-300 p-3 rounded-xl shrink-0 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
                     <div class="flex items-center gap-2 font-bold text-amber-950">
                         <i class="fa-solid fa-user-shield text-amber-700 text-sm"></i>
-                        <span>Instructor Management: Reset Scoreboard for New Semester</span>
+                        <span>Instructor Controls</span>
                     </div>
-                    <button onclick="clearEntireLeaderboard()" class="bg-rose-700 hover:bg-rose-800 text-white font-extrabold px-3 py-1.5 rounded-lg transition shadow text-xs shrink-0 flex items-center gap-1.5">
-                        <i class="fa-solid fa-trash-can"></i>
-                        <span>Wipe All Semester Scores</span>
-                    </button>
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <button onclick="exportScoresCSV()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold px-2.5 py-1.5 rounded-lg transition shadow text-xs flex items-center gap-1">
+                            <i class="fa-solid fa-file-csv"></i>
+                            <span>Export CSV</span>
+                        </button>
+                        <button onclick="resetScoresOnly()" class="bg-amber-600 hover:bg-amber-700 text-white font-extrabold px-2.5 py-1.5 rounded-lg transition shadow text-xs flex items-center gap-1">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            <span>Reset Scores Only</span>
+                        </button>
+                        <button onclick="clearEntireLeaderboard()" class="bg-rose-700 hover:bg-rose-800 text-white font-extrabold px-2.5 py-1.5 rounded-lg transition shadow text-xs flex items-center gap-1">
+                            <i class="fa-solid fa-trash-can"></i>
+                            <span>Delete All Data</span>
+                        </button>
+                    </div>
                 </div>
 
-                <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-1 custom-scrollbar min-h-[220px]">
+                <!-- Scrollable Participant List -->
+                <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-1.5 custom-scrollbar min-h-[180px] max-h-[280px] border-y border-slate-100 py-2">
                     <!-- Dynamically populated entries -->
+                </div>
+
+                <!-- Active Student Rank Card (Shows Student Rank in Middle with Neighbor Ranks) -->
+                <div id="my-rank-banner" class="hidden bg-red-50/90 border border-red-200 rounded-xl p-3 shrink-0 space-y-2">
+                    <div class="flex items-center justify-between border-b border-red-200/60 pb-1.5 text-xs font-black text-red-900 uppercase">
+                        <span><i class="fa-solid fa-user-tag text-red-600 mr-1"></i> Your Standing</span>
+                        <span id="my-rank-summary" class="text-red-700">Rank #-- of --</span>
+                    </div>
+                    <div id="my-rank-neighbors" class="space-y-1 text-xs">
+                        <!-- Dynamically populated: 1 rank above, student in middle, 1 rank below -->
+                    </div>
                 </div>
 
                 <!-- Scoring Disclaimer Box -->
@@ -964,6 +986,16 @@
                     errorElem.classList.remove('hidden');
                     return;
                 }
+
+                const isStudentIdTaken = Object.values(allUsersStore).some(
+                    u => u.studentId && u.studentId.toLowerCase() === studentId.toLowerCase()
+                );
+                if (isStudentIdTaken) {
+                    errorElem.textContent = "This Student ID is already registered to another account!";
+                    errorElem.classList.remove('hidden');
+                    return;
+                }
+
                 const avatar = document.getElementById('auth-avatar').value.trim() || `https://placehold.co/100x100/dc2626/ffffff?text=${username.charAt(0).toUpperCase()}`;
 
                 activeUser = {
@@ -1087,6 +1119,15 @@
                 return;
             }
 
+            const isStudentIdTaken = Object.values(allUsersStore).some(
+                u => u.username !== activeUser.username && u.studentId && u.studentId.toLowerCase() === newStudentId.toLowerCase()
+            );
+            if (isStudentIdTaken) {
+                editError.textContent = "This Student ID is already registered to another account.";
+                editError.classList.remove('hidden');
+                return;
+            }
+
             activeUser.studentId = newStudentId;
             if (newAvatar) activeUser.avatar = newAvatar;
             if (newPass) activeUser.password = newPass;
@@ -1094,36 +1135,6 @@
             saveActiveUserData();
             openProfileModal();
             showToast("Profile Updated", "Your Student ID and profile changes have been saved.");
-        }
-
-        function closeProfileModal() {
-            document.getElementById('profile-modal').classList.add('hidden');
-            document.getElementById('profile-modal').classList.remove('flex');
-            document.getElementById('edit-profile-form').classList.add('hidden');
-        }
-
-        function toggleEditProfileForm() {
-            const form = document.getElementById('edit-profile-form');
-            form.classList.toggle('hidden');
-        }
-
-        function handleProfileUpdate(e) {
-            e.preventDefault();
-            if (!activeUser) return;
-
-            const newInterests = document.getElementById('edit-interests').value.trim();
-            const newBio = document.getElementById('edit-bio').value.trim();
-            const newAvatar = document.getElementById('edit-avatar').value.trim();
-            const newPass = document.getElementById('edit-password').value;
-
-            activeUser.interests = newInterests || activeUser.interests;
-            activeUser.bio = newBio || activeUser.bio;
-            if (newAvatar) activeUser.avatar = newAvatar;
-            if (newPass) activeUser.password = newPass;
-
-            saveActiveUserData();
-            openProfileModal();
-            showToast("Profile Updated", "Your changes have been saved.");
         }
 
         function logoutUser() {
@@ -1248,6 +1259,7 @@
                         No registered students yet. Be the first to register and top the scoreboard!
                     </div>
                 `;
+                document.getElementById('my-rank-banner').classList.add('hidden');
                 return;
             }
 
@@ -1294,6 +1306,106 @@
                 `;
                 list.appendChild(item);
             });
+
+            // Render bottom "Your Standing" relative rank card (Rank above, Student Rank in middle, Rank below)
+            const myRankBanner = document.getElementById('my-rank-banner');
+            const myRankSummary = document.getElementById('my-rank-summary');
+            const myRankNeighbors = document.getElementById('my-rank-neighbors');
+
+            if (activeUser && usersArray.length > 0) {
+                const myIndex = usersArray.findIndex(u => u.username === activeUser.username);
+                if (myIndex !== -1) {
+                    myRankBanner.classList.remove('hidden');
+                    myRankSummary.textContent = `Rank #${myIndex + 1} of ${usersArray.length}`;
+
+                    let startIndex = Math.max(0, myIndex - 1);
+                    let endIndex = Math.min(usersArray.length - 1, myIndex + 1);
+
+                    // If at the top or bottom edge, adjust range to always display up to 3 entries
+                    if (myIndex === 0) endIndex = Math.min(usersArray.length - 1, 2);
+                    if (myIndex === usersArray.length - 1) startIndex = Math.max(0, usersArray.length - 3);
+
+                    myRankNeighbors.innerHTML = '';
+                    for (let i = startIndex; i <= endIndex; i++) {
+                        const u = usersArray[i];
+                        const isMe = u.username === activeUser.username;
+                        const row = document.createElement('div');
+                        row.className = `flex items-center justify-between p-1.5 rounded-lg ${
+                            isMe ? 'bg-red-700 text-white font-extrabold shadow-sm' : 'bg-white text-slate-700 font-medium border border-slate-200'
+                        }`;
+
+                        row.innerHTML = `
+                            <div class="flex items-center gap-2">
+                                <span class="${isMe ? 'bg-white text-red-800' : 'bg-slate-200 text-slate-700'} text-[10px] font-black px-1.5 py-0.5 rounded">
+                                    #${i + 1}
+                                </span>
+                                <span>@${u.username}</span>
+                                ${isMe ? '<span class="text-[9px] bg-red-900 text-white px-1 rounded uppercase font-black">You</span>' : ''}
+                            </div>
+                            <span>${u.totalPoints || 0} pts</span>
+                        `;
+                        myRankNeighbors.appendChild(row);
+                    }
+                } else {
+                    myRankBanner.classList.add('hidden');
+                }
+            } else {
+                myRankBanner.classList.add('hidden');
+            }
+        }
+
+        function resetScoresOnly() {
+            if (!isInstructorMode) return;
+            if (!confirm("⚠️ RESET SCORES WARNING:\n\nAre you sure you want to reset all student scores to 0 points? Student profiles, passwords, and IDs will be KEPT.")) return;
+
+            Object.keys(allUsersStore).forEach(username => {
+                allUsersStore[username].totalPoints = 0;
+                if (window.dbInstance) {
+                    try {
+                        const userRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'public', 'data', 'leaderboard', username);
+                        setDoc(userRef, { totalPoints: 0, updatedAt: new Date().toISOString() }, { merge: true }).catch(() => {});
+                    } catch(e) {}
+                }
+            });
+
+            if (activeUser) {
+                activeUser.totalPoints = 0;
+            }
+
+            try {
+                localStorage.setItem('tu_tax_users', JSON.stringify(allUsersStore));
+            } catch(e) {}
+
+            renderLeaderboard();
+            updateUserHeaderUI();
+            showToast("Scores Reset", "All scores reset to 0 pts. Profiles and Student IDs were kept.");
+        }
+
+        function exportScoresCSV() {
+            if (!isInstructorMode) return;
+            let usersArray = Object.values(allUsersStore);
+            if (usersArray.length === 0) {
+                showToast("Export Failed", "No student data available to export.");
+                return;
+            }
+            usersArray.sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
+
+            let csvContent = "data:text/csv;charset=utf-8,Rank,Username,Student ID,Total Points\n";
+            usersArray.forEach((u, i) => {
+                const username = `"${(u.username || '').replace(/"/g, '""')}"`;
+                const studentId = `"${(u.studentId || 'N/A').replace(/"/g, '""')}"`;
+                const points = u.totalPoints || 0;
+                csvContent += `${i + 1},${username},${studentId},${points}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Malaysian_Taxation_TU_Scoreboard.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("Export Successful", "Scoreboard exported as a CSV spreadsheet.");
         }
 
         // Instructor deletion functions
