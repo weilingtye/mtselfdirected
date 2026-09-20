@@ -146,8 +146,8 @@
                     <span id="tab-week-2-badge" class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
                         <i id="tab-week-2-icon" class="fa-solid fa-lock text-[10px]"></i> Week 2
                     </span>
-                    <span id="tab-week-2-title" class="font-bold">Topic Locked</span>
-                    <span id="tab-week-2-game" class="text-xs bg-slate-200 text-slate-500 px-2 py-0.5 rounded-md font-medium uppercase">Locked</span>
+                    <span id="tab-week-2-title" class="font-bold">Employment Income</span>
+                    <span id="tab-week-2-game" class="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-md font-medium uppercase">Snakes & Ladders</span>
                 </button>
 
                 <!-- Locked Week 3 -->
@@ -285,7 +285,6 @@
                 <div class="flex items-center gap-2 bg-rose-50 px-4 py-2 rounded-xl border border-rose-200 shadow-sm">
                     <span class="text-xs font-black text-rose-800 uppercase mr-1">Lives:</span>
                     <div id="w2-hearts-container" class="flex gap-1 text-rose-600 text-sm sm:text-base">
-                        <!-- 10 Hearts populated dynamically -->
                     </div>
                 </div>
             </div>
@@ -305,7 +304,6 @@
 
                     <!-- 20-Tile Grid Board (4 rows x 5 cols) -->
                     <div id="snakes-board-grid" class="grid grid-cols-5 gap-1.5 bg-slate-950 p-2.5 rounded-xl border border-slate-800 shadow-inner my-auto">
-                        <!-- Tiles generated dynamically -->
                     </div>
 
                     <!-- Legend & Instructions -->
@@ -364,7 +362,6 @@
 
                         <!-- MCQ Options Container -->
                         <div id="w2-mcq-options" class="space-y-2.5">
-                            <!-- Populated dynamically -->
                         </div>
 
                         <!-- Action Bar for Next Question -->
@@ -392,6 +389,7 @@
 
         </section>
 
+        <!-- Coin Flip Modal -->
         <div id="coin-flip-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 relative border border-slate-100">
                 <div class="w-12 h-12 bg-amber-100 text-amber-700 rounded-2xl flex items-center justify-center text-xl mx-auto font-bold shadow-sm">
@@ -427,6 +425,7 @@
             </div>
         </div>
 
+        <!-- Topic Unlock Modal -->
         <div id="topic-unlock-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 relative border border-slate-100">
                 <button onclick="closeTopicUnlockModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
@@ -457,14 +456,14 @@
                             <span class="font-extrabold text-sm text-slate-800 block">Week 2: Employment Income</span>
                             <span class="text-xs text-slate-500">Sec 13(1)(a) & 13(1)(b) MCQ Game</span>
                         </div>
-                        <button onclick="toggleWeek2Unlock()" id="unlock-w2-btn" class="px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-rose-600 text-white shadow">
-                            Locked
+                        <button onclick="toggleWeek2Unlock()" id="unlock-w2-btn" class="px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-emerald-600 text-white shadow">
+                            Unlocked
                         </button>
                     </div>
                 </div>
 
                 <div class="pt-2 text-center border-t">
-                    <p class="text-[11px] text-slate-400">Topic titles are hidden from students until unlocked by instructor.</p>
+                    <p class="text-[11px] text-slate-400">Topic modules unlocked here become instantly available to all students.</p>
                 </div>
             </div>
         </div>
@@ -594,7 +593,7 @@
                 <form onsubmit="handleInstructorLogin(event)" class="space-y-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Instructor Password</label>
-                        <input type="password" id="instructor-pass-input" required placeholder="Enter password" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
+                        <input type="password" id="instructor-pass-input" required placeholder="Enter password (taylors2026)" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
                     </div>
                     <p id="instructor-pass-error" class="text-xs text-rose-600 font-bold hidden text-center">Incorrect password.</p>
                     <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold py-2.5 rounded-xl shadow transition text-sm">
@@ -621,7 +620,7 @@
                     </div>
                 </div>
 
-                <!-- Instructor Scoreboard Reset & Export Banner (Visible only in Instructor Mode) -->
+                <!-- Instructor Scoreboard Reset & Export Banner -->
                 <div id="instructor-leaderboard-actions" class="hidden bg-amber-100 border border-amber-300 p-3 rounded-xl shrink-0 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
                     <div class="flex items-center gap-2 font-bold text-amber-950">
                         <i class="fa-solid fa-user-shield text-amber-700 text-sm"></i>
@@ -645,17 +644,15 @@
 
                 <!-- Scrollable Participant List -->
                 <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-1.5 custom-scrollbar min-h-[180px] max-h-[280px] border-y border-slate-100 py-2">
-                    <!-- Dynamically populated entries -->
                 </div>
 
-                <!-- Active Student Rank Card (Shows Student Rank in Middle with Neighbor Ranks) -->
+                <!-- Active Student Rank Card -->
                 <div id="my-rank-banner" class="hidden bg-red-50/90 border border-red-200 rounded-xl p-3 shrink-0 space-y-2">
                     <div class="flex items-center justify-between border-b border-red-200/60 pb-1.5 text-xs font-black text-red-900 uppercase">
                         <span><i class="fa-solid fa-user-tag text-red-600 mr-1"></i> Your Standing</span>
                         <span id="my-rank-summary" class="text-red-700">Rank #-- of --</span>
                     </div>
                     <div id="my-rank-neighbors" class="space-y-1 text-xs">
-                        <!-- Dynamically populated: 1 rank above, student in middle, 1 rank below -->
                     </div>
                 </div>
 
@@ -663,14 +660,10 @@
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 shrink-0 text-amber-950 text-xs space-y-1">
                     <div class="font-extrabold flex items-center gap-1.5 text-amber-900">
                         <i class="fa-solid fa-circle-info text-amber-600"></i>
-                        <span>Scoring & Fair Play Rules</span>
+                        <span>Scoring Rules</span>
                     </div>
                     <p class="text-[11px] leading-relaxed text-amber-800">
-                        Base points are awarded per correct question. To encourage mastery, getting a <strong>perfect score (10/10)</strong> awards attempt bonus points:
-                        <br>
-                        • <strong>1st try:</strong> +10 extra pts | • <strong>2nd try:</strong> +8 extra pts | • <strong>3rd try:</strong> +6 extra pts
-                        <br>
-                        • <strong>4th try:</strong> +4 extra pts | • <strong>5th try:</strong> +2 extra pts | • <strong>6+ tries:</strong> 0 extra pts.
+                        Base points awarded per question solved. Perfect module completions award performance bonus points.
                     </p>
                 </div>
 
@@ -698,7 +691,6 @@
                 </div>
 
                 <div id="answer-key-list" class="flex-grow overflow-y-auto space-y-3 pr-2 custom-scrollbar">
-                    <!-- Populated dynamically -->
                 </div>
             </div>
         </div>
@@ -713,6 +705,15 @@
                     <h3 class="text-2xl font-extrabold text-slate-800" id="summary-modal-title">Module Complete!</h3>
                     <p class="text-sm text-slate-500 mt-1" id="summary-modal-subtitle">Malaysian Taxation TU Challenge.</p>
                 </div>
+                <div class="bg-slate-50 p-4 rounded-xl border space-y-2">
+                    <p class="text-xs text-slate-400 uppercase font-bold">Session Score</p>
+                    <p id="summary-score-val" class="text-3xl font-black text-emerald-600">10 / 10</p>
+                </div>
+                <button onclick="closeSummaryModal()" class="w-full bg-red-700 hover:bg-red-800 text-white font-extrabold py-3 rounded-xl transition shadow">
+                    Back to Module
+                </button>
+            </div>
+        </div>
 
         <!-- Sound & BGM Settings Modal -->
         <div id="sound-settings-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
@@ -809,18 +810,14 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Global Application Context
         window.appId = typeof __app_id !== 'undefined' ? __app_id : 'malaysian-taxation-tu-app';
         let db = null;
         let auth = null;
         let currentUserUid = null;
 
-        // Define listenToLiveLeaderboard function on window
         window.listenToLiveLeaderboard = function() {
             if (!db) {
-                if (typeof window.renderLeaderboard === 'function') {
-                    window.renderLeaderboard();
-                }
+                if (typeof window.renderLeaderboard === 'function') window.renderLeaderboard();
                 return;
             }
             try {
@@ -830,27 +827,18 @@
                     snapshot.forEach((docSnap) => {
                         users.push({ id: docSnap.id, ...docSnap.data() });
                     });
-                    if (typeof window.updateAllUsersStore === 'function') {
-                        window.updateAllUsersStore(users);
-                    }
-                    if (typeof window.renderLeaderboard === 'function') {
-                        window.renderLeaderboard();
-                    }
+                    if (typeof window.updateAllUsersStore === 'function') window.updateAllUsersStore(users);
+                    if (typeof window.renderLeaderboard === 'function') window.renderLeaderboard();
                 }, (err) => {
                     console.warn("Leaderboard listener notice:", err);
-                    if (typeof window.renderLeaderboard === 'function') {
-                        window.renderLeaderboard();
-                    }
+                    if (typeof window.renderLeaderboard === 'function') window.renderLeaderboard();
                 });
             } catch (err) {
                 console.error("Error setting up leaderboard listener:", err);
-                if (typeof window.renderLeaderboard === 'function') {
-                    window.renderLeaderboard();
-                }
+                if (typeof window.renderLeaderboard === 'function') window.renderLeaderboard();
             }
         };
 
-        // Try initializing Firebase
         try {
             if (typeof __firebase_config !== 'undefined' && __firebase_config) {
                 const firebaseConfig = JSON.parse(__firebase_config);
@@ -870,21 +858,15 @@
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
                         currentUserUid = user.uid;
-                        if (typeof window.listenToLiveLeaderboard === 'function') {
-                            window.listenToLiveLeaderboard();
-                        }
+                        if (typeof window.listenToLiveLeaderboard === 'function') window.listenToLiveLeaderboard();
                     }
                 });
             } else {
-                if (typeof window.listenToLiveLeaderboard === 'function') {
-                    window.listenToLiveLeaderboard();
-                }
+                if (typeof window.listenToLiveLeaderboard === 'function') window.listenToLiveLeaderboard();
             }
         } catch (e) {
             console.log("Firebase initialized in local fallback mode.");
-            if (typeof window.listenToLiveLeaderboard === 'function') {
-                window.listenToLiveLeaderboard();
-            }
+            if (typeof window.listenToLiveLeaderboard === 'function') window.listenToLiveLeaderboard();
         }
 
         window.dbInstance = db;
@@ -893,13 +875,12 @@
     </script>
 
     <script>
-        // Sound & Audio Engine using Tone.js Synthesizers
         let audioInitialized = false;
         let masterSilent = false;
         let musicMuted = false;
         let sfxMuted = false;
-        let musicVol = 0.5; // 0 to 1
-        let sfxVol = 0.8;   // 0 to 1
+        let musicVol = 0.5;
+        let sfxVol = 0.8;
 
         let bgmVolumeNode = null;
         let sfxVolumeNode = null;
@@ -908,7 +889,6 @@
         let bgmLoopPattern = null;
         let currentTopicBgmIndex = 1;
 
-        // BGM Melody Patterns for Each Topic
         const bgmThemes = {
             1: {
                 title: "Week 1: Resident Status Chiptune",
@@ -927,17 +907,14 @@
         function setupAudioEngine() {
             if (audioInitialized) return;
             try {
-                // Main Gain Nodes for Music & SFX
                 bgmVolumeNode = new Tone.Volume(Tone.gainToDb(musicVol)).toDestination();
                 sfxVolumeNode = new Tone.Volume(Tone.gainToDb(sfxVol)).toDestination();
 
-                // Cute BGM Synth (PolySynth with warm triangle wave)
                 bgmSynth = new Tone.PolySynth(Tone.Synth, {
                     oscillator: { type: "triangle" },
                     envelope: { attack: 0.05, decay: 0.2, sustain: 0.3, release: 0.4 }
                 }).connect(bgmVolumeNode);
 
-                // Cute SFX Synth (AMSynth / Synth for bright pops & chimes)
                 sfxSynth = new Tone.Synth({
                     oscillator: { type: "sine" },
                     envelope: { attack: 0.01, decay: 0.15, sustain: 0.0, release: 0.1 }
@@ -971,7 +948,6 @@
 
             if (!audioInitialized) return;
 
-            // Stop existing pattern loop
             if (bgmLoopPattern) {
                 bgmLoopPattern.dispose();
             }
@@ -1083,18 +1059,917 @@
             }
         }
 
-        // Hook topic selection to audio switcher
-        const originalSelectWeek = window.selectWeek;
-        window.selectWeek = function(weekNum) {
-            originalSelectWeek(weekNum);
-            updateTopicBgm(weekNum);
-            playCuteSfx('pop');
-        };
-
-        // Standard sound trigger compatibility function
         window.playSound = function(type) {
             playCuteSfx(type);
         };
+    </script>
+
+    <script>
+        // Global Game State
+        let currentWeek = 1;
+        let isInstructor = false;
+        let week2Unlocked = true;
+        let loggedInUser = JSON.parse(localStorage.getItem('tax_tu_user') || 'null');
+        let allUsersStore = JSON.parse(localStorage.getItem('tax_tu_all_users') || '[]');
+
+        // Week 1 Hangman Dataset (10 Questions on Resident Status)
+        const week1Questions = [
+            {
+                id: 1,
+                category: "Section 7(1)(a) ITA 1967",
+                hint: "Under Section 7(1)(a), an individual is resident in Malaysia for a basis year if they are present in Malaysia for a period or periods amounting in total to at least how many days?",
+                answer: "ONE HUNDRED EIGHTY TWO",
+                explanation: "Section 7(1)(a) states an individual is resident if present in Malaysia for a period or aggregate of periods of at least 182 days in the basis year."
+            },
+            {
+                id: 2,
+                category: "Section 7(1)(b) ITA 1967",
+                hint: "Section 7(1)(b) allows presence of less than 182 days to count if it is linked to another period of 182 or more consecutive days in an adjacent year. What is this concept known as?",
+                answer: "LINKED YEAR",
+                explanation: "Section 7(1)(b) covers periods of less than 182 days linked to a main period of 182+ consecutive days in the preceding or following year."
+            },
+            {
+                id: 3,
+                category: "Section 7(1)(c) ITA 1967",
+                hint: "Under Section 7(1)(c), an individual is resident if present for at least 90 days in the basis year and was resident in how many of the 4 preceding basis years?",
+                answer: "THREE",
+                explanation: "Section 7(1)(c) requires presence of at least 90 days in the current year plus residence in 3 out of the preceding 4 basis years."
+            },
+            {
+                id: 4,
+                category: "Section 7(1)(d) ITA 1967",
+                hint: "Section 7(1)(d) deems an individual as resident for the current year if resident for the 3 preceding years and resident for which following year?",
+                answer: "FOLLOWING YEAR",
+                explanation: "Section 7(1)(d) deems an individual resident if resident in the 3 preceding basis years and in the immediately following basis year, even if absent for the entire current year."
+            },
+            {
+                id: 5,
+                category: "Section 7(1)(b) Exceptions",
+                hint: "Temporary absence for attending conferences, seminars, or study abroad connected to service in Malaysia is deemed as what during a consecutive period?",
+                answer: "QUALIFYING ABSENCE",
+                explanation: "Under proviso to s.7(1)(b), temporary absences for service-related study, social visits <=14 days, or ill-health are qualifying absences that do not break consecutive presence."
+            },
+            {
+                id: 6,
+                category: "Tax Residence Principle",
+                hint: "In Malaysian individual tax law, residence status is determined based on physical presence and not on what legal tie?",
+                answer: "CITIZENSHIP",
+                explanation: "Tax residence in Malaysia is based purely on physical presence under Section 7, independent of citizenship or nationality."
+            },
+            {
+                id: 7,
+                category: "Basis Year",
+                hint: "For individuals in Malaysia, the basis year for a Year of Assessment always coincides with which calendar period?",
+                answer: "CALENDAR YEAR",
+                explanation: "Under Section 21 of ITA 1967, the basis year for individual taxation is always the calendar year ending 31st December."
+            },
+            {
+                id: 8,
+                category: "Proviso to Section 7(1)(b)",
+                hint: "A temporary absence from Malaysia for social visits abroad must not exceed how many total days during the consecutive period?",
+                answer: "FOURTEEN DAYS",
+                explanation: "Social visits abroad must not exceed 14 days in aggregate to qualify as a permissible temporary absence under s.7(1)(b)."
+            },
+            {
+                id: 9,
+                category: "Double Taxation Agreement",
+                hint: "When an individual is resident in two countries, which rule under tax treaties resolves dual residence?",
+                answer: "TIE BREAKER RULE",
+                explanation: "Tie-breaker rules in Double Taxation Agreements (DTAs) determine single residence based on permanent home, center of vital interests, or habitual abode."
+            },
+            {
+                id: 10,
+                category: "Section 7 Summary",
+                hint: "Which statutory document published by HASiL provides official guidance on individual tax residence determinations?",
+                answer: "PUBLIC RULING",
+                explanation: "LHDNM / HASiL issues Public Rulings (e.g., PR No. 11/2017) explaining statutory interpretations of Section 7 ITA 1967."
+            }
+        ];
+
+        // Week 2 MCQ Dataset (Employment Income)
+        const week2Questions = [
+            {
+                id: 1,
+                category: "Section 13(1)(a) Gross Income",
+                question: "Which of the following items received from an employer is categorized as Section 13(1)(a) Gross Employment Income?",
+                options: [
+                    "Employer's contribution to EPF",
+                    "Contractual performance bonus and overtime pay",
+                    "Free medical treatment at company clinic",
+                    "Employer-provided accommodation"
+                ],
+                correct: 1,
+                explanation: "Salaries, bonuses, overtime, and leave pay are direct monetary remuneration categorized under Section 13(1)(a) ITA 1967."
+            },
+            {
+                id: 2,
+                category: "Section 13(1)(b) Benefits-In-Kind",
+                question: "A company car provided to an employee for private use is taxable under which subsection of Section 13?",
+                options: [
+                    "Section 13(1)(a)",
+                    "Section 13(1)(b)",
+                    "Section 13(1)(c)",
+                    "Section 13(1)(d)"
+                ],
+                correct: 1,
+                explanation: "Benefits-In-Kind (BIK) such as motorcars, drivers, and household furnishings are taxable under Section 13(1)(b)."
+            },
+            {
+                id: 3,
+                category: "Tax Exemptions",
+                question: "What is the annual statutory exemption limit for childcare allowance received by an employee?",
+                options: [
+                    "RM1,000",
+                    "RM2,400",
+                    "RM6,000",
+                    "Fully Exempt"
+                ],
+                correct: 1,
+                explanation: "Childcare allowance for children up to 12 years old is exempt up to RM2,400 per year."
+            },
+            {
+                id: 4,
+                category: "Medical Benefits Exemption",
+                question: "Medical benefits provided by an employer for an employee, their spouse, and children are subject to what tax treatment?",
+                options: [
+                    "Fully Taxable",
+                    "Taxable up to RM5,000",
+                    "Fully Exempt",
+                    "50% Taxable"
+                ],
+                correct: 2,
+                explanation: "Under Paragraph 35, Schedule 6 of ITA 1967, medical care benefits provided by employers are fully exempt from income tax."
+            },
+            {
+                id: 5,
+                category: "Perquisite Exemption",
+                question: "Petrol allowance for official duties is exempt up to what annual amount under Public Ruling 5/2019?",
+                options: [
+                    "RM1,200",
+                    "RM2,400",
+                    "RM6,000",
+                    "RM10,000"
+                ],
+                correct: 2,
+                explanation: "Petrol allowance or travelling mileage card for official duties is tax-exempt up to RM6,000 per year."
+            },
+            {
+                id: 6,
+                category: "Section 13(1)(c) Living Accommodation",
+                question: "Value of living accommodation provided by an employer to a normal employee is defined under which subsection?",
+                options: [
+                    "Section 13(1)(a)",
+                    "Section 13(1)(b)",
+                    "Section 13(1)(c)",
+                    "Section 13(1)(e)"
+                ],
+                correct: 2,
+                explanation: "Employer-provided living accommodation (VOLA) is assessed under Section 13(1)(c)."
+            },
+            {
+                id: 7,
+                category: "Leave Passage",
+                question: "How many local leave passage trips per year are tax-exempt for an employee?",
+                options: [
+                    "1 trip",
+                    "2 trips",
+                    "3 trips",
+                    "4 trips"
+                ],
+                correct: 2,
+                explanation: "Up to 3 domestic leave passage trips (including food and accommodation) are tax-exempt each year."
+            },
+            {
+                id: 8,
+                category: "Gratuity Exemption",
+                question: "Retirement gratuity is fully tax-exempt if the retirement is due to ill-health or after reaching what age after 10 years of service?",
+                options: [
+                    "Age 50",
+                    "Age 55",
+                    "Age 60",
+                    "Age 65"
+                ],
+                correct: 1,
+                explanation: "Gratuity on retirement is fully exempt if due to ill health, or compulsory retirement upon reaching age 55 (or official retirement age) with 10+ years with the same employer."
+            },
+            {
+                id: 9,
+                category: "Phone & Broadband",
+                question: "Mobile phones gifted to employees and telephone subscription bills paid by employers enjoy what exemption?",
+                options: [
+                    "Exempt up to RM1,000",
+                    "Exempt up to RM3,000",
+                    "Fully Exempt (1 phone per category)",
+                    "Taxable as cash equivalent"
+                ],
+                correct: 2,
+                explanation: "One telephone/tablet/laptop unit and official mobile bills paid by employers are fully tax-exempt per year."
+            },
+            {
+                id: 10,
+                category: "Compensation for Loss of Employment",
+                question: "Compensation for loss of employment is exempt up to what amount per completed year of service with the same employer?",
+                options: [
+                    "RM5,000",
+                    "RM10,000",
+                    "RM20,000",
+                    "RM50,000"
+                ],
+                correct: 2,
+                explanation: "Compensation for loss of employment is tax-exempt up to RM20,000 for each completed year of service."
+            }
+        ];
+
+        // Snakes & Ladders Board Layout Definition (20 tiles)
+        const boardLadders = { 3: 8, 7: 12, 13: 17 }; // Tile -> Jump Target
+        const boardSnakes = { 11: 4, 16: 9, 19: 10 }; // Tile -> Slide Target
+
+        // Week 1 Hangman State Variables
+        let w1CurrentIndex = 0;
+        let w1Score = 0;
+        let w1Lives = 6;
+        let w1GuessedLetters = new Set();
+        let w1Attempts = 1;
+        let w1AnswerSolved = false;
+
+        // Week 2 Snakes State Variables
+        let w2CurrentIndex = 0;
+        let w2TilePosition = 1;
+        let w2Hearts = 10;
+        let w2SelectedOption = null;
+
+        window.onload = function() {
+            updateUserUI();
+            initWeek1();
+            initWeek2Board();
+            updateTopicBgm(1);
+        };
+
+        function selectWeek(weekNum) {
+            if (weekNum === 2 && !week2Unlocked && !isInstructor) {
+                showToast("Topic Locked", "Week 2 is currently locked by the instructor.");
+                return;
+            }
+            if (weekNum === 3) {
+                showToast("Topic Locked", "Week 3 will be released in upcoming lectures!");
+                return;
+            }
+
+            currentWeek = weekNum;
+
+            // Toggle Tab Visuals
+            document.querySelectorAll('.week-tab').forEach(tab => {
+                tab.classList.remove('bg-red-700', 'text-white', 'bg-indigo-700', 'shadow');
+                tab.classList.add('text-slate-400', 'bg-slate-50');
+            });
+
+            const activeTab = document.getElementById(`tab-week-${weekNum}`);
+            if (activeTab) {
+                activeTab.classList.remove('text-slate-400', 'bg-slate-50');
+                if (weekNum === 1) activeTab.classList.add('bg-red-700', 'text-white', 'shadow');
+                if (weekNum === 2) activeTab.classList.add('bg-indigo-700', 'text-white', 'shadow');
+            }
+
+            // Toggle Views
+            document.querySelectorAll('.week-view').forEach(view => view.classList.add('hidden'));
+            const activeView = document.getElementById(`view-week-${weekNum}`);
+            if (activeView) activeView.classList.remove('hidden');
+
+            if (weekNum === 1) initWeek1();
+            if (weekNum === 2) loadWeek2Question();
+        }
+
+        function showLockedNotification(topicName) {
+            showToast("Topic Locked", `${topicName} is not yet available.`);
+        }
+
+        function initWeek1() {
+            w1Lives = 6;
+            w1GuessedLetters.clear();
+            w1AnswerSolved = false;
+            
+            const q = week1Questions[w1CurrentIndex];
+            document.getElementById('q-number-display').textContent = `Question ${w1CurrentIndex + 1} of ${week1Questions.length}`;
+            document.getElementById('attempt-num-display').textContent = w1Attempts;
+            document.getElementById('w1-score-display').textContent = `${w1Score} pts`;
+            document.getElementById('category-badge').textContent = q.category;
+            document.getElementById('question-hint').textContent = q.hint;
+            document.getElementById('lives-display').textContent = w1Lives;
+            document.getElementById('w1-progress-bar').style.width = `${((w1CurrentIndex + 1) / week1Questions.length) * 100}%`;
+
+            document.getElementById('action-bar').classList.add('hidden');
+            document.getElementById('explanation-box').classList.add('hidden');
+
+            updateHangmanGraphic();
+            renderWordSlots();
+            renderKeyboard();
+        }
+
+        function renderWordSlots() {
+            const container = document.getElementById('word-slots-container');
+            container.innerHTML = '';
+            const answer = week1Questions[w1CurrentIndex].answer;
+
+            let wordDiv = document.createElement('div');
+            wordDiv.className = "flex gap-1 sm:gap-1.5 my-1";
+
+            for (let i = 0; i < answer.length; i++) {
+                const char = answer[i];
+                if (char === ' ') {
+                    container.appendChild(wordDiv);
+                    wordDiv = document.createElement('div');
+                    wordDiv.className = "flex gap-1 sm:gap-1.5 my-1 mx-2";
+                    continue;
+                }
+
+                const tile = document.createElement('div');
+                tile.className = "w-7 h-9 sm:w-9 sm:h-11 rounded-lg border-2 border-slate-700 bg-slate-800 text-white font-extrabold flex items-center justify-center text-sm sm:text-lg shadow-sm uppercase transition-all";
+                if (w1GuessedLetters.has(char) || w1AnswerSolved) {
+                    tile.textContent = char;
+                    tile.classList.remove('bg-slate-800', 'border-slate-700');
+                    tile.classList.add('bg-emerald-600', 'border-emerald-400');
+                } else {
+                    tile.textContent = '';
+                }
+                wordDiv.appendChild(tile);
+            }
+            container.appendChild(wordDiv);
+        }
+
+        function renderKeyboard() {
+            const kb = document.getElementById('keyboard');
+            kb.innerHTML = '';
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+
+            letters.forEach(letter => {
+                const btn = document.createElement('button');
+                btn.textContent = letter;
+                btn.className = "letter-btn w-8 h-9 sm:w-10 sm:h-10 rounded-xl font-black text-xs sm:text-sm bg-slate-100 text-slate-800 border border-slate-300 hover:bg-slate-200 shadow-sm active:scale-95 transition-all";
+                
+                if (w1GuessedLetters.has(letter)) {
+                    btn.disabled = true;
+                    const answer = week1Questions[w1CurrentIndex].answer;
+                    if (answer.includes(letter)) {
+                        btn.className = "letter-btn w-8 h-9 sm:w-10 sm:h-10 rounded-xl font-black text-xs sm:text-sm bg-emerald-600 text-white border border-emerald-700 opacity-80 cursor-not-allowed";
+                    } else {
+                        btn.className = "letter-btn w-8 h-9 sm:w-10 sm:h-10 rounded-xl font-black text-xs sm:text-sm bg-rose-100 text-rose-500 border border-rose-200 opacity-50 cursor-not-allowed";
+                    }
+                } else if (w1Lives <= 0 || w1AnswerSolved) {
+                    btn.disabled = true;
+                } else {
+                    btn.onclick = () => handleGuess(letter);
+                }
+                kb.appendChild(btn);
+            });
+        }
+
+        function handleGuess(letter) {
+            if (w1GuessedLetters.has(letter) || w1Lives <= 0 || w1AnswerSolved) return;
+
+            w1GuessedLetters.add(letter);
+            const answer = week1Questions[w1CurrentIndex].answer;
+
+            if (answer.includes(letter)) {
+                playCuteSfx('correct');
+            } else {
+                w1Lives--;
+                playCuteSfx('wrong');
+            }
+
+            document.getElementById('lives-display').textContent = w1Lives;
+            updateHangmanGraphic();
+            renderWordSlots();
+            renderKeyboard();
+            checkW1WinLoss();
+        }
+
+        function updateHangmanGraphic() {
+            const parts = ['hm-head', 'hm-body', 'hm-arm-left', 'hm-arm-right', 'hm-leg-left', 'hm-leg-right'];
+            parts.forEach(p => document.getElementById(p).classList.add('hidden'));
+
+            const mistakes = 6 - w1Lives;
+            for (let i = 0; i < mistakes; i++) {
+                if (parts[i]) document.getElementById(parts[i]).classList.remove('hidden');
+            }
+        }
+
+        function checkW1WinLoss() {
+            const answer = week1Questions[w1CurrentIndex].answer;
+            const cleanAnswer = answer.replace(/\s+/g, '');
+            const allGuessed = cleanAnswer.split('').every(char => w1GuessedLetters.has(char));
+
+            const actionBar = document.getElementById('action-bar');
+            const statusMsg = document.getElementById('status-message');
+            const explanationBox = document.getElementById('explanation-box');
+            const explanationText = document.getElementById('explanation-text');
+
+            if (allGuessed) {
+                w1AnswerSolved = true;
+                w1Score += 10;
+                saveUserScore(10);
+                document.getElementById('w1-score-display').textContent = `${w1Score} pts`;
+                playCuteSfx('win');
+
+                statusMsg.className = "font-extrabold text-emerald-600 text-base flex items-center gap-1.5";
+                statusMsg.innerHTML = `<i class="fa-solid fa-circle-check"></i> Correct! +10 Points`;
+                actionBar.classList.remove('hidden');
+
+                explanationText.textContent = week1Questions[w1CurrentIndex].explanation;
+                explanationBox.classList.remove('hidden');
+                renderKeyboard();
+            } else if (w1Lives <= 0) {
+                playCuteSfx('wrong');
+                statusMsg.className = "font-extrabold text-rose-600 text-base flex items-center gap-1.5";
+                statusMsg.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Out of lives! Answer: <strong>${answer}</strong>`;
+                actionBar.classList.remove('hidden');
+
+                explanationText.textContent = week1Questions[w1CurrentIndex].explanation;
+                explanationBox.classList.remove('hidden');
+                renderKeyboard();
+            }
+        }
+
+        function nextQuestion() {
+            if (w1CurrentIndex < week1Questions.length - 1) {
+                w1CurrentIndex++;
+                initWeek1();
+            } else {
+                openSummaryModal();
+            }
+        }
+
+        function initWeek2Board() {
+            const grid = document.getElementById('snakes-board-grid');
+            grid.innerHTML = '';
+
+            for (let tile = 1; tile <= 20; tile++) {
+                const tileDiv = document.createElement('div');
+                tileDiv.id = `board-tile-${tile}`;
+                tileDiv.className = "h-11 sm:h-14 rounded-lg bg-slate-800 border border-slate-700 flex flex-col items-center justify-between p-1 relative font-bold text-xs text-slate-300";
+
+                let iconHtml = '';
+                if (boardLadders[tile]) {
+                    iconHtml = `<i class="fa-solid fa-arrow-up-right-dots text-emerald-400 text-[10px]" title="Ladder to ${boardLadders[tile]}"></i>`;
+                } else if (boardSnakes[tile]) {
+                    iconHtml = `<i class="fa-solid fa-worm text-rose-400 text-[10px]" title="Snake to ${boardSnakes[tile]}"></i>`;
+                }
+
+                tileDiv.innerHTML = `
+                    <div class="w-full flex justify-between items-center text-[9px] text-slate-400">
+                        <span>${tile}</span>
+                        ${iconHtml}
+                    </div>
+                    <div id="tile-player-${tile}" class="min-h-[16px]"></div>
+                `;
+                grid.appendChild(tileDiv);
+            }
+            updateBoardPlayerPosition();
+            renderHearts();
+        }
+
+        function renderHearts() {
+            const container = document.getElementById('w2-hearts-container');
+            container.innerHTML = '';
+            for (let i = 0; i < 10; i++) {
+                const heart = document.createElement('i');
+                if (i < w2Hearts) {
+                    heart.className = "fa-solid fa-heart text-rose-500 animate-pulse";
+                } else {
+                    heart.className = "fa-regular fa-heart text-slate-300";
+                }
+                container.appendChild(heart);
+            }
+        }
+
+        function updateBoardPlayerPosition() {
+            for (let t = 1; t <= 20; t++) {
+                const container = document.getElementById(`tile-player-${t}`);
+                if (container) container.innerHTML = '';
+            }
+
+            const activeContainer = document.getElementById(`tile-player-${w2TilePosition}`);
+            if (activeContainer) {
+                activeContainer.innerHTML = `<div class="bg-indigo-500 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shadow-md border border-white animate-bounce">📍</div>`;
+            }
+            document.getElementById('w2-tile-display').textContent = `Tile ${w2TilePosition} / 20`;
+        }
+
+        function loadWeek2Question() {
+            if (w2CurrentIndex >= week2Questions.length) {
+                openSummaryModal();
+                return;
+            }
+
+            const q = week2Questions[w2CurrentIndex];
+            document.getElementById('w2-q-number-display').textContent = `Question ${w2CurrentIndex + 1} of ${week2Questions.length}`;
+            document.getElementById('w2-category-badge').textContent = q.category;
+            document.getElementById('w2-question-text').textContent = q.question;
+
+            document.getElementById('w2-action-bar').classList.add('hidden');
+            document.getElementById('w2-explanation-box').classList.add('hidden');
+
+            const optionsContainer = document.getElementById('w2-mcq-options');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-200 hover:border-indigo-500 bg-white hover:bg-indigo-50/50 font-semibold text-sm transition-all flex items-center gap-3 group";
+                btn.onclick = () => selectW2Option(idx);
+                btn.innerHTML = `
+                    <span class="w-7 h-7 rounded-lg bg-slate-100 group-hover:bg-indigo-600 group-hover:text-white font-extrabold text-xs flex items-center justify-center text-slate-600 transition-colors">
+                        ${String.fromCharCode(65 + idx)}
+                    </span>
+                    <span class="text-slate-800">${opt}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectW2Option(selectedIdx) {
+            const q = week2Questions[w2CurrentIndex];
+            const isCorrect = selectedIdx === q.correct;
+
+            const optionsContainer = document.getElementById('w2-mcq-options');
+            Array.from(optionsContainer.children).forEach((btn, idx) => {
+                btn.onclick = null;
+                if (idx === q.correct) {
+                    btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-50 font-bold text-sm flex items-center gap-3";
+                } else if (idx === selectedIdx && !isCorrect) {
+                    btn.className = "w-full text-left p-3.5 rounded-xl border-2 border-rose-500 bg-rose-50 font-bold text-sm flex items-center gap-3 opacity-80";
+                } else {
+                    btn.className = "w-full text-left p-3.5 rounded-xl border border-slate-200 bg-slate-50 font-normal text-sm opacity-50";
+                }
+            });
+
+            const actionBar = document.getElementById('w2-action-bar');
+            const statusMsg = document.getElementById('w2-status-message');
+            const explanationBox = document.getElementById('w2-explanation-box');
+            const explanationText = document.getElementById('w2-explanation-text');
+
+            if (isCorrect) {
+                playCuteSfx('correct');
+                saveUserScore(10);
+
+                // Advance Tile
+                w2TilePosition = Math.min(20, w2TilePosition + 2);
+                if (boardLadders[w2TilePosition]) {
+                    setTimeout(() => {
+                        playCuteSfx('ladder');
+                        showToast("Ladder Jump!", `Climbed ladder to tile ${boardLadders[w2TilePosition]}!`);
+                        w2TilePosition = boardLadders[w2TilePosition];
+                        updateBoardPlayerPosition();
+                    }, 600);
+                }
+                updateBoardPlayerPosition();
+
+                statusMsg.className = "font-extrabold text-emerald-600 text-base flex items-center gap-1.5";
+                statusMsg.innerHTML = `<i class="fa-solid fa-circle-check"></i> Correct! Advance 2 Tiles!`;
+            } else {
+                playCuteSfx('wrong');
+                openCoinFlipModal();
+
+                if (boardSnakes[w2TilePosition]) {
+                    setTimeout(() => {
+                        playCuteSfx('snake');
+                        showToast("Snake Slide!", `Slid back down to tile ${boardSnakes[w2TilePosition]}!`);
+                        w2TilePosition = boardSnakes[w2TilePosition];
+                        updateBoardPlayerPosition();
+                    }, 600);
+                }
+
+                statusMsg.className = "font-extrabold text-rose-600 text-base flex items-center gap-1.5";
+                statusMsg.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Incorrect answer!`;
+            }
+
+            explanationText.textContent = q.explanation;
+            explanationBox.classList.remove('hidden');
+            actionBar.classList.remove('hidden');
+        }
+
+        function nextWeek2Question() {
+            w2CurrentIndex++;
+            loadWeek2Question();
+        }
+
+        function openCoinFlipModal() {
+            document.getElementById('coin-flip-modal').classList.remove('hidden');
+            document.getElementById('coin-flip-modal').classList.add('flex');
+            document.getElementById('coin-result-text').textContent = '';
+            document.getElementById('flip-coin-btn').classList.remove('hidden');
+            document.getElementById('close-coin-btn').classList.add('hidden');
+        }
+
+        function closeCoinFlipModal() {
+            document.getElementById('coin-flip-modal').classList.add('hidden');
+            document.getElementById('coin-flip-modal').classList.remove('flex');
+        }
+
+        function executeCoinFlip() {
+            const coin = document.getElementById('coin-element');
+            const flipBtn = document.getElementById('flip-coin-btn');
+            flipBtn.disabled = true;
+
+            coin.classList.add('rotate-[1080deg]');
+
+            setTimeout(() => {
+                const isHeads = Math.random() > 0.5;
+                coin.classList.remove('rotate-[1080deg]');
+                document.getElementById('coin-face-text').textContent = isHeads ? '🪙 HEADS' : '💔 TAILS';
+
+                const resultText = document.getElementById('coin-result-text');
+                if (isHeads) {
+                    playCuteSfx('win');
+                    resultText.className = "min-h-[24px] font-extrabold text-sm text-emerald-600";
+                    resultText.textContent = "HEADS! Free retry granted! No heart lost.";
+                } else {
+                    playCuteSfx('wrong');
+                    w2Hearts = Math.max(0, w2Hearts - 1);
+                    renderHearts();
+                    resultText.className = "min-h-[24px] font-extrabold text-sm text-rose-600";
+                    resultText.textContent = "TAILS! Deducted 1 Heart ❤️";
+                }
+
+                flipBtn.classList.add('hidden');
+                document.getElementById('close-coin-btn').classList.remove('hidden');
+            }, 700);
+        }
+
+        function updateUserUI() {
+            const container = document.getElementById('user-header-profile');
+            if (loggedInUser) {
+                container.innerHTML = `
+                    <button onclick="openProfileModal()" class="bg-black/40 hover:bg-black/60 backdrop-blur px-3 py-1.5 rounded-xl border border-red-500/30 flex items-center gap-2 text-xs sm:text-sm font-bold text-white transition">
+                        <img src="${loggedInUser.avatar || 'https://placehold.co/100x100/dc2626/ffffff?text=TU'}" class="w-5 h-5 rounded-full object-cover">
+                        <span>@${loggedInUser.username}</span>
+                    </button>
+                `;
+                document.getElementById('user-accumulated-score').textContent = loggedInUser.score || 0;
+            } else {
+                container.innerHTML = `
+                    <button onclick="openAuthModal()" class="bg-red-700 hover:bg-red-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs sm:text-sm transition flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Login / Register</span>
+                    </button>
+                `;
+            }
+        }
+
+        function saveUserScore(points) {
+            if (!loggedInUser) return;
+            loggedInUser.score = (loggedInUser.score || 0) + points;
+            localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
+
+            // Sync with allUsersStore
+            const idx = allUsersStore.findIndex(u => u.username === loggedInUser.username);
+            if (idx >= 0) {
+                allUsersStore[idx].score = loggedInUser.score;
+            } else {
+                allUsersStore.push(loggedInUser);
+            }
+            localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
+
+            // Sync to Firestore if online
+            if (window.dbInstance && window.docRef) {
+                try {
+                    const uRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'users', loggedInUser.username);
+                    window.setDoc ? window.setDoc(uRef, loggedInUser, { merge: true }) : null;
+                } catch (e) { console.warn("Firestore score sync notice:", e); }
+            }
+
+            updateUserUI();
+        }
+
+        function openAuthModal() {
+            document.getElementById('auth-modal').classList.remove('hidden');
+            document.getElementById('auth-modal').classList.add('flex');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+            document.getElementById('auth-modal').classList.remove('flex');
+        }
+
+        function switchAuthMode(mode) {
+            const isReg = mode === 'register';
+            document.getElementById('register-fields').classList.toggle('hidden', !isReg);
+            document.getElementById('tab-btn-login').className = isReg ? "flex-1 py-1.5 font-bold text-xs rounded-lg text-slate-500 transition" : "flex-1 py-1.5 font-bold text-xs rounded-lg bg-white shadow text-red-800 transition";
+            document.getElementById('tab-btn-register').className = isReg ? "flex-1 py-1.5 font-bold text-xs rounded-lg bg-white shadow text-red-800 transition" : "flex-1 py-1.5 font-bold text-xs rounded-lg text-slate-500 transition";
+            document.getElementById('auth-submit-btn').textContent = isReg ? "Register Student Account" : "Log In";
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('auth-username').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const studentId = document.getElementById('auth-student-id').value.trim();
+            const avatar = document.getElementById('auth-avatar').value.trim();
+
+            if (!username) return;
+
+            loggedInUser = {
+                username,
+                password,
+                studentId: studentId || "0351000",
+                avatar: avatar || `https://placehold.co/100x100/dc2626/ffffff?text=${username.substring(0,2).toUpperCase()}`,
+                score: 0
+            };
+
+            localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
+            updateUserUI();
+            closeAuthModal();
+            showToast("Welcome!", `Logged in as @${username}`);
+        }
+
+        function openProfileModal() {
+            if (!loggedInUser) return;
+            document.getElementById('prof-display-username').textContent = `@${loggedInUser.username}`;
+            document.getElementById('prof-display-points').textContent = loggedInUser.score || 0;
+            document.getElementById('prof-display-studentid').textContent = loggedInUser.studentId || 'Not set';
+            document.getElementById('prof-display-img').src = loggedInUser.avatar || 'https://placehold.co/100x100/dc2626/ffffff?text=TU';
+
+            document.getElementById('profile-modal').classList.remove('hidden');
+            document.getElementById('profile-modal').classList.add('flex');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+            document.getElementById('profile-modal').classList.remove('flex');
+        }
+
+        function logoutUser() {
+            loggedInUser = null;
+            localStorage.removeItem('tax_tu_user');
+            updateUserUI();
+            closeProfileModal();
+            showToast("Logged Out", "You have logged out.");
+        }
+
+        function openLeaderboardModal() {
+            renderLeaderboard();
+            document.getElementById('leaderboard-modal').classList.remove('hidden');
+            document.getElementById('leaderboard-modal').classList.add('flex');
+        }
+
+        function closeLeaderboardModal() {
+            document.getElementById('leaderboard-modal').classList.add('hidden');
+            document.getElementById('leaderboard-modal').classList.remove('flex');
+        }
+
+        function updateAllUsersStore(users) {
+            allUsersStore = users;
+            localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
+        }
+
+        function renderLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            list.innerHTML = '';
+
+            const sorted = [...allUsersStore].sort((a, b) => (b.score || 0) - (a.score || 0));
+
+            if (sorted.length === 0) {
+                list.innerHTML = `<p class="text-center text-xs text-slate-400 py-6">No scores registered yet. Be the first!</p>`;
+                return;
+            }
+
+            sorted.forEach((u, idx) => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between p-2.5 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-100/80 transition text-xs";
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="w-6 font-black ${idx === 0 ? 'text-amber-500 text-sm' : idx === 1 ? 'text-slate-400 text-sm' : idx === 2 ? 'text-amber-700 text-sm' : 'text-slate-400'}">
+                            #${idx + 1}
+                        </span>
+                        <img src="${u.avatar || 'https://placehold.co/100x100/dc2626/ffffff?text=TU'}" class="w-7 h-7 rounded-full object-cover">
+                        <div>
+                            <strong class="text-slate-800 block">@${u.username}</strong>
+                            <span class="text-[10px] text-slate-400">ID: ${u.studentId || 'N/A'}</span>
+                        </div>
+                    </div>
+                    <span class="font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">
+                        ${u.score || 0} pts
+                    </span>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function openInstructorLoginModal() {
+            document.getElementById('instructor-modal').classList.remove('hidden');
+            document.getElementById('instructor-modal').classList.add('flex');
+        }
+
+        function closeInstructorLoginModal() {
+            document.getElementById('instructor-modal').classList.add('hidden');
+            document.getElementById('instructor-modal').classList.remove('flex');
+        }
+
+        function handleInstructorLogin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('instructor-pass-input').value;
+            if (pass === 'taylors2026' || pass === 'admin') {
+                isInstructor = true;
+                document.getElementById('instructor-toolbar').classList.remove('hidden');
+                document.getElementById('instructor-leaderboard-actions').classList.remove('hidden');
+                closeInstructorLoginModal();
+                showToast("Instructor Mode Active", "Controls unlocked!");
+            } else {
+                document.getElementById('instructor-pass-error').classList.remove('hidden');
+            }
+        }
+
+        function exitInstructorMode() {
+            isInstructor = false;
+            document.getElementById('instructor-toolbar').classList.add('hidden');
+            document.getElementById('instructor-leaderboard-actions').classList.add('hidden');
+            showToast("Instructor Mode Exited", "Returned to student view.");
+        }
+
+        function openTopicUnlockModal() {
+            document.getElementById('topic-unlock-modal').classList.remove('hidden');
+            document.getElementById('topic-unlock-modal').classList.add('flex');
+        }
+
+        function closeTopicUnlockModal() {
+            document.getElementById('topic-unlock-modal').classList.add('hidden');
+            document.getElementById('topic-unlock-modal').classList.remove('flex');
+        }
+
+        function toggleWeek2Unlock() {
+            week2Unlocked = !week2Unlocked;
+            const btn = document.getElementById('unlock-w2-btn');
+            if (week2Unlocked) {
+                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-emerald-600 text-white shadow";
+                btn.textContent = "Unlocked";
+            } else {
+                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-rose-600 text-white shadow";
+                btn.textContent = "Locked";
+            }
+        }
+
+        function instructorRevealAnswer() {
+            if (!isInstructor) return;
+            if (currentWeek === 1) {
+                const answer = week1Questions[w1CurrentIndex].answer;
+                answer.split('').forEach(char => w1GuessedLetters.add(char));
+                renderWordSlots();
+                renderKeyboard();
+                checkW1WinLoss();
+            }
+        }
+
+        function instructorSkipQuestion() {
+            if (!isInstructor) return;
+            if (currentWeek === 1) nextQuestion();
+            if (currentWeek === 2) nextWeek2Question();
+        }
+
+        function openAnswerKeyModal() {
+            const container = document.getElementById('answer-key-list');
+            container.innerHTML = '';
+            week1Questions.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = "bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1 text-xs";
+                item.innerHTML = `
+                    <div class="font-bold text-slate-800">Q${idx + 1}: ${q.category}</div>
+                    <div class="text-slate-600">${q.hint}</div>
+                    <div class="font-extrabold text-emerald-700">Answer: ${q.answer}</div>
+                    <div class="text-[11px] text-slate-500 bg-white p-2 rounded border mt-1">${q.explanation}</div>
+                `;
+                container.appendChild(item);
+            });
+            document.getElementById('answer-key-modal').classList.remove('hidden');
+            document.getElementById('answer-key-modal').classList.add('flex');
+        }
+
+        function closeAnswerKeyModal() {
+            document.getElementById('answer-key-modal').classList.add('hidden');
+            document.getElementById('answer-key-modal').classList.remove('flex');
+        }
+
+        function openSummaryModal() {
+            document.getElementById('summary-modal').classList.remove('hidden');
+            document.getElementById('summary-modal').classList.add('flex');
+            playCuteSfx('win');
+        }
+
+        function closeSummaryModal() {
+            document.getElementById('summary-modal').classList.add('hidden');
+            document.getElementById('summary-modal').classList.remove('flex');
+        }
+
+        function showToast(title, message) {
+            const toast = document.getElementById('locked-toast');
+            document.getElementById('locked-toast-title').textContent = title;
+            document.getElementById('locked-toast-msg').textContent = message;
+
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 3000);
+        }
     </script>
 </body>
 </html>
