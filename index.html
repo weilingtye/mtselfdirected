@@ -288,6 +288,10 @@
                     <!-- Registration Only Fields -->
                     <div id="register-fields" class="space-y-3 hidden">
                         <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Student ID *</label>
+                            <input type="text" id="auth-student-id" placeholder="e.g. 0351234" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-600 text-sm">
+                        </div>
+                        <div>
                             <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Taxation Interests</label>
                             <input type="text" id="auth-interests" placeholder="e.g. Individual Tax, Corporate Tax, RPGT" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-600 text-sm">
                         </div>
@@ -327,6 +331,10 @@
 
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
                     <div>
+                        <span class="text-[10px] font-extrabold uppercase text-slate-400 block">Student ID</span>
+                        <p id="prof-display-studentid" class="text-xs font-bold text-red-700">Not set</p>
+                    </div>
+                    <div>
                         <span class="text-[10px] font-extrabold uppercase text-slate-400 block">Tax Interests</span>
                         <p id="prof-display-interests" class="text-xs font-semibold text-slate-700">None set</p>
                     </div>
@@ -343,10 +351,27 @@
                     
                     <!-- Edit Profile Form -->
                     <form id="edit-profile-form" onsubmit="handleProfileUpdate(event)" class="space-y-3 hidden bg-slate-50 p-3 rounded-xl border border-slate-200">
-                        <input type="text" id="edit-interests" placeholder="Interests" class="w-full px-3 py-1.5 rounded-lg border text-xs">
-                        <textarea id="edit-bio" rows="2" placeholder="Bio" class="w-full px-3 py-1.5 rounded-lg border text-xs"></textarea>
-                        <input type="url" id="edit-avatar" placeholder="Avatar URL" class="w-full px-3 py-1.5 rounded-lg border text-xs">
-                        <input type="password" id="edit-password" placeholder="New Password (optional)" class="w-full px-3 py-1.5 rounded-lg border text-xs">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Student ID *</label>
+                            <input type="text" id="edit-studentid" required placeholder="Student ID" class="w-full px-3 py-1.5 rounded-lg border text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Interests</label>
+                            <input type="text" id="edit-interests" placeholder="Interests" class="w-full px-3 py-1.5 rounded-lg border text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Bio</label>
+                            <textarea id="edit-bio" rows="2" placeholder="Bio" class="w-full px-3 py-1.5 rounded-lg border text-xs"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Avatar URL</label>
+                            <input type="url" id="edit-avatar" placeholder="Avatar URL" class="w-full px-3 py-1.5 rounded-lg border text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">New Password (optional)</label>
+                            <input type="password" id="edit-password" placeholder="New Password" class="w-full px-3 py-1.5 rounded-lg border text-xs">
+                        </div>
+                        <p id="edit-profile-error" class="text-xs text-rose-600 font-bold hidden text-center"></p>
                         <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 rounded-lg text-xs transition">Save Changes</button>
                     </form>
 
@@ -635,6 +660,25 @@
         let activeUser = null;
         let allUsersStore = {}; // Fallback in-memory storage
 
+        // Comprehensive profanity list including English and local Malaysian slang/vulgarities
+        const profanityList = [
+            "damn", "hell", "shit", "fuck", "bitch", "bastard", "crap", "asshole", "dick", "pussy",
+            "cunt", "cock", "idiot", "stupid", "fool", "puki", "lanjiao", "pukimak", "babi", "anjing",
+            "sial", "bodoh", "pantat", "jubor", "kimak", "pukima", "solok", "sohai", "pukim@k", "fck",
+            "b1tch", "sh1t", "ass", "slut", "whore", "nigger", "nigga"
+        ];
+
+        function containsProfanity(text) {
+            if (!text) return false;
+            const cleaned = text.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const words = text.toLowerCase().split(/[\s_.-]+/);
+
+            return profanityList.some(badWord => {
+                const cleanedBadWord = badWord.toLowerCase().replace(/[^a-z0-9]/g, '');
+                return words.includes(cleanedBadWord) || cleaned.includes(cleanedBadWord);
+            });
+        }
+
         // Load persisted users from localStorage if available
         try {
             const stored = localStorage.getItem('tu_tax_users');
@@ -905,7 +949,22 @@
                 return;
             }
 
+            // Check for profanity in username
+            if (containsProfanity(username)) {
+                errorElem.textContent = "⚠️ Inappropriate language or profanity is strictly prohibited in usernames.";
+                errorElem.classList.remove('hidden');
+                return;
+            }
+
             if (authMode === 'register') {
+                const studentId = document.getElementById('auth-student-id').value.trim();
+                
+                if (!studentId) {
+                    errorElem.textContent = "Student ID is compulsory for registration.";
+                    errorElem.classList.remove('hidden');
+                    return;
+                }
+
                 if (allUsersStore[username]) {
                     errorElem.textContent = "Username already taken! Please pick another.";
                     errorElem.classList.remove('hidden');
@@ -917,6 +976,7 @@
 
                 activeUser = {
                     username: username,
+                    studentId: studentId,
                     password: password,
                     interests: interests || "Taxation Student",
                     bio: bio || "Enthusiastic about Malaysian taxation law.",
@@ -959,6 +1019,7 @@
                     const userRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'public', 'data', 'leaderboard', activeUser.username);
                     setDoc(userRef, {
                         username: activeUser.username,
+                        studentId: activeUser.studentId || 'N/A',
                         totalPoints: activeUser.totalPoints || 0,
                         bio: activeUser.bio,
                         interests: activeUser.interests,
@@ -996,16 +1057,59 @@
             if (!activeUser) return openAuthModal();
             document.getElementById('prof-display-img').src = activeUser.avatar;
             document.getElementById('prof-display-username').textContent = `@${activeUser.username}`;
+            document.getElementById('prof-display-studentid').textContent = activeUser.studentId || 'Not set';
             document.getElementById('prof-display-points').textContent = activeUser.totalPoints || 0;
             document.getElementById('prof-display-interests').textContent = activeUser.interests || "None specified";
             document.getElementById('prof-display-bio').textContent = activeUser.bio || "No bio provided.";
 
+            document.getElementById('edit-studentid').value = activeUser.studentId || '';
             document.getElementById('edit-interests').value = activeUser.interests || '';
             document.getElementById('edit-bio').value = activeUser.bio || '';
             document.getElementById('edit-avatar').value = activeUser.avatar || '';
 
             document.getElementById('profile-modal').classList.remove('hidden');
             document.getElementById('profile-modal').classList.add('flex');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.add('hidden');
+            document.getElementById('profile-modal').classList.remove('flex');
+            document.getElementById('edit-profile-form').classList.add('hidden');
+        }
+
+        function toggleEditProfileForm() {
+            const form = document.getElementById('edit-profile-form');
+            form.classList.toggle('hidden');
+        }
+
+        function handleProfileUpdate(e) {
+            e.preventDefault();
+            if (!activeUser) return;
+
+            const editError = document.getElementById('edit-profile-error');
+            editError.classList.add('hidden');
+
+            const newStudentId = document.getElementById('edit-studentid').value.trim();
+            const newInterests = document.getElementById('edit-interests').value.trim();
+            const newBio = document.getElementById('edit-bio').value.trim();
+            const newAvatar = document.getElementById('edit-avatar').value.trim();
+            const newPass = document.getElementById('edit-password').value;
+
+            if (!newStudentId) {
+                editError.textContent = "Student ID is compulsory.";
+                editError.classList.remove('hidden');
+                return;
+            }
+
+            activeUser.studentId = newStudentId;
+            activeUser.interests = newInterests || activeUser.interests;
+            activeUser.bio = newBio || activeUser.bio;
+            if (newAvatar) activeUser.avatar = newAvatar;
+            if (newPass) activeUser.password = newPass;
+
+            saveActiveUserData();
+            openProfileModal();
+            showToast("Profile Updated", "Your Student ID and profile changes have been saved.");
         }
 
         function closeProfileModal() {
@@ -1193,7 +1297,7 @@
                                 <span class="font-extrabold text-sm text-slate-800">@${user.username}</span>
                                 ${isCurrent ? '<span class="bg-red-700 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase">You</span>' : ''}
                             </div>
-                            <p class="text-[11px] text-slate-500 line-clamp-1">${user.interests || 'Taxation Scholar'}</p>
+                            <p class="text-[11px] text-slate-500 line-clamp-1">ID: ${user.studentId || 'N/A'} • ${user.interests || 'Taxation Scholar'}</p>
                         </div>
                     </div>
                     <div class="flex items-center">
