@@ -134,7 +134,7 @@
 
         <nav class="bg-white p-2 rounded-2xl shadow-sm border border-slate-200 overflow-x-auto custom-scrollbar">
             <div class="flex space-x-2 min-w-max">
-                <!-- Available Week 1: Topic displayed as "Resident Status" -->
+                <!-- Available Week 1 -->
                 <button onclick="selectWeek(1)" id="tab-week-1" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all bg-red-700 text-white shadow">
                     <span class="bg-red-900 text-white text-xs px-2 py-0.5 rounded-full font-bold">Week 1</span>
                     <span>Resident Status</span>
@@ -291,7 +291,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-                <!-- Left 5 Columns: Snakes & Ladders Interactive Board -->
+                <!-- Left 5 Columns: Board -->
                 <div class="lg:col-span-5 bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-lg text-white flex flex-col justify-between space-y-4">
                     <div class="flex items-center justify-between border-b border-slate-800 pb-2">
                         <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -302,7 +302,7 @@
                         </span>
                     </div>
 
-                    <!-- 20-Tile Grid Board (4 rows x 5 cols) -->
+                    <!-- 20-Tile Grid Board -->
                     <div id="snakes-board-grid" class="grid grid-cols-5 gap-1.5 bg-slate-950 p-2.5 rounded-xl border border-slate-800 shadow-inner my-auto">
                     </div>
 
@@ -319,10 +319,10 @@
                     </div>
                 </div>
 
-                <!-- Right 7 Columns: MCQ Question, Options & Side Reference Guide -->
+                <!-- Right 7 Columns: Question Box -->
                 <div class="lg:col-span-7 space-y-6">
                     
-                    <!-- Side Reference Guide Box (Short & Simple Guide for Employment Income) -->
+                    <!-- Side Reference Guide Box -->
                     <div class="bg-indigo-900/10 border border-indigo-200 p-3.5 rounded-2xl space-y-1.5">
                         <div class="flex items-center justify-between text-indigo-950 font-bold text-xs">
                             <span class="flex items-center gap-1.5">
@@ -468,7 +468,7 @@
             </div>
         </div>
 
-        <!-- Auth Modal (Login / Register) -->
+        <!-- Auth Modal -->
         <div id="auth-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 sm:p-6 overflow-y-auto">
             <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-5 sm:p-6 space-y-4 relative max-h-[85vh] sm:max-h-[90vh] flex flex-col my-auto border border-slate-100">
                 <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 z-10 p-1">
@@ -523,7 +523,7 @@
             </div>
         </div>
 
-        <!-- User Profile Drawer / Modal -->
+        <!-- User Profile Modal -->
         <div id="profile-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4 overflow-y-auto">
             <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-5 relative my-auto border border-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
                 <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-1">
@@ -593,7 +593,7 @@
                 <form onsubmit="handleInstructorLogin(event)" class="space-y-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Instructor Password</label>
-                        <input type="password" id="instructor-pass-input" required placeholder="Enter password (taylors2026)" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
+                        <input type="password" id="instructor-pass-input" required placeholder="Enter password" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm">
                     </div>
                     <p id="instructor-pass-error" class="text-xs text-rose-600 font-bold hidden text-center">Incorrect password.</p>
                     <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold py-2.5 rounded-xl shadow transition text-sm">
@@ -603,7 +603,7 @@
             </div>
         </div>
 
-        <!-- Leaderboard / Scoreboard Modal -->
+        <!-- Leaderboard Modal -->
         <div id="leaderboard-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 space-y-4 relative max-h-[90vh] flex flex-col">
                 <button onclick="closeLeaderboardModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
@@ -620,7 +620,7 @@
                     </div>
                 </div>
 
-                <!-- Instructor Scoreboard Reset & Export Banner -->
+                <!-- Instructor Controls Banner -->
                 <div id="instructor-leaderboard-actions" class="hidden bg-amber-100 border border-amber-300 p-3 rounded-xl shrink-0 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
                     <div class="flex items-center gap-2 font-bold text-amber-950">
                         <i class="fa-solid fa-user-shield text-amber-700 text-sm"></i>
@@ -646,7 +646,7 @@
                 <div id="leaderboard-list" class="flex-grow overflow-y-auto space-y-2 pr-1.5 custom-scrollbar min-h-[180px] max-h-[280px] border-y border-slate-100 py-2">
                 </div>
 
-                <!-- Active Student Rank Card -->
+                <!-- Active Student Rank Banner -->
                 <div id="my-rank-banner" class="hidden bg-red-50/90 border border-red-200 rounded-xl p-3 shrink-0 space-y-2">
                     <div class="flex items-center justify-between border-b border-red-200/60 pb-1.5 text-xs font-black text-red-900 uppercase">
                         <span><i class="fa-solid fa-user-tag text-red-600 mr-1"></i> Your Standing</span>
@@ -656,7 +656,7 @@
                     </div>
                 </div>
 
-                <!-- Scoring Disclaimer Box -->
+                <!-- Scoring Rules -->
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 shrink-0 text-amber-950 text-xs space-y-1">
                     <div class="font-extrabold flex items-center gap-1.5 text-amber-900">
                         <i class="fa-solid fa-circle-info text-amber-600"></i>
@@ -732,7 +732,6 @@
                     </div>
                 </div>
 
-                <!-- Active Topic Theme Display -->
                 <div class="bg-indigo-50 border border-indigo-200 p-3 rounded-xl flex items-center justify-between">
                     <div>
                         <span class="text-[10px] font-extrabold text-indigo-600 uppercase tracking-wider block">Current Topic Theme</span>
@@ -741,7 +740,6 @@
                     <span class="text-xs bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded-md font-bold uppercase">Active</span>
                 </div>
 
-                <!-- Silence / Master Mute Toggle -->
                 <div class="p-3 bg-slate-50 border rounded-xl flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-volume-xmark text-slate-500 text-sm"></i>
@@ -756,7 +754,6 @@
                     </label>
                 </div>
 
-                <!-- Background Music Volume Controls -->
                 <div class="space-y-2 bg-slate-50 p-3 rounded-xl border">
                     <div class="flex items-center justify-between text-xs font-bold text-slate-700">
                         <span class="flex items-center gap-1.5"><i class="fa-solid fa-compact-disc text-indigo-600"></i> Background Music</span>
@@ -770,7 +767,6 @@
                     </div>
                 </div>
 
-                <!-- Sound Effects Volume Controls -->
                 <div class="space-y-2 bg-slate-50 p-3 rounded-xl border">
                     <div class="flex items-center justify-between text-xs font-bold text-slate-700">
                         <span class="flex items-center gap-1.5"><i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> Sound Effects (SFX)</span>
@@ -805,6 +801,7 @@
 
     </main>
 
+    <!-- Firebase Script Block -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -872,8 +869,10 @@
         window.dbInstance = db;
         window.deleteDocRef = deleteDoc;
         window.docRef = doc;
+        window.setDocRef = setDoc;
     </script>
 
+    <!-- Tone.js Audio Engine Block -->
     <script>
         let audioInitialized = false;
         let masterSilent = false;
@@ -1064,6 +1063,7 @@
         };
     </script>
 
+    <!-- Main Logic Block -->
     <script>
         // Global Game State
         let currentWeek = 1;
@@ -1280,11 +1280,11 @@
             }
         ];
 
-        // Snakes & Ladders Board Layout Definition (20 tiles)
-        const boardLadders = { 3: 8, 7: 12, 13: 17 }; // Tile -> Jump Target
-        const boardSnakes = { 11: 4, 16: 9, 19: 10 }; // Tile -> Slide Target
+        // Board Layout
+        const boardLadders = { 3: 8, 7: 12, 13: 17 };
+        const boardSnakes = { 11: 4, 16: 9, 19: 10 };
 
-        // Week 1 Hangman State Variables
+        // Week 1 State
         let w1CurrentIndex = 0;
         let w1Score = 0;
         let w1Lives = 6;
@@ -1292,7 +1292,7 @@
         let w1Attempts = 1;
         let w1AnswerSolved = false;
 
-        // Week 2 Snakes State Variables
+        // Week 2 State
         let w2CurrentIndex = 0;
         let w2TilePosition = 1;
         let w2Hearts = 10;
@@ -1317,7 +1317,6 @@
 
             currentWeek = weekNum;
 
-            // Toggle Tab Visuals
             document.querySelectorAll('.week-tab').forEach(tab => {
                 tab.classList.remove('bg-red-700', 'text-white', 'bg-indigo-700', 'shadow');
                 tab.classList.add('text-slate-400', 'bg-slate-50');
@@ -1330,10 +1329,11 @@
                 if (weekNum === 2) activeTab.classList.add('bg-indigo-700', 'text-white', 'shadow');
             }
 
-            // Toggle Views
             document.querySelectorAll('.week-view').forEach(view => view.classList.add('hidden'));
             const activeView = document.getElementById(`view-week-${weekNum}`);
             if (activeView) activeView.classList.remove('hidden');
+
+            updateTopicBgm(weekNum);
 
             if (weekNum === 1) initWeek1();
             if (weekNum === 2) loadWeek2Question();
@@ -1610,7 +1610,6 @@
                 playCuteSfx('correct');
                 saveUserScore(10);
 
-                // Advance Tile
                 w2TilePosition = Math.min(20, w2TilePosition + 2);
                 if (boardLadders[w2TilePosition]) {
                     setTimeout(() => {
@@ -1719,7 +1718,6 @@
             loggedInUser.score = (loggedInUser.score || 0) + points;
             localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
 
-            // Sync with allUsersStore
             const idx = allUsersStore.findIndex(u => u.username === loggedInUser.username);
             if (idx >= 0) {
                 allUsersStore[idx].score = loggedInUser.score;
@@ -1728,11 +1726,10 @@
             }
             localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
 
-            // Sync to Firestore if online
-            if (window.dbInstance && window.docRef) {
+            if (window.dbInstance && window.docRef && window.setDocRef) {
                 try {
                     const uRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'users', loggedInUser.username);
-                    window.setDoc ? window.setDoc(uRef, loggedInUser, { merge: true }) : null;
+                    window.setDocRef(uRef, loggedInUser, { merge: true });
                 } catch (e) { console.warn("Firestore score sync notice:", e); }
             }
 
@@ -1766,15 +1763,32 @@
 
             if (!username) return;
 
+            const existingUser = allUsersStore.find(u => u.username === username);
+            if (existingUser && existingUser.password && existingUser.password !== password) {
+                const err = document.getElementById('auth-error');
+                err.textContent = "Incorrect password for this username.";
+                err.classList.remove('hidden');
+                return;
+            }
+
             loggedInUser = {
                 username,
                 password,
-                studentId: studentId || "0351000",
-                avatar: avatar || `https://placehold.co/100x100/dc2626/ffffff?text=${username.substring(0,2).toUpperCase()}`,
-                score: 0
+                studentId: studentId || (existingUser ? existingUser.studentId : "0351000"),
+                avatar: avatar || (existingUser ? existingUser.avatar : `https://placehold.co/100x100/dc2626/ffffff?text=${username.substring(0,2).toUpperCase()}`),
+                score: existingUser ? (existingUser.score || 0) : 0
             };
 
             localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
+            
+            const idx = allUsersStore.findIndex(u => u.username === username);
+            if (idx >= 0) {
+                allUsersStore[idx] = loggedInUser;
+            } else {
+                allUsersStore.push(loggedInUser);
+            }
+            localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
+
             updateUserUI();
             closeAuthModal();
             showToast("Welcome!", `Logged in as @${username}`);
@@ -1787,6 +1801,9 @@
             document.getElementById('prof-display-studentid').textContent = loggedInUser.studentId || 'Not set';
             document.getElementById('prof-display-img').src = loggedInUser.avatar || 'https://placehold.co/100x100/dc2626/ffffff?text=TU';
 
+            document.getElementById('edit-studentid').value = loggedInUser.studentId || '';
+            document.getElementById('edit-avatar').value = loggedInUser.avatar || '';
+
             document.getElementById('profile-modal').classList.remove('hidden');
             document.getElementById('profile-modal').classList.add('flex');
         }
@@ -1794,6 +1811,44 @@
         function closeProfileModal() {
             document.getElementById('profile-modal').classList.add('hidden');
             document.getElementById('profile-modal').classList.remove('flex');
+        }
+
+        function toggleEditProfileForm() {
+            const form = document.getElementById('edit-profile-form');
+            form.classList.toggle('hidden');
+        }
+
+        function handleProfileUpdate(e) {
+            e.preventDefault();
+            if (!loggedInUser) return;
+
+            const newStudentId = document.getElementById('edit-studentid').value.trim();
+            const newAvatar = document.getElementById('edit-avatar').value.trim();
+            const newPassword = document.getElementById('edit-password').value;
+
+            loggedInUser.studentId = newStudentId || loggedInUser.studentId;
+            if (newAvatar) loggedInUser.avatar = newAvatar;
+            if (newPassword) loggedInUser.password = newPassword;
+
+            localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
+
+            const idx = allUsersStore.findIndex(u => u.username === loggedInUser.username);
+            if (idx >= 0) {
+                allUsersStore[idx] = loggedInUser;
+                localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
+            }
+
+            if (window.dbInstance && window.docRef && window.setDocRef) {
+                try {
+                    const uRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'users', loggedInUser.username);
+                    window.setDocRef(uRef, loggedInUser, { merge: true });
+                } catch (err) { console.warn("Sync err:", err); }
+            }
+
+            openProfileModal();
+            updateUserUI();
+            document.getElementById('edit-profile-form').classList.add('hidden');
+            showToast("Profile Updated", "Your details have been saved.");
         }
 
         function logoutUser() {
@@ -1828,12 +1883,14 @@
 
             if (sorted.length === 0) {
                 list.innerHTML = `<p class="text-center text-xs text-slate-400 py-6">No scores registered yet. Be the first!</p>`;
+                renderMyRankBanner(sorted);
                 return;
             }
 
             sorted.forEach((u, idx) => {
                 const item = document.createElement('div');
-                item.className = "flex items-center justify-between p-2.5 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-100/80 transition text-xs";
+                const isMe = loggedInUser && loggedInUser.username === u.username;
+                item.className = `flex items-center justify-between p-2.5 rounded-xl border transition text-xs ${isMe ? 'bg-red-50 border-red-300 font-bold' : 'border-slate-100 bg-slate-50/50 hover:bg-slate-100/80'}`;
                 item.innerHTML = `
                     <div class="flex items-center gap-3">
                         <span class="w-6 font-black ${idx === 0 ? 'text-amber-500 text-sm' : idx === 1 ? 'text-slate-400 text-sm' : idx === 2 ? 'text-amber-700 text-sm' : 'text-slate-400'}">
@@ -1841,7 +1898,7 @@
                         </span>
                         <img src="${u.avatar || 'https://placehold.co/100x100/dc2626/ffffff?text=TU'}" class="w-7 h-7 rounded-full object-cover">
                         <div>
-                            <strong class="text-slate-800 block">@${u.username}</strong>
+                            <strong class="text-slate-800 block">@${u.username} ${isMe ? '(You)' : ''}</strong>
                             <span class="text-[10px] text-slate-400">ID: ${u.studentId || 'N/A'}</span>
                         </div>
                     </div>
@@ -1851,6 +1908,88 @@
                 `;
                 list.appendChild(item);
             });
+
+            renderMyRankBanner(sorted);
+        }
+
+        function renderMyRankBanner(sorted) {
+            const banner = document.getElementById('my-rank-banner');
+            if (!loggedInUser) {
+                banner.classList.add('hidden');
+                return;
+            }
+
+            const myIndex = sorted.findIndex(u => u.username === loggedInUser.username);
+            if (myIndex === -1) {
+                banner.classList.add('hidden');
+                return;
+            }
+
+            banner.classList.remove('hidden');
+            document.getElementById('my-rank-summary').textContent = `Rank #${myIndex + 1} of ${sorted.length}`;
+
+            const neighborsDiv = document.getElementById('my-rank-neighbors');
+            neighborsDiv.innerHTML = '';
+
+            const start = Math.max(0, myIndex - 1);
+            const end = Math.min(sorted.length - 1, myIndex + 1);
+
+            for (let i = start; i <= end; i++) {
+                const u = sorted[i];
+                const row = document.createElement('div');
+                row.className = `flex justify-between items-center py-0.5 ${i === myIndex ? 'font-extrabold text-red-800' : 'text-slate-600'}`;
+                row.innerHTML = `
+                    <span>#${i + 1} @${u.username}</span>
+                    <span>${u.score || 0} pts</span>
+                `;
+                neighborsDiv.appendChild(row);
+            }
+        }
+
+        function exportScoresCSV() {
+            if (!isInstructor) return;
+            let csvContent = "data:text/csv;charset=utf-8,Rank,Username,Student_ID,Score\n";
+            const sorted = [...allUsersStore].sort((a, b) => (b.score || 0) - (a.score || 0));
+
+            sorted.forEach((u, i) => {
+                csvContent += `${i + 1},${u.username},${u.studentId || ''},${u.score || 0}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "malaysian_tax_tu_scoreboard.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function resetScoresOnly() {
+            if (!isInstructor) return;
+            if (confirm("Reset scores for all registered students to 0?")) {
+                allUsersStore.forEach(u => u.score = 0);
+                localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
+                if (loggedInUser) {
+                    loggedInUser.score = 0;
+                    localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
+                }
+                renderLeaderboard();
+                updateUserUI();
+                showToast("Scores Reset", "All student scores set to 0.");
+            }
+        }
+
+        function clearEntireLeaderboard() {
+            if (!isInstructor) return;
+            if (confirm("Are you sure you want to delete all student user accounts and scores permanently?")) {
+                allUsersStore = [];
+                localStorage.removeItem('tax_tu_all_users');
+                localStorage.removeItem('tax_tu_user');
+                loggedInUser = null;
+                renderLeaderboard();
+                updateUserUI();
+                showToast("Leaderboard Cleared", "All student records deleted.");
+            }
         }
 
         function openInstructorLoginModal() {
