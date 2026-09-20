@@ -235,6 +235,7 @@
                         </div>
                     </div>
 
+                    <!-- Week 1 Student Action Bar with Next Question Button -->
                     <div id="action-bar" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div id="status-message" class="font-bold text-sm"></div>
                         <button onclick="nextQuestion()" class="w-full sm:w-auto bg-red-700 hover:bg-red-800 text-white font-bold px-6 py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
@@ -347,6 +348,7 @@
                         <div id="w2-mcq-options" class="space-y-2.5">
                         </div>
 
+                        <!-- Week 2 Student Action Bar with Next Question Button -->
                         <div id="w2-action-bar" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div id="w2-status-message" class="font-bold text-sm"></div>
                             <button onclick="nextWeek2Question()" class="w-full sm:w-auto bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-6 py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
@@ -2011,8 +2013,11 @@
 
         function instructorSkipQuestion() {
             if (!isInstructor) return;
-            if (currentWeek === 1) nextQuestion();
-            if (currentWeek === 2) nextWeek2Question();
+            if (currentWeek === 1) {
+                nextQuestion();
+            } else if (currentWeek === 2) {
+                nextWeek2Question();
+            }
         }
 
         function openTopicUnlockModal() {
@@ -2028,64 +2033,26 @@
         function toggleWeek2Unlock() {
             week2Unlocked = !week2Unlocked;
             const btn = document.getElementById('unlock-w2-btn');
-            const tabBadgeIcon = document.getElementById('tab-week-2-icon');
-            
+            const tabBadge = document.getElementById('tab-week-2-badge');
+            const tabIcon = document.getElementById('tab-week-2-icon');
+
             if (week2Unlocked) {
-                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-emerald-600 text-white shadow";
                 btn.textContent = "Unlocked";
-                if (tabBadgeIcon) tabBadgeIcon.className = "fa-solid fa-unlock text-[10px]";
-                showToast("Module Unlocked", "Week 2 is now accessible to all students.");
+                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-emerald-600 text-white shadow";
+                tabBadge.className = "bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1";
+                tabIcon.className = "fa-solid fa-unlock text-[10px]";
+                showToast("Topic Unlocked", "Week 2: Employment Income is now open to students!");
             } else {
-                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-rose-600 text-white shadow";
                 btn.textContent = "Locked";
-                if (tabBadgeIcon) tabBadgeIcon.className = "fa-solid fa-lock text-[10px]";
-                showToast("Module Locked", "Week 2 access restricted.");
+                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-rose-600 text-white shadow";
+                tabBadge.className = "bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1";
+                tabIcon.className = "fa-solid fa-lock text-[10px]";
+                showToast("Topic Locked", "Week 2: Employment Income has been locked.");
             }
         }
 
         function openAnswerKeyModal() {
-            const list = document.getElementById('answer-key-list');
-            list.innerHTML = '';
-
-            // Week 1 Keys
-            const w1Header = document.createElement('div');
-            w1Header.className = "font-black text-xs text-red-800 uppercase tracking-wider bg-red-50 p-2 rounded-lg border border-red-200 mt-1";
-            w1Header.textContent = "Week 1: Resident Status (Hangman Solutions)";
-            list.appendChild(w1Header);
-
-            week1Questions.forEach((q, i) => {
-                const card = document.createElement('div');
-                card.className = "p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1";
-                card.innerHTML = `
-                    <div class="flex justify-between font-extrabold text-slate-800">
-                        <span>Q${i+1}: ${q.category}</span>
-                        <span class="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded font-black">${q.answer}</span>
-                    </div>
-                    <p class="text-slate-600 text-[11px]">${q.explanation}</p>
-                `;
-                list.appendChild(card);
-            });
-
-            // Week 2 Keys
-            const w2Header = document.createElement('div');
-            w2Header.className = "font-black text-xs text-indigo-800 uppercase tracking-wider bg-indigo-50 p-2 rounded-lg border border-indigo-200 mt-4";
-            w2Header.textContent = "Week 2: Employment Income (MCQ Solutions)";
-            list.appendChild(w2Header);
-
-            week2Questions.forEach((q, i) => {
-                const card = document.createElement('div');
-                card.className = "p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1";
-                card.innerHTML = `
-                    <div class="flex justify-between font-extrabold text-slate-800">
-                        <span>Q${i+1}: ${q.category}</span>
-                        <span class="text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded font-black">Option ${String.fromCharCode(65 + q.correct)}</span>
-                    </div>
-                    <p class="text-slate-700 font-semibold">${q.question}</p>
-                    <p class="text-slate-600 text-[11px]">${q.explanation}</p>
-                `;
-                list.appendChild(card);
-            });
-
+            renderAnswerKey();
             document.getElementById('answer-key-modal').classList.remove('hidden');
             document.getElementById('answer-key-modal').classList.add('flex');
         }
@@ -2095,21 +2062,70 @@
             document.getElementById('answer-key-modal').classList.remove('flex');
         }
 
+        function renderAnswerKey() {
+            const container = document.getElementById('answer-key-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            // Week 1 Section
+            const w1Header = document.createElement('div');
+            w1Header.className = "font-black text-sm text-red-800 border-b border-red-200 pb-1 mt-2 mb-2 flex items-center gap-1.5";
+            w1Header.innerHTML = `<i class="fa-solid fa-font"></i> Week 1: Resident Status (Hangman Solutions)`;
+            container.appendChild(w1Header);
+
+            week1Questions.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = "p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1";
+                item.innerHTML = `
+                    <div class="flex items-center justify-between font-bold text-slate-800">
+                        <span>Q${idx + 1}: ${q.category}</span>
+                        <span class="text-red-700 bg-red-100 px-2 py-0.5 rounded font-black">${q.answer}</span>
+                    </div>
+                    <p class="text-slate-600">${q.hint}</p>
+                    <p class="text-emerald-700 text-[11px] font-medium border-t border-slate-200 pt-1"><strong>Rationale:</strong> ${q.explanation}</p>
+                `;
+                container.appendChild(item);
+            });
+
+            // Week 2 Section
+            const w2Header = document.createElement('div');
+            w2Header.className = "font-black text-sm text-indigo-800 border-b border-indigo-200 pb-1 mt-4 mb-2 flex items-center gap-1.5";
+            w2Header.innerHTML = `<i class="fa-solid fa-list-check"></i> Week 2: Employment Income (MCQ Solutions)`;
+            container.appendChild(w2Header);
+
+            week2Questions.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = "p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 text-xs space-y-1";
+                item.innerHTML = `
+                    <div class="flex items-center justify-between font-bold text-slate-800">
+                        <span>Q${idx + 1}: ${q.category}</span>
+                        <span class="text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded font-black">Option ${String.fromCharCode(65 + q.correct)}: ${q.options[q.correct]}</span>
+                    </div>
+                    <p class="text-slate-700 font-medium">${q.question}</p>
+                    <p class="text-indigo-900 text-[11px] border-t border-indigo-100 pt-1"><strong>Rationale:</strong> ${q.explanation}</p>
+                `;
+                container.appendChild(item);
+            });
+        }
+
         function openSummaryModal() {
             const title = document.getElementById('summary-modal-title');
+            const subtitle = document.getElementById('summary-modal-subtitle');
             const scoreVal = document.getElementById('summary-score-val');
 
             if (currentWeek === 1) {
                 title.textContent = "Week 1 Module Complete!";
-                scoreVal.textContent = `${w1Score} pts`;
-            } else {
-                title.textContent = "Week 2 Module Complete!";
-                scoreVal.textContent = `Tile ${w2TilePosition} reached!`;
+                subtitle.textContent = "You completed all Resident Status Hangman challenges!";
+                scoreVal.textContent = `${w1Score} / ${week1Questions.length * 10} pts`;
+            } else if (currentWeek === 2) {
+                title.textContent = "Week 2 Board Complete!";
+                subtitle.textContent = "You reached the end of the Employment Income Board!";
+                scoreVal.textContent = `Tile ${w2TilePosition} reached • ${w2Hearts} ❤️ remaining`;
             }
 
-            playCuteSfx('win');
             document.getElementById('summary-modal').classList.remove('hidden');
             document.getElementById('summary-modal').classList.add('flex');
+            playCuteSfx('win');
         }
 
         function closeSummaryModal() {
@@ -2119,10 +2135,16 @@
 
         function exportScoresCSV() {
             if (!isInstructor) return;
+            if (allUsersStore.length === 0) {
+                showToast("Export CSV", "No student scores to export.");
+                return;
+            }
+
             let csvContent = "data:text/csv;charset=utf-8,Username,StudentID,Score\n";
             allUsersStore.forEach(u => {
-                csvContent += `"${u.username}","${u.studentId || ''}",${u.score || 0}\n`;
+                csvContent += `"${u.username || ''}","${u.studentId || ''}",${u.score || 0}\n`;
             });
+
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
@@ -2130,32 +2152,52 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            showToast("Exported CSV", "Leaderboard data downloaded successfully.");
+            showToast("CSV Exported", "Downloaded student scoreboard.");
         }
 
         function resetScoresOnly() {
             if (!isInstructor) return;
-            if (confirm("Are you sure you want to reset all user scores to 0?")) {
-                allUsersStore.forEach(u => u.score = 0);
-                if (loggedInUser) loggedInUser.score = 0;
+            if (confirm("Are you sure you want to reset all student scores to 0?")) {
+                allUsersStore.forEach(u => {
+                    u.score = 0;
+                    if (window.dbInstance && window.docRef && window.setDoc) {
+                        try {
+                            const uRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'users', u.username);
+                            window.setDoc(uRef, { score: 0 }, { merge: true });
+                        } catch (e) { console.warn(e); }
+                    }
+                });
+                if (loggedInUser) {
+                    loggedInUser.score = 0;
+                    localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
+                }
                 localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
-                localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
-                renderLeaderboard();
                 updateUserUI();
-                showToast("Scores Reset", "All student scores set back to 0.");
+                renderLeaderboard();
+                showToast("Scores Reset", "All student scores set to 0.");
             }
         }
 
         function clearEntireLeaderboard() {
             if (!isInstructor) return;
-            if (confirm("Delete all registered accounts and scores permanently?")) {
+            if (confirm("WARNING: Are you sure you want to delete all student user data?")) {
+                if (window.dbInstance && window.docRef && window.deleteDocRef) {
+                    allUsersStore.forEach(u => {
+                        try {
+                            const uRef = window.docRef(window.dbInstance, 'artifacts', window.appId, 'users', u.username);
+                            window.deleteDocRef(uRef);
+                        } catch (e) { console.warn(e); }
+                    });
+                }
                 allUsersStore = [];
-                loggedInUser = null;
                 localStorage.removeItem('tax_tu_all_users');
-                localStorage.removeItem('tax_tu_user');
-                renderLeaderboard();
+                if (loggedInUser) {
+                    loggedInUser.score = 0;
+                    localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
+                }
                 updateUserUI();
-                showToast("Data Cleared", "All user records removed.");
+                renderLeaderboard();
+                showToast("Data Deleted", "Leaderboard data cleared.");
             }
         }
     </script>
