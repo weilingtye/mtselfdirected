@@ -155,6 +155,10 @@
                     <span id="tab-week-2-game" class="text-xs bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-md font-medium uppercase">Snakes & Ladders</span>
                 </button>
 
+                <!-- =========================================================================
+                     UI NAVIGATION PLACEHOLDER FOR FUTURE WEEKS (e.g., WEEK 3 & BEYOND)
+                     Duplicate the tab button below and update IDs (tab-week-3) to add new weeks.
+                     ========================================================================= -->
                 <button onclick="showLockedNotification('Week 3')" class="week-tab px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2 transition-all text-slate-400 bg-slate-50 border border-slate-200 opacity-75 cursor-not-allowed">
                     <span class="bg-slate-200 text-slate-500 text-xs px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
                         <i class="fa-solid fa-lock text-[10px]"></i> Week 3
@@ -374,6 +378,11 @@
 
         </section>
 
+        <!-- =========================================================================
+             FUTURE WEEKLY GAME MODULE SECTION PLACEHOLDER
+             Add <section id="view-week-3" class="week-view space-y-6 hidden"> ... </section>
+             ========================================================================= -->
+
         <!-- Coin Flip Modal -->
         <div id="coin-flip-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 relative border border-slate-100">
@@ -399,6 +408,7 @@
                 <div id="coin-result-text" class="min-h-[24px] font-extrabold text-sm text-slate-800"></div>
 
                 <div class="space-y-2">
+                    <!-- FIXED: Added onclick="executeCoinFlip()" trigger to button below -->
                     <button id="flip-coin-btn" onclick="executeCoinFlip()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black py-2.5 rounded-xl shadow transition text-sm">
                         <i class="fa-solid fa-rotate-right mr-1"></i> Flip Coin Now
                     </button>
@@ -444,6 +454,11 @@
                             Unlocked
                         </button>
                     </div>
+
+                    <!-- =========================================================================
+                         INSTRUCTOR UNLOCK MODAL PLACEHOLDER FOR FUTURE WEEKS
+                         Insert new week unlock toggles here for Week 3, 4, etc.
+                         ========================================================================= -->
                 </div>
 
                 <div class="pt-2 text-center border-t">
@@ -867,6 +882,10 @@
         let bgmLoopPattern = null;
         let currentTopicBgmIndex = 1;
 
+        /* =========================================================================
+           AUDIO THEMES PLACEHOLDER FOR FUTURE WEEKS
+           Add new themes (e.g., 3: { title: "Week 3 Theme", ... }) here.
+           ========================================================================= */
         const bgmThemes = {
             1: {
                 title: "Week 1: Resident Status Chiptune",
@@ -1065,7 +1084,11 @@
         // Coin Flip Rotation Counter State Variable
         let coinRotationDegrees = 0;
 
-        // Week 1 Hangman Dataset (10 Questions on Resident Status)
+        /* =========================================================================
+           QUESTION BANK MODIFICATION PLACEHOLDER — WEEK 1 (HANGMAN)
+           Add or edit objects in week1Questions array below.
+           Format: { id: N, category: "", hint: "", answer: "", explanation: "" }
+           ========================================================================= */
         const week1Questions = [
             {
                 id: 1,
@@ -1139,7 +1162,11 @@
             }
         ];
 
-        // Week 2 MCQ Dataset (Employment Income)
+        /* =========================================================================
+           QUESTION BANK MODIFICATION PLACEHOLDER — WEEK 2 (MCQ)
+           Add or edit objects in week2Questions array below.
+           Format: { id: N, category: "", question: "", options: [...], correct: Index (0-3), explanation: "" }
+           ========================================================================= */
         const week2Questions = [
             {
                 id: 1,
@@ -1272,6 +1299,11 @@
                 explanation: "Compensation for loss of employment is tax-exempt up to RM20,000 for each completed year of service."
             }
         ];
+
+        /* =========================================================================
+           QUESTION BANK MODIFICATION PLACEHOLDER — WEEK 3 & FUTURE WEEKS
+           Define your future question arrays here (e.g., const week3Questions = [...];)
+           ========================================================================= */
 
         // Snakes & Ladders Board Layout Definition (20 tiles)
         const boardLadders = { 3: 8, 7: 12, 13: 17 }; // Tile -> Jump Target
@@ -2008,149 +2040,6 @@
             link.click();
             document.body.removeChild(link);
             showToast("Export Complete", "Scores downloaded as CSV.");
-        }
-
-        function resetScoresOnly() {
-            if (!isInstructor) return;
-            if (confirm("Reset scores for all users to 0? User accounts will remain.")) {
-                allUsersStore.forEach(u => u.score = 0);
-                if (loggedInUser) loggedInUser.score = 0;
-                localStorage.setItem('tax_tu_all_users', JSON.stringify(allUsersStore));
-                localStorage.setItem('tax_tu_user', JSON.stringify(loggedInUser));
-                updateUserUI();
-                renderLeaderboard();
-                showToast("Scores Reset", "All scores set to 0.");
-            }
-        }
-
-        function clearEntireLeaderboard() {
-            if (!isInstructor) return;
-            if (confirm("Delete ALL user accounts and scoreboard data permanently?")) {
-                allUsersStore = [];
-                loggedInUser = null;
-                localStorage.removeItem('tax_tu_all_users');
-                localStorage.removeItem('tax_tu_user');
-                updateUserUI();
-                renderLeaderboard();
-                showToast("Data Cleared", "All participant data deleted.");
-            }
-        }
-
-        function openInstructorLoginModal() {
-            document.getElementById('instructor-modal').classList.remove('hidden');
-            document.getElementById('instructor-modal').classList.add('flex');
-        }
-
-        function closeInstructorLoginModal() {
-            document.getElementById('instructor-modal').classList.add('hidden');
-            document.getElementById('instructor-modal').classList.remove('flex');
-        }
-
-        function handleInstructorLogin(e) {
-            e.preventDefault();
-            const passInput = document.getElementById('instructor-pass-input').value;
-            const currentPassword = localStorage.getItem('instructorPassword') || 'tye6632';
-
-            if (passInput === currentPassword) {
-                isInstructor = true;
-                document.getElementById('instructor-toolbar').classList.remove('hidden');
-                document.getElementById('instructor-leaderboard-actions').classList.remove('hidden');
-                closeInstructorLoginModal();
-                showToast("Instructor Mode", "Controls and answer features unlocked!");
-            } else {
-                document.getElementById('instructor-pass-error').classList.remove('hidden');
-            }
-        }
-
-        function exitInstructorMode() {
-            isInstructor = false;
-            document.getElementById('instructor-toolbar').classList.add('hidden');
-            document.getElementById('instructor-leaderboard-actions').classList.add('hidden');
-            showToast("Instructor Mode", "Exited instructor mode.");
-        }
-
-        function openTopicUnlockModal() {
-            document.getElementById('topic-unlock-modal').classList.remove('hidden');
-            document.getElementById('topic-unlock-modal').classList.add('flex');
-        }
-
-        function closeTopicUnlockModal() {
-            document.getElementById('topic-unlock-modal').classList.add('hidden');
-            document.getElementById('topic-unlock-modal').classList.remove('flex');
-        }
-
-        function toggleWeek2Unlock() {
-            week2Unlocked = !week2Unlocked;
-            const btn = document.getElementById('unlock-w2-btn');
-            const tabBtn = document.getElementById('tab-week-2');
-            
-            if (week2Unlocked) {
-                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-emerald-600 text-white shadow";
-                btn.textContent = "Unlocked";
-                if (tabBtn) tabBtn.classList.remove('opacity-75');
-            } else {
-                btn.className = "px-3 py-1.5 rounded-xl font-extrabold text-xs transition bg-slate-300 text-slate-700 shadow";
-                btn.textContent = "Locked";
-            }
-        }
-
-        function instructorRevealAnswer() {
-            if (!isInstructor) return;
-            if (currentWeek === 1) {
-                w1AnswerSolved = true;
-                renderWordSlots();
-                renderKeyboard();
-                document.getElementById('explanation-text').textContent = week1Questions[w1CurrentIndex].explanation;
-                document.getElementById('explanation-box').classList.remove('hidden');
-                document.getElementById('action-bar').classList.remove('hidden');
-            } else if (currentWeek === 2) {
-                selectW2Option(week2Questions[w2CurrentIndex].correct);
-            }
-        }
-
-        function instructorSkipQuestion() {
-            if (!isInstructor) return;
-            if (currentWeek === 1) {
-                nextQuestion();
-            } else if (currentWeek === 2) {
-                nextWeek2Question();
-            }
-        }
-
-        function openAnswerKeyModal() {
-            const list = document.getElementById('answer-key-list');
-            list.innerHTML = '';
-            week1Questions.forEach((q, idx) => {
-                const card = document.createElement('div');
-                card.className = "p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 text-xs";
-                card.innerHTML = `
-                    <div class="flex items-center justify-between font-bold text-slate-800">
-                        <span>Q${idx + 1}: ${q.category}</span>
-                        <span class="text-emerald-700 font-black bg-emerald-100 px-2 py-0.5 rounded">${q.answer}</span>
-                    </div>
-                    <p class="text-slate-600">${q.hint}</p>
-                    <p class="text-[11px] text-slate-500 italic border-t pt-1 mt-1">${q.explanation}</p>
-                `;
-                list.appendChild(card);
-            });
-            document.getElementById('answer-key-modal').classList.remove('hidden');
-            document.getElementById('answer-key-modal').classList.add('flex');
-        }
-
-        function closeAnswerKeyModal() {
-            document.getElementById('answer-key-modal').classList.add('hidden');
-            document.getElementById('answer-key-modal').classList.remove('flex');
-        }
-
-        function openSummaryModal() {
-            document.getElementById('summary-score-val').textContent = currentWeek === 1 ? `${w1Score} pts` : `Tile ${w2TilePosition} / 20`;
-            document.getElementById('summary-modal').classList.remove('hidden');
-            document.getElementById('summary-modal').classList.add('flex');
-        }
-
-        function closeSummaryModal() {
-            document.getElementById('summary-modal').classList.add('hidden');
-            document.getElementById('summary-modal').classList.remove('flex');
         }
     </script>
 </body>
